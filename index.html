@@ -181,14 +181,6 @@
             opacity: 0.8;
             margin-top: 5px;
         }
-        .pdf-ref {
-            background: #2c5a6e;
-            border-left: 4px solid #ffc107;
-            padding: 0.6rem;
-            margin-top: 0.8rem;
-            border-radius: 1rem;
-            font-size: 0.8rem;
-        }
         @media (max-width: 800px) {
             .card { padding: 1rem; }
             .input-group label { width: 100%; }
@@ -199,7 +191,7 @@
 <div class="container">
     <div class="header">
         <h1>⚙️ Gear Manufacturing Workshop (Milling Machine)</h1>
-        <a href="/manual" target="_blank" class="pdf-btn">📖 Open Reference Manual (PDF)</a>
+        <a href="/manual" target="_blank" class="pdf-btn">📖 Reference Manual (PDF)</a>
     </div>
     <div class="sub">Spur · Helical · Bevel · Spiral Bevel · Worm · Rack · Sprocket | Indexing: Direct, Simple, Differential, Angular</div>
     <div class="flex-grid">
@@ -238,7 +230,6 @@
             <div id="rackExtra" style="display:none;"><div class="input-group"><label>Rack length (mm) :</label><input type="number" id="rackLength" placeholder="optional"></div></div>
             <button id="computeDimensionsBtn">⟳ Compute dimensions</button>
             <div class="result-box"><h3>📊 Geometric parameters</h3><div id="dimensionsOutput">—</div></div>
-            <div class="pdf-ref" id="pdfRefDimensions"></div>
         </div>
 
         <!-- RIGHT: INDEXING -->
@@ -269,11 +260,11 @@
             <div class="result-box"><h3>⚙️ Helical / Spiral change gears (lead)</h3><div id="helicalGearOutput">—</div></div>
             <div class="result-box"><h3>📌 Manufacturing note</h3><div id="manufactureNote">—</div></div>
             <div class="result-box"><h3>🪚 Cutter recommendation</h3><div id="cutterOut">—</div></div>
-            <div class="pdf-ref" id="pdfRefIndexing"></div>
         </div>
     </div>
     <div class="small-note" style="text-align:center; margin-top:24px;">
-        ✅ Formulas based on Solomon Fisiha manual. Use the PDF button to open the manual and verify each calculation.
+        ✅ Formulas based on Solomon Fisiha manual. Differential indexing: i = (A-N)*40/A, multiply to get available gears. 
+        <a href="/manual" target="_blank" style="color:#2c7da0;">📄 Download / view the full PDF manual</a>
     </div>
 </div>
 
@@ -299,41 +290,9 @@
     const helicalGearOut = document.getElementById('helicalGearOutput');
     const manufactureNote = document.getElementById('manufactureNote');
     const cutterOut = document.getElementById('cutterOut');
-    const pdfRefDimensions = document.getElementById('pdfRefDimensions');
-    const pdfRefIndexing = document.getElementById('pdfRefIndexing');
     
     let isMetric = true;
 
-    // PDF reference mapping (based on the manual's table of contents)
-    const gearPdfMap = {
-        spur: { title: "Spur Milling", page: "10–12" },
-        helical: { title: "Helical Milling", page: "13–17" },
-        bevel: { title: "Bevel Milling", page: "30–35" },
-        spiralBevel: { title: "Spiral Bevel Gear", page: "36–38" },
-        wormShaft: { title: "Worm shaft", page: "22–25" },
-        wormWheel: { title: "Worm wheel", page: "25–27" },
-        rack: { title: "Rack milling", page: "28–29" },
-        sprocket: { title: "Sprocket Gear", page: "39–41" }
-    };
-    const indexingPdfMap = {
-        direct: { title: "Direct indexing (plane indexing)", page: "4" },
-        simple: { title: "Simple indexing (indirect indexing)", page: "4–5" },
-        differential: { title: "Differential indexing", page: "5–7" },
-        angular: { title: "Angular indexing", page: "8–9" }
-    };
-
-    function updatePdfReferences() {
-        // Dimensions reference
-        const gearKey = gearType.value;
-        const gearRef = gearPdfMap[gearKey] || { title: "Gear manufacturing", page: "see manual" };
-        pdfRefDimensions.innerHTML = `📖 <strong>Check in PDF:</strong> <a href="/manual" target="_blank" style="color:#ffc107;">Open manual →</a> Section "${gearRef.title}" (page ${gearRef.page}) for formulas and corrections.`;
-        
-        // Indexing reference
-        const method = document.getElementById('indexMethod').value;
-        const idxRef = indexingPdfMap[method] || { title: "Indexing", page: "3–9" };
-        pdfRefIndexing.innerHTML = `📖 <strong>Verify indexing:</strong> See "<a href="/manual" target="_blank" style="color:#ffc107;">${idxRef.title}</a>" (page ${idxRef.page}) in the PDF.`;
-    }
-    
     function getModule() {
         if (isMetric) return parseFloat(moduleInput.value);
         let dp = parseFloat(dpInput.value);
@@ -476,16 +435,15 @@
             let remainderDeg = (turns - full) * degPerTurn;
             indexingOutput.innerHTML = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${min}'<br>1 crank turn = ${degPerTurn.toFixed(3)}°<br>Crank: ${full} full turn(s) + ${remainderDeg.toFixed(3)}° (${turns.toFixed(5)} turns)`;
         }
-        updatePdfReferences();
     }
     
     // geometry calculation (same as before, compact)
     function computeDimensions(){
         let type = gearType.value;
         let N = parseInt(teethInput.value);
-        if(isNaN(N) || (type!='rack' && N<1)){ dimOutput.innerHTML='<span class="warning">Invalid teeth</span>'; updatePdfReferences(); return; }
+        if(isNaN(N) || (type!='rack' && N<1)){ dimOutput.innerHTML='<span class="warning">Invalid teeth</span>'; return; }
         let m = getModule();
-        if(isNaN(m) || m<=0){ dimOutput.innerHTML='<span class="warning">Enter module/DP</span>'; updatePdfReferences(); return; }
+        if(isNaN(m) || m<=0){ dimOutput.innerHTML='<span class="warning">Enter module/DP</span>'; return; }
         let html=''; let note=''; let cutterMsg='';
         if(type === 'spur'){
             let Do = m*(N+2); let d = m*N; let h = 2.25*m; let p = Math.PI*m;
@@ -557,7 +515,7 @@
         } else if(type === 'sprocket'){
             let P = parseFloat(document.getElementById('chainPitch').value);
             let Dr = parseFloat(document.getElementById('rollerDia').value);
-            if(isNaN(P)){ dimOutput.innerHTML='<span class="warning">Enter chain pitch</span>'; updatePdfReferences(); return; }
+            if(isNaN(P)){ dimOutput.innerHTML='<span class="warning">Enter chain pitch</span>'; return; }
             let theta = 360/N;
             let d = P / Math.sin((theta/2)*Math.PI/180);
             let Do = d + (N>19?0.9:0.8)*Dr;
@@ -571,7 +529,6 @@
         manufactureNote.innerHTML = note;
         cutterOut.innerHTML = cutterMsg;
         if(type !== 'helical' && type !== 'spiralBevel') helicalGearOut.innerHTML = 'Select helical/spiral bevel for lead change gears.';
-        updatePdfReferences();
     }
     
     function getCutterNumber(N){
@@ -646,7 +603,6 @@
     updateMethodUI();
     computeDimensions();
     syncTeeth();
-    updatePdfReferences();
 </script>
 </body>
 </html>
