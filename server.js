@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoint to serve the PDF manual
-app.get('/', (req, res) => {
+app.get('/manual', (req, res) => {
     const pdfPath = path.join(__dirname, 'docs', 'gear_manufacturing_manual.pdf');
     res.sendFile(pdfPath, (err) => {
         if (err) {
