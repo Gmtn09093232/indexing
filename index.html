@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gear Manufacturing Workshop | Milling Machine Indexing</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Inter', sans-serif;
+        }
+        body {
+            background: #eef2f7;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        h1 {
+            font-size: 1.9rem;
+            background: linear-gradient(135deg, #1f3b4c, #0a2e3f);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0;
+        }
+        .pdf-btn {
+            background: #d9534f;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 24px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .pdf-btn:hover {
+            background: #c9302c;
+        }
+        .sub {
+            border-left: 5px solid #2c7da0;
+            padding-left: 18px;
+            margin: 15px 0 25px;
+            color: #2c3e4e;
+            font-weight: 500;
+        }
+        .flex-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+        .card {
+            background: rgba(255,255,255,0.9);
+            border-radius: 2rem;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.1);
+            padding: 1.4rem 1.8rem;
+            flex: 1;
+            min-width: 360px;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #cbd5e1;
+            display: inline-block;
+            color: #1f3b4c;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .input-group label {
+            width: 160px;
+            font-weight: 600;
+            color: #1e3b4a;
+        }
+        input, select {
+            background: white;
+            border: 1px solid #cbd5e6;
+            border-radius: 40px;
+            padding: 8px 16px;
+            flex: 1;
+            min-width: 140px;
+        }
+        button {
+            background: #2c7da0;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 22px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #1f617e;
+            transform: scale(0.97);
+        }
+        .result-box {
+            background: #1e2a36;
+            border-radius: 1.4rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #eef4ff;
+            font-size: 0.9rem;
+        }
+        .result-box h3 {
+            margin: 0 0 8px;
+            font-size: 1.1rem;
+            color: #bbe4f0;
+        }
+        .param-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 12px;
+        }
+        .param-item {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #3e6275;
+            padding: 3px 0;
+        }
+        .badge {
+            background: #2c7da0bb;
+            border-radius: 20px;
+            padding: 2px 12px;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+        .warning {
+            background: #ffd966cc;
+            color: #2d2b1f;
+            padding: 6px 12px;
+            border-radius: 28px;
+        }
+        table.indexing-tab {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .indexing-tab th, .indexing-tab td {
+            padding: 6px 4px;
+            text-align: left;
+            border-bottom: 1px solid #3e6275;
+        }
+        hr {
+            margin: 12px 0;
+            border-color: #3c6478;
+        }
+        .mode-switch {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .mode-chip {
+            background: #e2e8f0;
+            padding: 5px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .active-mode {
+            background: #2c7da0;
+            color: white;
+        }
+        .small-note {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        .pdf-ref {
+            background: #2c5a6e;
+            border-left: 4px solid #ffc107;
+            padding: 0.6rem;
+            margin-top: 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+        }
+        @media (max-width: 800px) {
+            .card { padding: 1rem; }
+            .input-group label { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>⚙️ Gear Manufacturing Workshop (Milling Machine)</h1>
+        <a href="/manual" target="_blank" class="pdf-btn">📖 Open Reference Manual (PDF)</a>
+    </div>
+    <div class="sub">Spur · Helical · Bevel · Spiral Bevel · Worm · Rack · Sprocket | Indexing: Direct, Simple, Differential, Angular</div>
+    <div class="flex-grid">
+        <!-- LEFT: Component & dimensions -->
+        <div class="card">
+            <h2>📐 Component & Data</h2>
+            <div class="input-group">
+                <label>Gear / Workpiece type :</label>
+                <select id="gearType">
+                    <option value="spur">⚙️ Spur gear</option>
+                    <option value="helical">🌀 Helical gear</option>
+                    <option value="bevel">📐 Straight bevel gear</option>
+                    <option value="spiralBevel">🌀📐 Spiral bevel gear</option>
+                    <option value="wormShaft">🐛 Worm shaft</option>
+                    <option value="wormWheel">🐛 Worm wheel</option>
+                    <option value="rack">📏 Rack</option>
+                    <option value="sprocket">🔗 Sprocket</option>
+                </select>
+            </div>
+            <div class="mode-switch" id="modDpSwitch">
+                <div class="mode-chip active-mode" id="metricModeBtn">📏 Metric (Module mm)</div>
+                <div class="mode-chip" id="imperialModeBtn">🔩 Imperial (DP)</div>
+            </div>
+            <div id="commonFields">
+                <div class="input-group"><label>Number of teeth (N) :</label><input type="number" id="teeth" value="28" step="1" min="1"></div>
+                <div id="metricBlock"><div class="input-group"><label>Module (m) mm :</label><input type="number" id="module" value="2.5" step="0.1" min="0.3"></div></div>
+                <div id="imperialBlock" style="display:none;"><div class="input-group"><label>Diametral Pitch (DP) :</label><input type="number" id="dp" value="10" step="0.5" min="2"></div></div>
+            </div>
+            <!-- dynamic fields -->
+            <div id="helicalExtra" style="display:none;"><div class="input-group"><label>Helix angle β (deg) :</label><input type="number" id="helixAngle" value="20"></div><div class="input-group"><label>Face width (mm) :</label><input type="number" id="faceWidth" value="30"></div></div>
+            <div id="bevelExtra" style="display:none;"><div class="input-group"><label>Shaft angle Σ (deg) :</label><input type="number" id="shaftAngle" value="90"></div><div class="input-group"><label>Pitch cone δ (auto if blank) :</label><input type="number" id="pitchCone" placeholder="auto"></div></div>
+            <div id="spiralExtra" style="display:none;"><div class="input-group"><label>Spiral angle ψ (deg) :</label><input type="number" id="spiralAngle" value="35"></div><div class="input-group"><label>Hand :</label><select id="spiralHand"><option>Right</option><option>Left</option></select></div></div>
+            <div id="wormExtra" style="display:none;"><div class="input-group"><label>Number of starts :</label><input type="number" id="wormStarts" value="1" min="1"></div><div class="input-group"><label>Worm shaft OD (mm) :</label><input type="number" id="wormOD" placeholder="for pitch dia"></div></div>
+            <div id="wormWheelExtra" style="display:none;"><div class="input-group"><label>Worm starts (nw) :</label><input type="number" id="wwStarts" value="1"></div><div class="input-group"><label>Worm pitch dia d_w (mm) :</label><input type="number" id="wormPD" placeholder="optional"></div></div>
+            <div id="sprocketExtra" style="display:none;"><div class="input-group"><label>Chain pitch P (mm) :</label><input type="number" id="chainPitch" value="12.7"></div><div class="input-group"><label>Roller dia Dr (mm) :</label><input type="number" id="rollerDia" value="7.92"></div></div>
+            <div id="rackExtra" style="display:none;"><div class="input-group"><label>Rack length (mm) :</label><input type="number" id="rackLength" placeholder="optional"></div></div>
+            <button id="computeDimensionsBtn">⟳ Compute dimensions</button>
+            <div class="result-box"><h3>📊 Geometric parameters</h3><div id="dimensionsOutput">—</div></div>
+            <div class="pdf-ref" id="pdfRefDimensions"></div>
+        </div>
+
+        <!-- RIGHT: INDEXING -->
+        <div class="card">
+            <h2>🔄 Dividing Head Indexing</h2>
+            <div class="input-group"><label>Method :</label>
+                <select id="indexMethod">
+                    <option value="direct">🎯 Direct indexing (24/N)</option>
+                    <option value="simple">🔁 Simple indexing (40/N)</option>
+                    <option value="differential">⚙️ Differential indexing (A-N)*40/A</option>
+                    <option value="angular">📐 Angular indexing (degrees)</option>
+                </select>
+            </div>
+            <div class="input-group"><label>Head ratio (usually 40) :</label><input type="number" id="headRatio" value="40" step="1"></div>
+            <div id="directDiv" class="small-note">Direct: 24 must be divisible by N. Crank = 24/N holes.</div>
+            <div id="simpleDiv"><div class="input-group"><label>Number of divisions (N) :</label><input type="number" id="simpleN" value="28"></div>
+            <div class="input-group"><label>Hole circles preset :</label><select id="holePreset"><option value="24,25,28,30,34,37,38,39,41,42,43,46,47,49,51,53,54,57,58,59,62,66">Full set (plate1-4)</option><option value="15,16,17,18,19,20,21,23,27,29,31,33,37,39,41,43,47,49">B&S Standard</option></select></div>
+            <div class="input-group"><label>Custom holes :</label><input type="text" id="customHoles" placeholder="21,39,49"></div></div>
+            <div id="diffDiv" style="display:none;">
+                <div class="input-group"><label>Required divisions (N) :</label><input type="number" id="diffRequiredN" value="67"></div>
+                <div class="input-group"><label>Approx divisions (A) :</label><input type="number" id="diffApproxA" value="70" step="1"></div>
+                <div class="input-group"><label>Standard change gears :</label><input type="text" id="diffGearSet" value="25,25,30,35,40,50,55,60,70,80,90,100"></div>
+                <div class="small-note">Step1: select A (simple indexing). Step2: i = (A-N)*40/A → multiply to match gear set.</div>
+            </div>
+            <div id="angularDiv" style="display:none;"><div class="input-group"><label>Angle (deg) :</label><input type="number" id="angleDeg" value="15" step="0.5"></div><div class="input-group"><label>Minutes :</label><input type="number" id="angleMin" value="0" step="1" min="0" max="59"></div></div>
+            <button id="computeIndexingBtn">⚙️ Compute Indexing Settings</button>
+            <div class="result-box"><h3>🔧 Indexing result</h3><div id="indexingOutput">—</div></div>
+            <div class="result-box"><h3>⚙️ Helical / Spiral change gears (lead)</h3><div id="helicalGearOutput">—</div></div>
+            <div class="result-box"><h3>📌 Manufacturing note</h3><div id="manufactureNote">—</div></div>
+            <div class="result-box"><h3>🪚 Cutter recommendation</h3><div id="cutterOut">—</div></div>
+            <div class="pdf-ref" id="pdfRefIndexing"></div>
+        </div>
+    </div>
+    <div class="small-note" style="text-align:center; margin-top:24px;">
+        ✅ Formulas based on Solomon Fisiha manual. Use the PDF button to open the manual and verify each calculation.
+    </div>
+</div>
+
+<script>
+    // DOM elements
+    const gearType = document.getElementById('gearType');
+    const teethInput = document.getElementById('teeth');
+    const moduleInput = document.getElementById('module');
+    const dpInput = document.getElementById('dp');
+    const metricBtn = document.getElementById('metricModeBtn');
+    const imperialBtn = document.getElementById('imperialModeBtn');
+    const metricBlock = document.getElementById('metricBlock');
+    const imperialBlock = document.getElementById('imperialBlock');
+    const helicalDiv = document.getElementById('helicalExtra');
+    const bevelDiv = document.getElementById('bevelExtra');
+    const spiralDiv = document.getElementById('spiralExtra');
+    const wormDiv = document.getElementById('wormExtra');
+    const wormWheelDiv = document.getElementById('wormWheelExtra');
+    const sprocketDiv = document.getElementById('sprocketExtra');
+    const rackDiv = document.getElementById('rackExtra');
+    const dimOutput = document.getElementById('dimensionsOutput');
+    const indexingOutput = document.getElementById('indexingOutput');
+    const helicalGearOut = document.getElementById('helicalGearOutput');
+    const manufactureNote = document.getElementById('manufactureNote');
+    const cutterOut = document.getElementById('cutterOut');
+    const pdfRefDimensions = document.getElementById('pdfRefDimensions');
+    const pdfRefIndexing = document.getElementById('pdfRefIndexing');
+    
+    let isMetric = true;
+
+    // PDF reference mapping (based on the manual's table of contents)
+    const gearPdfMap = {
+        spur: { title: "Spur Milling", page: "10–12" },
+        helical: { title: "Helical Milling", page: "13–17" },
+        bevel: { title: "Bevel Milling", page: "30–35" },
+        spiralBevel: { title: "Spiral Bevel Gear", page: "36–38" },
+        wormShaft: { title: "Worm shaft", page: "22–25" },
+        wormWheel: { title: "Worm wheel", page: "25–27" },
+        rack: { title: "Rack milling", page: "28–29" },
+        sprocket: { title: "Sprocket Gear", page: "39–41" }
+    };
+    const indexingPdfMap = {
+        direct: { title: "Direct indexing (plane indexing)", page: "4" },
+        simple: { title: "Simple indexing (indirect indexing)", page: "4–5" },
+        differential: { title: "Differential indexing", page: "5–7" },
+        angular: { title: "Angular indexing", page: "8–9" }
+    };
+
+    function updatePdfReferences() {
+        // Dimensions reference
+        const gearKey = gearType.value;
+        const gearRef = gearPdfMap[gearKey] || { title: "Gear manufacturing", page: "see manual" };
+        pdfRefDimensions.innerHTML = `📖 <strong>Check in PDF:</strong> <a href="/manual" target="_blank" style="color:#ffc107;">Open manual →</a> Section "${gearRef.title}" (page ${gearRef.page}) for formulas and corrections.`;
+        
+        // Indexing reference
+        const method = document.getElementById('indexMethod').value;
+        const idxRef = indexingPdfMap[method] || { title: "Indexing", page: "3–9" };
+        pdfRefIndexing.innerHTML = `📖 <strong>Verify indexing:</strong> See "<a href="/manual" target="_blank" style="color:#ffc107;">${idxRef.title}</a>" (page ${idxRef.page}) in the PDF.`;
+    }
+    
+    function getModule() {
+        if (isMetric) return parseFloat(moduleInput.value);
+        let dp = parseFloat(dpInput.value);
+        if (isNaN(dp)) return NaN;
+        return 25.4 / dp;
+    }
+    function getModuleDisplay() { return isMetric ? `m = ${getModule().toFixed(3)} mm` : `DP = ${dpInput.value}, module = ${getModule().toFixed(3)} mm`; }
+    
+    function gcd(a,b){ a=Math.abs(a); while(b){ let t=b; b=a%b; a=t; } return a; }
+    
+    function getHoleCircles(){
+        let preset = document.getElementById('holePreset').value;
+        let circles = preset.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
+        let custom = document.getElementById('customHoles').value;
+        if(custom){
+            custom.split(',').forEach(v=>{let x=parseInt(v.trim()); if(!isNaN(x)&&x>0 && !circles.includes(x)) circles.push(x);});
+        }
+        return circles.sort((a,b)=>a-b);
+    }
+    
+    function simpleIndexForDiff(ratio, A, holeCircles) {
+        let turns = ratio / A;
+        let full = Math.floor(turns);
+        let rem = ratio % A;
+        if (rem===0) return {exact:true, fullTurns:full, msg:`${full} full turn(s)`};
+        let num=rem, den=A;
+        let g=gcd(num,den); num/=g; den/=g;
+        for(let hc of holeCircles){
+            if(hc % den === 0){
+                let mult = hc/den;
+                let holes = num * mult;
+                let extraFull = 0;
+                if(holes >= hc){ extraFull = Math.floor(holes/hc); holes %= hc; }
+                return {exact:false, fullTurns:full+extraFull, holes:holes, circle:hc, fraction:`${num}/${den}`};
+            }
+        }
+        return {error:`No hole circle multiple of ${den}`};
+    }
+    
+    function computeDifferentialExact(ratio, N, A, gearSetArray) {
+        if (A === N) return {error: "Approx A must be different from N"};
+        let diffRaw = (A - N) * ratio / A;
+        let sign = (A - N) >= 0 ? "positive" : "negative";
+        let num = Math.abs(A - N) * ratio;
+        let den = A;
+        let g = gcd(num, den);
+        num /= g;
+        den /= g;
+        let found = null;
+        for (let k = 1; k <= 20; k++) {
+            let drive = num * k;
+            let driven = den * k;
+            if (gearSetArray.includes(drive) && gearSetArray.includes(driven)) {
+                found = { drive, driven, multiplier: k };
+                break;
+            }
+        }
+        if (!found) {
+            let best = { drive: 1, driven: 1, err: Infinity };
+            for (let drv of gearSetArray) {
+                for (let drn of gearSetArray) {
+                    let val = drv / drn;
+                    let target = num/den;
+                    let err = Math.abs(val - target);
+                    if (err < best.err) { best = { drive: drv, driven: drn, err: err }; }
+                }
+            }
+            return { exactMatch: false, sign, rawFraction: `${num}/${den}`, suggested: best, errorMsg: `No exact multiplier. Closest: ${best.drive}/${best.driven} = ${(best.drive/best.driven).toFixed(5)}` };
+        }
+        return { exactMatch: true, sign, multiplier: found.multiplier, drive: found.drive, driven: found.driven, rawFraction: `${num}/${den}`, formula: `(${A} - ${N})*40/${A} = ${diffRaw.toFixed(5)} = ${num}/${den} → ×${found.multiplier} → ${found.drive}/${found.driven}` };
+    }
+    
+    function computeIndexing() {
+        let method = document.getElementById('indexMethod').value;
+        let ratio = parseFloat(document.getElementById('headRatio').value);
+        if (isNaN(ratio)) ratio = 40;
+        
+        if (method === 'direct') {
+            let Ndiv = parseInt(document.getElementById('simpleN').value);
+            if (24 % Ndiv !== 0) indexingOutput.innerHTML = `<span class="warning">Direct: N must divide 24. 24/${Ndiv} = ${24/Ndiv} holes (not integer).</span>`;
+            else indexingOutput.innerHTML = `<strong>Direct indexing</strong><br>Crank movement = ${24/Ndiv} holes on direct plate. Disengage worm, lock spindle.`;
+        } 
+        else if (method === 'simple') {
+            let Ndiv = parseInt(document.getElementById('simpleN').value);
+            let circles = getHoleCircles();
+            let turns = ratio / Ndiv;
+            let full = Math.floor(turns);
+            let rem = ratio % Ndiv;
+            if (rem === 0) indexingOutput.innerHTML = `<strong>Simple indexing</strong><br>${full} full turn(s) of crank.`;
+            else {
+                let num = rem, den = Ndiv;
+                let g = gcd(num,den); num/=g; den/=g;
+                let options = [];
+                for(let hc of circles) {
+                    if(hc % den === 0) {
+                        let mult = hc/den;
+                        let holes = num * mult;
+                        let extraFull = 0;
+                        if(holes >= hc) { extraFull = Math.floor(holes/hc); holes %= hc; }
+                        options.push({circle:hc, full:full+extraFull, holes:holes});
+                    }
+                }
+                if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`;
+                else {
+                    let html = `<strong>Simple indexing</strong><br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr>`;
+                    options.forEach(opt => { html += `<tr><td>${opt.circle}</td><td>${opt.full}</td><td>${opt.holes}</td></tr>`; });
+                    indexingOutput.innerHTML = html + `</table>`;
+                }
+            }
+        }
+        else if (method === 'differential') {
+            let Nreq = parseInt(document.getElementById('diffRequiredN').value);
+            let Aapprox = parseInt(document.getElementById('diffApproxA').value);
+            let gearSet = document.getElementById('diffGearSet').value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
+            let circles = getHoleCircles();
+            let simpleRes = simpleIndexForDiff(ratio, Aapprox, circles);
+            if (simpleRes.error) { indexingOutput.innerHTML = `<span class="warning">${simpleRes.error}</span>`; return; }
+            let simpleHtml = simpleRes.exact ? `Crank for ${Aapprox}: ${simpleRes.msg}` : `Crank for ${Aapprox}: ${simpleRes.fullTurns} turns + ${simpleRes.holes}/${simpleRes.circle}`;
+            let diffRes = computeDifferentialExact(ratio, Nreq, Aapprox, gearSet);
+            let html = `<strong>Differential indexing (step by step)</strong><br>
+            Step1: Choose A = ${Aapprox} (indexable simply).<br>
+            T = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleHtml}<br>
+            Step2: i = (A - N)*40/A = ${diffRes.formula || `(${Aapprox} - ${Nreq})*40/${Aapprox} = ${((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}`}<br>`;
+            if (diffRes.exactMatch) {
+                html += `<strong>Change gears: ${diffRes.drive} (on spindle) / ${diffRes.driven} (on worm)</strong><br>
+                Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
+                Idler rule: ${diffRes.sign === "positive" ? "simple train → 1 idler" : "simple train → 2 idlers"} (for compound see manual).`;
+            } else {
+                html += `Exact multiplier not found. ${diffRes.errorMsg}<br>Use compound gearing or adjust A.`;
+            }
+            indexingOutput.innerHTML = html;
+        }
+        else if (method === 'angular') {
+            let deg = parseFloat(document.getElementById('angleDeg').value) || 0;
+            let min = parseFloat(document.getElementById('angleMin').value) || 0;
+            let totalDeg = deg + min/60;
+            let degPerTurn = 360/ratio;
+            let turns = totalDeg / degPerTurn;
+            let full = Math.floor(turns);
+            let remainderDeg = (turns - full) * degPerTurn;
+            indexingOutput.innerHTML = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${min}'<br>1 crank turn = ${degPerTurn.toFixed(3)}°<br>Crank: ${full} full turn(s) + ${remainderDeg.toFixed(3)}° (${turns.toFixed(5)} turns)`;
+        }
+        updatePdfReferences();
+    }
+    
+    // geometry calculation (same as before, compact)
+    function computeDimensions(){
+        let type = gearType.value;
+        let N = parseInt(teethInput.value);
+        if(isNaN(N) || (type!='rack' && N<1)){ dimOutput.innerHTML='<span class="warning">Invalid teeth</span>'; updatePdfReferences(); return; }
+        let m = getModule();
+        if(isNaN(m) || m<=0){ dimOutput.innerHTML='<span class="warning">Enter module/DP</span>'; updatePdfReferences(); return; }
+        let html=''; let note=''; let cutterMsg='';
+        if(type === 'spur'){
+            let Do = m*(N+2); let d = m*N; let h = 2.25*m; let p = Math.PI*m;
+            html = `<div class="param-grid"><div class="param-item"><span>Outside Dia Do</span><strong>${Do.toFixed(2)} mm</strong></div>
+            <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
+            <div class="param-item"><span>Whole depth</span><strong>${h.toFixed(2)} mm</strong></div>
+            <div class="param-item"><span>Circular pitch</span><strong>${p.toFixed(3)} mm</strong></div></div>`;
+            note = `Spur: T = 40/${N}. Cutter No. ${getCutterNumber(N)}.`; cutterMsg = `Involute cutter No. ${getCutterNumber(N)}.`;
+        } else if(type === 'helical'){
+            let beta = parseFloat(document.getElementById('helixAngle').value) || 0;
+            let rad = beta*Math.PI/180;
+            let mt = m / Math.cos(rad);
+            let d = mt * N;
+            let lead = Math.PI * d / Math.tan(rad);
+            html = `<div class="param-grid"><div class="param-item"><span>Pitch dia</span><strong>${d.toFixed(2)} mm</strong></div>
+            <div class="param-item"><span>Helix lead L</span><strong>${lead>0?lead.toFixed(1):'∞'} mm</strong></div></div>`;
+            note = `Table angle ${beta}°. Change gears lead = ${lead.toFixed(1)} mm.`;
+            helicalGearOut.innerHTML = `Lead change gears: L/(p*40) = ${(lead/(5*40)).toFixed(4)}.`;
+            cutterMsg = `Involute cutter No. ${getCutterNumber(N)}.`;
+        } else if(type === 'bevel'){
+            let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
+            let delta = parseFloat(document.getElementById('pitchCone').value);
+            if(isNaN(delta)) delta = Math.atan(Math.sin(shaft*Math.PI/180)/(1+Math.cos(shaft*Math.PI/180))) * 180/Math.PI;
+            let thetaF = Math.atan(2.4*Math.sin(delta*Math.PI/180)/N) * 180/Math.PI;
+            let rootAngle = delta - thetaF;
+            let thetaA = Math.atan(2*Math.sin(delta*Math.PI/180)/N) * 180/Math.PI;
+            let faceAngle = delta + thetaA;
+            html = `<div class="param-grid"><div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div>
+            <div class="param-item"><span>Root angle (dividing head)</span><strong>${rootAngle.toFixed(2)}°</strong></div>
+            <div class="param-item"><span>Face angle (compound)</span><strong>${faceAngle.toFixed(2)}°</strong></div></div>`;
+            note = `Tilt dividing head to ${rootAngle.toFixed(1)}°.`; cutterMsg = `Straight bevel cutter.`;
+        } else if(type === 'spiralBevel'){
+            let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
+            let delta = parseFloat(document.getElementById('pitchCone').value);
+            if(isNaN(delta)) delta = Math.atan(Math.sin(shaft*Math.PI/180)/(1+Math.cos(shaft*Math.PI/180))) * 180/Math.PI;
+            let psi = parseFloat(document.getElementById('spiralAngle').value) || 35;
+            let d = m*N;
+            let lead = (Math.PI * d) / Math.tan(psi*Math.PI/180);
+            html = `<div class="param-grid"><div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div>
+            <div class="param-item"><span>Spiral angle ψ</span><strong>${psi}°</strong></div>
+            <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div></div>`;
+            note = `Table swivel ψ = ${psi}°, hand ${document.getElementById('spiralHand').value}.`;
+            helicalGearOut.innerHTML = `Lead = ${lead.toFixed(1)} mm → ratio ≈ ${(lead/(5*40)).toFixed(4)}.`;
+            cutterMsg = `Spiral bevel cutter.`;
+        } else if(type === 'wormShaft'){
+            let starts = parseInt(document.getElementById('wormStarts').value) || 1;
+            let wormOD = parseFloat(document.getElementById('wormOD').value);
+            let d = wormOD ? wormOD - 2*m : 40 - 2*m;
+            let lead = Math.PI * m * starts;
+            let gamma = Math.atan(m * starts / d) * 180/Math.PI;
+            html = `<div class="param-grid"><div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
+            <div class="param-item"><span>Lead angle γ (swivel)</span><strong>${gamma.toFixed(2)}°</strong></div></div>`;
+            note = `Table swivel ${gamma.toFixed(1)}°, indexing on compound rest.`; cutterMsg = `Single-point cutter, tip ≤ 0.697*m.`;
+        } else if(type === 'wormWheel'){
+            let starts = parseInt(document.getElementById('wwStarts').value) || 1;
+            let d_worm = parseFloat(document.getElementById('wormPD').value);
+            if(isNaN(d_worm)) d_worm = 40 - 2*m;
+            let D3 = m*(N+2);
+            let center = (d_worm + m*N)/2;
+            let gamma = Math.atan(m*starts/d_worm)*180/Math.PI;
+            html = `<div class="param-grid"><div class="param-item"><span>Groove dia D3</span><strong>${D3.toFixed(2)} mm</strong></div>
+            <div class="param-item"><span>Center distance</span><strong>${center.toFixed(2)} mm</strong></div>
+            <div class="param-item"><span>Table swivel γ</span><strong>${gamma.toFixed(2)}°</strong></div></div>`;
+            note = `Indexing T = 40/${N}. Table swivel = ${gamma.toFixed(1)}°.`; cutterMsg = `Hob or involute cutter.`;
+        } else if(type === 'rack'){
+            let p = Math.PI * m;
+            html = `<div class="param-grid"><div class="param-item"><span>Circular pitch P</span><strong>${p.toFixed(3)} mm</strong></div></div>`;
+            note = `Linear spacing = ${p.toFixed(2)} mm per tooth.`; cutterMsg = `Rack form cutter.`;
+        } else if(type === 'sprocket'){
+            let P = parseFloat(document.getElementById('chainPitch').value);
+            let Dr = parseFloat(document.getElementById('rollerDia').value);
+            if(isNaN(P)){ dimOutput.innerHTML='<span class="warning">Enter chain pitch</span>'; updatePdfReferences(); return; }
+            let theta = 360/N;
+            let d = P / Math.sin((theta/2)*Math.PI/180);
+            let Do = d + (N>19?0.9:0.8)*Dr;
+            let root = d - Dr;
+            html = `<div class="param-grid"><div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
+            <div class="param-item"><span>Outside dia Do</span><strong>${Do.toFixed(2)} mm</strong></div>
+            <div class="param-item"><span>Root dia</span><strong>${root.toFixed(2)} mm</strong></div></div>`;
+            note = `Indexing T = 40/${N}. Use pitch cutter.`; cutterMsg = `Sprocket form cutter, pitch ${P}mm.`;
+        }
+        dimOutput.innerHTML = html + `<hr><span class="badge">${getModuleDisplay()}</span>`;
+        manufactureNote.innerHTML = note;
+        cutterOut.innerHTML = cutterMsg;
+        if(type !== 'helical' && type !== 'spiralBevel') helicalGearOut.innerHTML = 'Select helical/spiral bevel for lead change gears.';
+        updatePdfReferences();
+    }
+    
+    function getCutterNumber(N){
+        if(N>=135) return 1; if(N>=55) return 2; if(N>=35) return 3; if(N>=26) return 4;
+        if(N>=21) return 5; if(N>=17) return 6; if(N>=14) return 7; return 8;
+    }
+    
+    function updateVisibility(){
+        let t = gearType.value;
+        helicalDiv.style.display = (t==='helical') ? 'block' : 'none';
+        bevelDiv.style.display = (t==='bevel' || t==='spiralBevel') ? 'block' : 'none';
+        spiralDiv.style.display = (t==='spiralBevel') ? 'block' : 'none';
+        wormDiv.style.display = (t==='wormShaft') ? 'block' : 'none';
+        wormWheelDiv.style.display = (t==='wormWheel') ? 'block' : 'none';
+        sprocketDiv.style.display = (t==='sprocket') ? 'block' : 'none';
+        rackDiv.style.display = (t==='rack') ? 'block' : 'none';
+        computeDimensions();
+    }
+    
+    function setMetric(active){
+        isMetric = active;
+        metricBtn.classList.toggle('active-mode', active);
+        imperialBtn.classList.toggle('active-mode', !active);
+        metricBlock.style.display = active ? 'block' : 'none';
+        imperialBlock.style.display = active ? 'none' : 'block';
+        computeDimensions();
+    }
+    
+    function updateMethodUI(){
+        let method = document.getElementById('indexMethod').value;
+        document.getElementById('directDiv').style.display = method==='direct'?'block':'none';
+        document.getElementById('simpleDiv').style.display = method==='simple'?'block':'none';
+        document.getElementById('diffDiv').style.display = method==='differential'?'block':'none';
+        document.getElementById('angularDiv').style.display = method==='angular'?'block':'none';
+        computeIndexing();
+    }
+    
+    function syncTeeth(){
+        let idxN = document.getElementById('simpleN');
+        let teethVal = teethInput.value;
+        if(teethVal) idxN.value = teethVal;
+        let diffReq = document.getElementById('diffRequiredN');
+        if(diffReq) diffReq.value = teethVal;
+    }
+    
+    // Event listeners
+    gearType.addEventListener('change', updateVisibility);
+    document.getElementById('computeDimensionsBtn').addEventListener('click', computeDimensions);
+    document.getElementById('computeIndexingBtn').addEventListener('click', computeIndexing);
+    document.getElementById('indexMethod').addEventListener('change', updateMethodUI);
+    teethInput.addEventListener('input', ()=>{ syncTeeth(); computeDimensions(); });
+    moduleInput.addEventListener('input', computeDimensions);
+    dpInput.addEventListener('input', computeDimensions);
+    document.getElementById('helixAngle')?.addEventListener('input', computeDimensions);
+    document.getElementById('shaftAngle')?.addEventListener('input', computeDimensions);
+    document.getElementById('pitchCone')?.addEventListener('input', computeDimensions);
+    document.getElementById('spiralAngle')?.addEventListener('input', computeDimensions);
+    document.getElementById('wormStarts')?.addEventListener('input', computeDimensions);
+    document.getElementById('wormOD')?.addEventListener('input', computeDimensions);
+    document.getElementById('wwStarts')?.addEventListener('input', computeDimensions);
+    document.getElementById('chainPitch')?.addEventListener('input', computeDimensions);
+    document.getElementById('rollerDia')?.addEventListener('input', computeDimensions);
+    document.getElementById('holePreset')?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); });
+    document.getElementById('customHoles')?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); });
+    document.getElementById('diffGearSet')?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='differential') computeIndexing(); });
+    document.getElementById('diffRequiredN')?.addEventListener('input', ()=>{ syncTeeth(); if(document.getElementById('indexMethod').value==='differential') computeIndexing(); });
+    document.getElementById('diffApproxA')?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='differential') computeIndexing(); });
+    metricBtn.addEventListener('click', ()=>setMetric(true));
+    imperialBtn.addEventListener('click', ()=>setMetric(false));
+    
+    updateVisibility();
+    updateMethodUI();
+    computeDimensions();
+    syncTeeth();
+    updatePdfReferences();
+</script>
+</body>
+</html>
