@@ -207,68 +207,25 @@
             border-radius: 1rem;
             font-size: 0.75rem;
         }
-        /* Mobile-specific adjustments */
         @media (max-width: 700px) {
-            body {
-                padding: 12px;
-            }
-            .header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .pdf-btn {
-                white-space: normal;
-                text-align: center;
-            }
-            h1 {
-                font-size: 1.4rem;
-                text-align: center;
-            }
-            .card {
-                padding: 1rem;
-            }
-            .input-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .input-group label {
-                width: auto;
-                margin-bottom: 4px;
-            }
-            .param-grid {
-                grid-template-columns: 1fr;
-            }
-            .mode-switch {
-                flex-direction: row;
-            }
-            .mode-chip {
-                padding: 8px 12px;
-                font-size: 0.8rem;
-            }
-            button {
-                padding: 12px;
-                font-size: 1rem;
-            }
-            .result-box {
-                font-size: 0.8rem;
-                padding: 0.8rem;
-            }
-            table.indexing-tab {
-                font-size: 0.7rem;
-            }
-            .indexing-tab th, .indexing-tab td {
-                padding: 6px 2px;
-            }
+            body { padding: 12px; }
+            .header { flex-direction: column; align-items: stretch; }
+            .pdf-btn { white-space: normal; text-align: center; }
+            h1 { font-size: 1.4rem; text-align: center; }
+            .card { padding: 1rem; }
+            .input-group { flex-direction: column; align-items: stretch; }
+            .input-group label { width: auto; margin-bottom: 4px; }
+            .param-grid { grid-template-columns: 1fr; }
+            .mode-switch { flex-direction: row; }
+            .mode-chip { padding: 8px 12px; font-size: 0.8rem; }
+            button { padding: 12px; font-size: 1rem; }
+            .result-box { font-size: 0.8rem; padding: 0.8rem; }
+            table.indexing-tab { font-size: 0.7rem; }
+            .indexing-tab th, .indexing-tab td { padding: 6px 2px; }
         }
-        /* touch-friendly for very small devices */
         @media (max-width: 480px) {
-            .mode-chip {
-                padding: 6px 8px;
-                font-size: 0.75rem;
-            }
-            .input-group input, .input-group select {
-                padding: 10px 12px;
-            }
+            .mode-chip { padding: 6px 8px; font-size: 0.75rem; }
+            .input-group input, .input-group select { padding: 10px 12px; }
         }
     </style>
 </head>
@@ -280,7 +237,6 @@
     </div>
     <div class="sub">Spur · Helical · Bevel · Spiral Bevel · Worm · Rack · Sprocket | Indexing: Direct, Simple, Differential, Angular</div>
     <div class="flex-grid">
-        <!-- LEFT: Component & dimensions -->
         <div class="card">
             <h2>📐 Component & Data</h2>
             <div class="input-group">
@@ -305,7 +261,6 @@
                 <div id="metricBlock"><div class="input-group"><label>Module (m) mm :</label><input type="number" id="module" value="2.5" step="0.1" min="0.3"></div></div>
                 <div id="imperialBlock" style="display:none;"><div class="input-group"><label>Diametral Pitch (DP) :</label><input type="number" id="dp" value="10" step="0.5" min="2"></div></div>
             </div>
-            <!-- dynamic fields -->
             <div id="helicalExtra" style="display:none;"><div class="input-group"><label>Helix angle β (deg) :</label><input type="number" id="helixAngle" value="20"></div><div class="input-group"><label>Face width (mm) :</label><input type="number" id="faceWidth" value="30"></div></div>
             <div id="bevelExtra" style="display:none;"><div class="input-group"><label>Shaft angle Σ (deg) :</label><input type="number" id="shaftAngle" value="90"></div><div class="input-group"><label>Pitch cone δ (auto if blank) :</label><input type="number" id="pitchCone" placeholder="auto"></div></div>
             <div id="spiralExtra" style="display:none;"><div class="input-group"><label>Spiral angle ψ (deg) :</label><input type="number" id="spiralAngle" value="35"></div><div class="input-group"><label>Hand :</label><select id="spiralHand"><option>Right</option><option>Left</option></select></div></div>
@@ -318,7 +273,6 @@
             <div class="pdf-ref" id="pdfRefDimensions"></div>
         </div>
 
-        <!-- RIGHT: INDEXING -->
         <div class="card">
             <h2>🔄 Dividing Head Indexing</h2>
             <div class="input-group"><label>Method :</label>
@@ -350,12 +304,11 @@
         </div>
     </div>
     <div class="small-note" style="text-align:center; margin-top:24px;">
-        ✅ Formulas based on Solomon Fisiha manual. Use the PDF button to open the manual and verify each calculation.
+        ✅ Formulas based on Solomon Fisiha manual. Compound gear search now included.
     </div>
 </div>
 
 <script>
-    // DOM elements
     const gearType = document.getElementById('gearType');
     const teethInput = document.getElementById('teeth');
     const moduleInput = document.getElementById('module');
@@ -381,7 +334,6 @@
     
     let isMetric = true;
 
-    // PDF reference mapping (based on the manual's table of contents)
     const gearPdfMap = {
         spur: { title: "Spur Milling", page: "10–12" },
         helical: { title: "Helical Milling", page: "13–17" },
@@ -400,12 +352,9 @@
     };
 
     function updatePdfReferences() {
-        // Dimensions reference
         const gearKey = gearType.value;
         const gearRef = gearPdfMap[gearKey] || { title: "Gear manufacturing", page: "see manual" };
         pdfRefDimensions.innerHTML = `📖 <strong>Check in PDF:</strong> <a href="/manual" target="_blank" style="color:#ffc107;">Open manual →</a> Section "${gearRef.title}" (page ${gearRef.page}) for formulas and corrections.`;
-        
-        // Indexing reference
         const method = document.getElementById('indexMethod').value;
         const idxRef = indexingPdfMap[method] || { title: "Indexing", page: "3–9" };
         pdfRefIndexing.innerHTML = `📖 <strong>Verify indexing:</strong> See "<a href="/manual" target="_blank" style="color:#ffc107;">${idxRef.title}</a>" (page ${idxRef.page}) in the PDF.`;
@@ -450,6 +399,7 @@
         return {error:`No hole circle multiple of ${den}`};
     }
     
+    // ENHANCED differential with compound gear search
     function computeDifferentialExact(ratio, N, A, gearSetArray) {
         if (A === N) return {error: "Approx A must be different from N"};
         let diffRaw = (A - N) * ratio / A;
@@ -459,28 +409,68 @@
         let g = gcd(num, den);
         num /= g;
         den /= g;
-        let found = null;
+        
+        // 1) Try simple multiplier
         for (let k = 1; k <= 20; k++) {
             let drive = num * k;
             let driven = den * k;
             if (gearSetArray.includes(drive) && gearSetArray.includes(driven)) {
-                found = { drive, driven, multiplier: k };
-                break;
+                return {
+                    exactMatch: true, compound: false, sign,
+                    multiplier: k, drive: drive, driven: driven,
+                    rawFraction: `${num}/${den}`,
+                    formula: `(${A} - ${N})*40/${A} = ${diffRaw.toFixed(5)} = ${num}/${den} → ×${k} → ${drive}/${driven}`
+                };
             }
         }
-        if (!found) {
-            let best = { drive: 1, driven: 1, err: Infinity };
-            for (let drv of gearSetArray) {
-                for (let drn of gearSetArray) {
-                    let val = drv / drn;
-                    let target = num/den;
-                    let err = Math.abs(val - target);
-                    if (err < best.err) { best = { drive: drv, driven: drn, err: err }; }
+        
+        // 2) Compound search: split fraction into two gear pairs (a/b)*(c/d) = num/den
+        let bestCompound = null;
+        let bestError = Infinity;
+        // iterate over all possible first pairs from the gear set
+        for (let a of gearSetArray) {
+            for (let b of gearSetArray) {
+                let ratio1 = a / b;
+                // required second ratio = (num/den) / ratio1 = (num * b) / (den * a)
+                let remNum = num * b;
+                let remDen = den * a;
+                let rg = gcd(remNum, remDen);
+                remNum /= rg;
+                remDen /= rg;
+                // find second pair from gear set (or multiplier)
+                for (let k2 = 1; k2 <= 20; k2++) {
+                    let c = remNum * k2;
+                    let d = remDen * k2;
+                    if (gearSetArray.includes(c) && gearSetArray.includes(d)) {
+                        let total = (a/b) * (c/d);
+                        let err = Math.abs(total - num/den);
+                        if (err < bestError && err < 0.00001) {
+                            bestError = err;
+                            bestCompound = { first: `${a}/${b}`, second: `${c}/${d}`, a, b, c, d, k2 };
+                        }
+                    }
                 }
             }
-            return { exactMatch: false, sign, rawFraction: `${num}/${den}`, suggested: best, errorMsg: `No exact multiplier. Closest: ${best.drive}/${best.driven} = ${(best.drive/best.driven).toFixed(5)}` };
         }
-        return { exactMatch: true, sign, multiplier: found.multiplier, drive: found.drive, driven: found.driven, rawFraction: `${num}/${den}`, formula: `(${A} - ${N})*40/${A} = ${diffRaw.toFixed(5)} = ${num}/${den} → ×${found.multiplier} → ${found.drive}/${found.driven}` };
+        if (bestCompound) {
+            return {
+                exactMatch: true, compound: true, sign,
+                compoundGears: { first: bestCompound.first, second: bestCompound.second },
+                rawFraction: `${num}/${den}`,
+                formula: `(${A} - ${N})*40/${A} = ${diffRaw.toFixed(5)} = ${num}/${den}<br>Compound: (${bestCompound.first}) × (${bestCompound.second}) = ${(num/den).toFixed(6)}`
+            };
+        }
+        
+        // Fallback: best simple approximation
+        let best = { drive: 1, driven: 1, err: Infinity };
+        for (let drv of gearSetArray) {
+            for (let drn of gearSetArray) {
+                let val = drv / drn;
+                let err = Math.abs(val - num/den);
+                if (err < best.err) { best = { drive: drv, driven: drn, err: err }; }
+            }
+        }
+        return { exactMatch: false, sign, rawFraction: `${num}/${den}`, suggested: best, errorMsg: `No exact multiplier. Closest simple: ${best.drive}/${best.driven} = ${(best.drive/best.driven).toFixed(5)}. Try adjusting A.` };
     }
     
     function computeIndexing() {
@@ -535,11 +525,20 @@
             T = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleHtml}<br>
             Step2: i = (A - N)*40/A = ${diffRes.formula || `(${Aapprox} - ${Nreq})*40/${Aapprox} = ${((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}`}<br>`;
             if (diffRes.exactMatch) {
-                html += `<strong>Change gears: ${diffRes.drive} (on spindle) / ${diffRes.driven} (on worm)</strong><br>
-                Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
-                Idler rule: ${diffRes.sign === "positive" ? "simple train → 1 idler" : "simple train → 2 idlers"} (for compound see manual).`;
+                if (diffRes.compound) {
+                    html += `<strong>🔧 Compound change gears (exact match):</strong><br>
+                    First pair: ${diffRes.compoundGears.first}<br>
+                    Second pair: ${diffRes.compoundGears.second}<br>
+                    Installation: (${diffRes.compoundGears.first.split('/')[0]} on spindle, ${diffRes.compoundGears.first.split('/')[1]} on intermediate) THEN (${diffRes.compoundGears.second.split('/')[0]} on intermediate, ${diffRes.compoundGears.second.split('/')[1]} on worm)<br>
+                    Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
+                    Idler rule (compound): ${diffRes.sign === "positive" ? "zero idler gears" : "one idler gear"}.`;
+                } else {
+                    html += `<strong>Change gears (simple train): ${diffRes.drive} (on spindle) / ${diffRes.driven} (on worm)</strong><br>
+                    Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
+                    Idler rule: ${diffRes.sign === "positive" ? "simple train → 1 idler" : "simple train → 2 idlers"}.`;
+                }
             } else {
-                html += `Exact multiplier not found. ${diffRes.errorMsg}<br>Use compound gearing or adjust A.`;
+                html += `Exact match not found. ${diffRes.errorMsg}<br>Consider changing A (approx divisions) to a value that yields a factorable ratio.`;
             }
             indexingOutput.innerHTML = html;
         }
@@ -556,7 +555,6 @@
         updatePdfReferences();
     }
     
-    // geometry calculation (same as before, compact)
     function computeDimensions(){
         let type = gearType.value;
         let N = parseInt(teethInput.value);
@@ -694,7 +692,6 @@
         if(diffReq) diffReq.value = teethVal;
     }
     
-    // Event listeners
     gearType.addEventListener('change', updateVisibility);
     document.getElementById('computeDimensionsBtn').addEventListener('click', computeDimensions);
     document.getElementById('computeIndexingBtn').addEventListener('click', computeIndexing);
