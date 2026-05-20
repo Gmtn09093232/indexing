@@ -207,6 +207,21 @@
             border-radius: 1rem;
             font-size: 0.75rem;
         }
+        .gear-drawing {
+            background: #f0f4f8;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+            overflow-x: auto;
+        }
+        .gear-drawing svg {
+            max-width: 100%;
+            height: auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
         @media (max-width: 700px) {
             body { padding: 12px; }
             .header { flex-direction: column; align-items: stretch; }
@@ -297,6 +312,10 @@
             <div id="angularDiv" style="display:none;"><div class="input-group"><label>Angle (deg) :</label><input type="number" id="angleDeg" value="15" step="0.5"></div><div class="input-group"><label>Minutes :</label><input type="number" id="angleMin" value="0" step="1" min="0" max="59"></div></div>
             <button id="computeIndexingBtn">⚙️ Compute Indexing Settings</button>
             <div class="result-box"><h3>🔧 Indexing result</h3><div id="indexingOutput">—</div></div>
+            <div class="gear-drawing" id="gearDrawingContainer" style="display:none;">
+                <h3 style="margin:0 0 8px; color:#1e3b4a;">📐 Compound Gear Train Layout</h3>
+                <div id="gearDrawingSvg"></div>
+            </div>
             <div class="result-box"><h3>⚙️ Helical / Spiral change gears (lead)</h3><div id="helicalGearOutput">—</div></div>
             <div class="result-box"><h3>📌 Manufacturing note</h3><div id="manufactureNote">—</div></div>
             <div class="result-box"><h3>🪚 Cutter recommendation</h3><div id="cutterOut">—</div></div>
@@ -304,7 +323,7 @@
         </div>
     </div>
     <div class="small-note" style="text-align:center; margin-top:24px;">
-        ✅ Formulas based on Solomon Fisiha manual. Compound gear search now included.
+        ✅ Formulas based on Solomon Fisiha manual. Compound gear search included.
     </div>
 </div>
 
@@ -331,6 +350,8 @@
     const cutterOut = document.getElementById('cutterOut');
     const pdfRefDimensions = document.getElementById('pdfRefDimensions');
     const pdfRefIndexing = document.getElementById('pdfRefIndexing');
+    const gearDrawingContainer = document.getElementById('gearDrawingContainer');
+    const gearDrawingSvg = document.getElementById('gearDrawingSvg');
     
     let isMetric = true;
 
@@ -399,6 +420,69 @@
         return {error:`No hole circle multiple of ${den}`};
     }
     
+    // Function to generate simple 2D drawing of compound gear train
+    function generateCompoundDrawing(firstPair, secondPair) {
+        const [a, b] = firstPair.split('/').map(Number);
+        const [c, d] = secondPair.split('/').map(Number);
+        const width = 600;
+        const height = 300;
+        const centerY = height/2;
+        const x1 = 100, x2 = 280, x3 = 460; // spindle, intermediate, worm shaft positions
+        const r_base = 40;
+        const r1 = Math.min(60, 20 + a/2);
+        const r2 = Math.min(60, 20 + b/2);
+        const r3 = Math.min(60, 20 + c/2);
+        const r4 = Math.min(60, 20 + d/2);
+        
+        let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:14px;">`;
+        // Background
+        svg += `<rect width="100%" height="100%" fill="#fafafa" rx="10"/>`;
+        // Shaft lines
+        svg += `<line x1="${x1}" y1="${centerY-70}" x2="${x1}" y2="${centerY+70}" stroke="#888" stroke-width="2" stroke-dasharray="4"/>`;
+        svg += `<line x1="${x2}" y1="${centerY-80}" x2="${x2}" y2="${centerY+80}" stroke="#888" stroke-width="2" stroke-dasharray="4"/>`;
+        svg += `<line x1="${x3}" y1="${centerY-70}" x2="${x3}" y2="${centerY+70}" stroke="#888" stroke-width="2" stroke-dasharray="4"/>`;
+        
+        // Gear 1 (spindle) - driver
+        svg += `<circle cx="${x1}" cy="${centerY}" r="${r1}" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/>`;
+        svg += `<text x="${x1}" y="${centerY-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${a}</text>`;
+        svg += `<text x="${x1}" y="${centerY+10}" text-anchor="middle" fill="#1e3b4a" font-size="10">Spindle</text>`;
+        
+        // Gear 2 (intermediate, driven of first pair)
+        svg += `<circle cx="${x2}" cy="${centerY}" r="${r2}" fill="#d9f0ec" stroke="#2c7da0" stroke-width="2"/>`;
+        svg += `<text x="${x2}" y="${centerY-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${b}</text>`;
+        svg += `<text x="${x2}" y="${centerY+10}" text-anchor="middle" fill="#1e3b4a" font-size="10">Intermediate</text>`;
+        
+        // Gear 3 (intermediate, driver of second pair) - same shaft
+        svg += `<circle cx="${x2}" cy="${centerY-70}" r="${r3}" fill="#d9f0ec" stroke="#2c7da0" stroke-width="2"/>`;
+        svg += `<text x="${x2}" y="${centerY-80}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${c}</text>`;
+        
+        // Gear 4 (worm shaft)
+        svg += `<circle cx="${x3}" cy="${centerY-70}" r="${r4}" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/>`;
+        svg += `<text x="${x3}" y="${centerY-80}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${d}</text>`;
+        svg += `<text x="${x3}" y="${centerY-55}" text-anchor="middle" fill="#1e3b4a" font-size="10">Worm shaft</text>`;
+        
+        // Connection lines (meshing)
+        svg += `<line x1="${x1+r1-5}" y1="${centerY}" x2="${x2-r2+5}" y2="${centerY}" stroke="#e67e22" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>`;
+        svg += `<line x1="${x2+r3-5}" y1="${centerY-70}" x2="${x3-r4+5}" y2="${centerY-70}" stroke="#e67e22" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>`;
+        
+        // Rotation arrows (curved)
+        svg += `<path d="M ${x1-35} ${centerY-20} A 38 38 0 0 1 ${x1-35} ${centerY+20}" fill="none" stroke="#27ae60" stroke-width="2" marker-end="url(#arrowGreen)"/>`;
+        svg += `<text x="${x1-50}" y="${centerY}" text-anchor="middle" fill="#27ae60" font-size="11">↻</text>`;
+        
+        svg += `<defs>
+            <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <polygon points="0 0, 8 4, 0 8" fill="#e67e22"/>
+            </marker>
+            <marker id="arrowGreen" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+                <polygon points="0 0, 6 3, 0 6" fill="#27ae60"/>
+            </marker>
+        </defs>`;
+        
+        svg += `<text x="300" y="280" text-anchor="middle" fill="#555" font-size="12">Compound train: (${a}/${b}) × (${c}/${d}) = ${(a/b * c/d).toFixed(4)}</text>`;
+        svg += `</svg>`;
+        return svg;
+    }
+    
     // ENHANCED differential with compound gear search
     function computeDifferentialExact(ratio, N, A, gearSetArray) {
         if (A === N) return {error: "Approx A must be different from N"};
@@ -427,26 +511,23 @@
         // 2) Compound search: split fraction into two gear pairs (a/b)*(c/d) = num/den
         let bestCompound = null;
         let bestError = Infinity;
-        // iterate over all possible first pairs from the gear set
         for (let a of gearSetArray) {
             for (let b of gearSetArray) {
                 let ratio1 = a / b;
-                // required second ratio = (num/den) / ratio1 = (num * b) / (den * a)
                 let remNum = num * b;
                 let remDen = den * a;
                 let rg = gcd(remNum, remDen);
                 remNum /= rg;
                 remDen /= rg;
-                // find second pair from gear set (or multiplier)
                 for (let k2 = 1; k2 <= 20; k2++) {
                     let c = remNum * k2;
-                    let d = remDen * k2;
-                    if (gearSetArray.includes(c) && gearSetArray.includes(d)) {
-                        let total = (a/b) * (c/d);
+                    let d2 = remDen * k2;
+                    if (gearSetArray.includes(c) && gearSetArray.includes(d2)) {
+                        let total = (a/b) * (c/d2);
                         let err = Math.abs(total - num/den);
                         if (err < bestError && err < 0.00001) {
                             bestError = err;
-                            bestCompound = { first: `${a}/${b}`, second: `${c}/${d}`, a, b, c, d, k2 };
+                            bestCompound = { first: `${a}/${b}`, second: `${c}/${d2}`, a, b, c, d: d2, k2 };
                         }
                     }
                 }
@@ -477,6 +558,10 @@
         let method = document.getElementById('indexMethod').value;
         let ratio = parseFloat(document.getElementById('headRatio').value);
         if (isNaN(ratio)) ratio = 40;
+        
+        // Hide drawing container initially
+        gearDrawingContainer.style.display = 'none';
+        gearDrawingSvg.innerHTML = '';
         
         if (method === 'direct') {
             let Ndiv = parseInt(document.getElementById('simpleN').value);
@@ -532,13 +617,19 @@
                     Installation: (${diffRes.compoundGears.first.split('/')[0]} on spindle, ${diffRes.compoundGears.first.split('/')[1]} on intermediate) THEN (${diffRes.compoundGears.second.split('/')[0]} on intermediate, ${diffRes.compoundGears.second.split('/')[1]} on worm)<br>
                     Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
                     Idler rule (compound): ${diffRes.sign === "positive" ? "zero idler gears" : "one idler gear"}.`;
+                    // Generate drawing
+                    const svg = generateCompoundDrawing(diffRes.compoundGears.first, diffRes.compoundGears.second);
+                    gearDrawingSvg.innerHTML = svg;
+                    gearDrawingContainer.style.display = 'block';
                 } else {
                     html += `<strong>Change gears (simple train): ${diffRes.drive} (on spindle) / ${diffRes.driven} (on worm)</strong><br>
                     Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
                     Idler rule: ${diffRes.sign === "positive" ? "simple train → 1 idler" : "simple train → 2 idlers"}.`;
+                    gearDrawingContainer.style.display = 'none';
                 }
             } else {
                 html += `Exact match not found. ${diffRes.errorMsg}<br>Consider changing A (approx divisions) to a value that yields a factorable ratio.`;
+                gearDrawingContainer.style.display = 'none';
             }
             indexingOutput.innerHTML = html;
         }
@@ -551,6 +642,7 @@
             let full = Math.floor(turns);
             let remainderDeg = (turns - full) * degPerTurn;
             indexingOutput.innerHTML = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${min}'<br>1 crank turn = ${degPerTurn.toFixed(3)}°<br>Crank: ${full} full turn(s) + ${remainderDeg.toFixed(3)}° (${turns.toFixed(5)} turns)`;
+            gearDrawingContainer.style.display = 'none';
         }
         updatePdfReferences();
     }
