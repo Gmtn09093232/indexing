@@ -89,7 +89,7 @@
             gap: 8px;
         }
         .input-group label {
-            width: 140px;
+            width: 150px;
             font-weight: 600;
             color: #1e3b4a;
             font-size: 0.9rem;
@@ -102,6 +102,21 @@
             flex: 1;
             min-width: 120px;
             font-size: 0.9rem;
+        }
+        .small-btn {
+            background: #2c7da0;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.8rem;
+            width: auto;
+            margin: 0;
+        }
+        .small-btn:hover {
+            background: #1f617e;
         }
         button {
             background: #2c7da0;
@@ -267,8 +282,17 @@
             margin: 0 auto;
             cursor: grab;
         }
-        .svg-wrapper svg:active {
-            cursor: grabbing;
+        .alt-gears {
+            margin-top: 10px;
+            padding: 8px;
+            background: #2c5a6e;
+            border-radius: 1rem;
+        }
+        .alt-select {
+            margin: 8px 0;
+            padding: 6px;
+            border-radius: 40px;
+            width: 100%;
         }
         @media (max-width: 700px) {
             body { padding: 12px; }
@@ -287,10 +311,6 @@
             .indexing-tab th, .indexing-tab td { padding: 6px 2px; }
             .zoom-controls button { padding: 2px 8px; font-size: 0.7rem; }
         }
-        @media (max-width: 480px) {
-            .mode-chip { padding: 6px 8px; font-size: 0.75rem; }
-            .input-group input, .input-group select { padding: 10px 12px; }
-        }
     </style>
 </head>
 <body>
@@ -301,6 +321,7 @@
     </div>
     <div class="sub">Spur · Helical · Bevel · Spiral Bevel · Worm · Rack · Sprocket | Indexing: Direct, Simple, Differential, Angular</div>
     <div class="flex-grid">
+        <!-- LEFT CARD: COMPONENT DATA -->
         <div class="card">
             <h2>📐 Component & Data</h2>
             <div class="input-group">
@@ -325,7 +346,38 @@
                 <div id="metricBlock"><div class="input-group"><label>Module (m) mm :</label><input type="number" id="module" value="2.5" step="0.1" min="0.3"></div></div>
                 <div id="imperialBlock" style="display:none;"><div class="input-group"><label>Diametral Pitch (DP) :</label><input type="number" id="dp" value="10" step="0.5" min="2"></div></div>
             </div>
-            <div id="helicalExtra" style="display:none;"><div class="input-group"><label>Helix angle β (deg) :</label><input type="number" id="helixAngle" value="20"></div><div class="input-group"><label>Face width (mm) :</label><input type="number" id="faceWidth" value="30"></div></div>
+            <!-- dynamic fields -->
+            <div id="helicalExtra" style="display:none;">
+                <div class="input-group"><label>Helix angle β (deg) :</label><input type="number" id="helixAngle" value="20"></div>
+                <div class="input-group"><label>Face width (mm) :</label><input type="number" id="faceWidth" value="30"></div>
+                <div class="input-group"><label>Leadscrew pitch (mm) :</label><input type="number" id="leadscrewPitch" value="5" step="0.5" min="1"></div>
+                <div class="input-group">
+                    <label>Lead mode :</label>
+                    <select id="leadMode">
+                        <option value="auto">📐 Compute from helix angle</option>
+                        <option value="manual">✏️ Enter lead manually</option>
+                    </select>
+                </div>
+                <div class="input-group" id="manualLeadGroup" style="display:none;">
+                    <label>Manual lead (mm) :</label>
+                    <input type="number" id="manualLead" value="450" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Lead change gear preset :</label>
+                    <select id="leadGearPreset">
+                        <option value="25,25,30,35,40,50,55,60,70,80,90,100">🔧 Standard set (25‑100)</option>
+                        <option value="24,24,28,32,40,44,48,56,64,72,86,100">📐 Alternative set (24‑100)</option>
+                        <option value="20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120">🔄 Extended set (20‑120)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Custom lead change gears :</label>
+                    <input type="text" id="leadGearSet" placeholder="e.g., 25,30,40,50,60" value="25,25,30,35,40,50,55,60,70,80,90,100">
+                    <button class="small-btn" id="saveLeadPreset">💾 Save as preset</button>
+                    <button class="small-btn" id="removeLeadPreset">🗑️ Remove last</button>
+                </div>
+                <div class="small-note">These gears will be used for helical/spiral lead calculation.</div>
+            </div>
             <div id="bevelExtra" style="display:none;"><div class="input-group"><label>Shaft angle Σ (deg) :</label><input type="number" id="shaftAngle" value="90"></div><div class="input-group"><label>Pitch cone δ (auto if blank) :</label><input type="number" id="pitchCone" placeholder="auto"></div></div>
             <div id="spiralExtra" style="display:none;"><div class="input-group"><label>Spiral angle ψ (deg) :</label><input type="number" id="spiralAngle" value="35"></div><div class="input-group"><label>Hand :</label><select id="spiralHand"><option>Right</option><option>Left</option></select></div></div>
             <div id="wormExtra" style="display:none;"><div class="input-group"><label>Number of starts :</label><input type="number" id="wormStarts" value="1" min="1"></div><div class="input-group"><label>Worm shaft OD (mm) :</label><input type="number" id="wormOD" placeholder="for pitch dia"></div></div>
@@ -337,6 +389,7 @@
             <div class="pdf-ref" id="pdfRefDimensions"></div>
         </div>
 
+        <!-- RIGHT CARD: INDEXING -->
         <div class="card">
             <h2>🔄 Dividing Head Indexing</h2>
             <div class="input-group"><label>Method :</label>
@@ -353,9 +406,8 @@
                 <div class="input-group"><label>Number of divisions (N) :</label><input type="number" id="simpleN" value="28"></div>
                 <div class="input-group"><label>Hole circles preset :</label>
                     <select id="holePreset">
-                        <option value="15,16,17,18,19,20,21,23,27,29,31,33,37,39,41,43,47,49">📋 Plate 1-3 (15-20 | 21-33 | 37-49)</option>
-                        <option value="24,25,28,30,34,37,38,39,41,42,43,46,47,49,51,53,54,57,58,59,62,66">📋 Set A-D (24-34 | 37-43 | 46-53 | 54-66)</option>
-                        <option value="15,16,17,18,19,20,21,23,27,29,31,33,37,39,41,43,47,49">🔧 B&S Standard (same as Plate 1-3)</option>
+                        <option value="15,16,17,18,19,20,21,23,27,29,31,33,37,39,41,43,47,49">📋 Plate 1-3</option>
+                        <option value="24,25,28,30,34,37,38,39,41,42,43,46,47,49,51,53,54,57,58,59,62,66">📋 Set A-D</option>
                     </select>
                 </div>
                 <div class="input-group"><label>Custom holes :</label><input type="text" id="customHoles" placeholder="21,39,49"></div>
@@ -363,14 +415,20 @@
             <div id="diffDiv" style="display:none;">
                 <div class="input-group"><label>Required divisions (N) :</label><input type="number" id="diffRequiredN" value="67"></div>
                 <div class="input-group"><label>Approx divisions (A) :</label><input type="number" id="diffApproxA" value="70" step="1"></div>
-                <div class="input-group"><label>Change gear preset :</label>
+                <div class="input-group">
+                    <label>Change gear preset :</label>
                     <select id="diffGearPreset">
                         <option value="25,25,30,35,40,50,55,60,70,80,90,100">🔧 Standard set (25‑100)</option>
                         <option value="24,24,28,32,40,44,48,56,64,72,86,100">📐 Alternative set (24‑100)</option>
                         <option value="20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120">🔄 Extended set (20‑120)</option>
                     </select>
                 </div>
-                <div class="input-group"><label>Custom change gears :</label><input type="text" id="diffGearSet" placeholder="e.g., 25,30,40,50,60,70,80,90,100" value="25,25,30,35,40,50,55,60,70,80,90,100"></div>
+                <div class="input-group">
+                    <label>Custom change gears :</label>
+                    <input type="text" id="diffGearSet" placeholder="e.g., 25,30,40,50,60,70,80,90,100" value="25,25,30,35,40,50,55,60,70,80,90,100">
+                    <button class="small-btn" id="saveDiffPreset">💾 Save as preset</button>
+                    <button class="small-btn" id="removeDiffPreset">🗑️ Remove last</button>
+                </div>
                 <div class="small-note">Step1: select A (simple indexing). Step2: i = (A-N)*40/A → multiply to match gear set.</div>
             </div>
             <div id="angularDiv" style="display:none;"><div class="input-group"><label>Angle (deg) :</label><input type="number" id="angleDeg" value="15" step="0.5"></div><div class="input-group"><label>Minutes :</label><input type="number" id="angleMin" value="0" step="1" min="0" max="59"></div></div>
@@ -386,7 +444,7 @@
                             <button id="zoomTopIn">+</button>
                         </div>
                     </div>
-                    <div id="topViewWrapper" class="svg-wrapper" style="overflow: auto;">
+                    <div id="topViewWrapper" class="svg-wrapper">
                         <div id="topViewSvg"></div>
                     </div>
                 </div>
@@ -399,23 +457,70 @@
                             <button id="zoomSideIn">+</button>
                         </div>
                     </div>
-                    <div id="sideViewWrapper" class="svg-wrapper" style="overflow: auto;">
+                    <div id="sideViewWrapper" class="svg-wrapper">
                         <div id="sideViewSvg"></div>
                     </div>
                 </div>
             </div>
-            <div class="result-box"><h3>⚙️ Helical / Spiral change gears (lead)</h3><div id="helicalGearOutput">—</div></div>
+            <div class="result-box" id="leadGearResult">
+                <h3>⚙️ Helical / Spiral change gears (lead)</h3>
+                <div id="helicalGearOutput">—</div>
+                <div id="altGearSelection" class="alt-gears" style="display:none;">
+                    <label>🔁 Alternative gear trains :</label>
+                    <select id="altGearSelect" class="alt-select"></select>
+                </div>
+            </div>
             <div class="result-box"><h3>📌 Manufacturing note</h3><div id="manufactureNote">—</div></div>
             <div class="result-box"><h3>🪚 Cutter recommendation</h3><div id="cutterOut">—</div></div>
             <div class="pdf-ref" id="pdfRefIndexing"></div>
         </div>
     </div>
     <div class="small-note" style="text-align:center; margin-top:24px;">
-        ✅ Formulas based on Solomon Fisiha manual. Compound gear search included.
+        ✅ Lead change gears: multiple alternatives (simple/compound) with error percentage. Select any to see 2D drawing.
     </div>
 </div>
 
 <script>
+    // ---------------------------- Helper functions ----------------------------
+    function gcd(a,b){ a=Math.abs(a); while(b){ let t=b; b=a%b; a=t; } return a; }
+    
+    // Preset management (localStorage)
+    function loadPresets(storageKey, selectElement, defaultPresets) {
+        const saved = localStorage.getItem(storageKey);
+        let presets = saved ? JSON.parse(saved) : defaultPresets;
+        selectElement.innerHTML = '';
+        for (let p of presets) {
+            let option = document.createElement('option');
+            option.value = p.value;
+            option.textContent = p.label;
+            selectElement.appendChild(option);
+        }
+        return presets;
+    }
+    function savePreset(storageKey, selectElement, newValue, newLabel, defaultPresets) {
+        let presets = loadPresets(storageKey, selectElement, defaultPresets);
+        if (!presets.some(p => p.value === newValue)) {
+            presets.push({ value: newValue, label: newLabel });
+            localStorage.setItem(storageKey, JSON.stringify(presets));
+            loadPresets(storageKey, selectElement, defaultPresets);
+            selectElement.value = newValue;
+            return true;
+        }
+        return false;
+    }
+    function removeLastPreset(storageKey, selectElement, defaultPresets) {
+        let presets = loadPresets(storageKey, selectElement, defaultPresets);
+        if (presets.length > defaultPresets.length) {
+            presets.pop();
+            localStorage.setItem(storageKey, JSON.stringify(presets));
+            loadPresets(storageKey, selectElement, defaultPresets);
+            selectElement.selectedIndex = 0;
+            return true;
+        }
+        return false;
+    }
+    
+    // DOM references
     const gearType = document.getElementById('gearType');
     const teethInput = document.getElementById('teeth');
     const moduleInput = document.getElementById('module');
@@ -434,6 +539,8 @@
     const dimOutput = document.getElementById('dimensionsOutput');
     const indexingOutput = document.getElementById('indexingOutput');
     const helicalGearOut = document.getElementById('helicalGearOutput');
+    const altGearSelection = document.getElementById('altGearSelection');
+    const altGearSelect = document.getElementById('altGearSelect');
     const manufactureNote = document.getElementById('manufactureNote');
     const cutterOut = document.getElementById('cutterOut');
     const pdfRefDimensions = document.getElementById('pdfRefDimensions');
@@ -444,12 +551,82 @@
     const topViewWrapper = document.getElementById('topViewWrapper');
     const sideViewWrapper = document.getElementById('sideViewWrapper');
     
+    const diffGearPreset = document.getElementById('diffGearPreset');
+    const diffGearSet = document.getElementById('diffGearSet');
+    const leadGearPreset = document.getElementById('leadGearPreset');
+    const leadGearSet = document.getElementById('leadGearSet');
+    const leadMode = document.getElementById('leadMode');
+    const manualLeadGroup = document.getElementById('manualLeadGroup');
+    const manualLead = document.getElementById('manualLead');
+    
     let isMetric = true;
-    let currentTopSvg = '';
-    let currentSideSvg = '';
-    let topScale = 1;
-    let sideScale = 1;
-
+    let topScale = 1, sideScale = 1;
+    let currentAlternatives = []; // stored for dropdown
+    
+    const defaultDiffPresets = [
+        { value: "25,25,30,35,40,50,55,60,70,80,90,100", label: "🔧 Standard set (25‑100)" },
+        { value: "24,24,28,32,40,44,48,56,64,72,86,100", label: "📐 Alternative set (24‑100)" },
+        { value: "20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120", label: "🔄 Extended set (20‑120)" }
+    ];
+    const defaultLeadPresets = [
+        { value: "25,25,30,35,40,50,55,60,70,80,90,100", label: "🔧 Standard set (25‑100)" },
+        { value: "24,24,28,32,40,44,48,56,64,72,86,100", label: "📐 Alternative set (24‑100)" },
+        { value: "20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120", label: "🔄 Extended set (20‑120)" }
+    ];
+    
+    loadPresets('diffPresets', diffGearPreset, defaultDiffPresets);
+    loadPresets('leadPresets', leadGearPreset, defaultLeadPresets);
+    
+    diffGearPreset.addEventListener('change', () => {
+        diffGearSet.value = diffGearPreset.value;
+        if (document.getElementById('indexMethod').value === 'differential') computeIndexing();
+        computeDimensions();
+    });
+    leadGearPreset.addEventListener('change', () => {
+        leadGearSet.value = leadGearPreset.value;
+        computeDimensions();
+    });
+    document.getElementById('saveDiffPreset').addEventListener('click', () => {
+        const customVal = diffGearSet.value.trim();
+        if (customVal) {
+            let label = `📌 Custom (${customVal.substring(0,20)}${customVal.length>20?'...':''})`;
+            savePreset('diffPresets', diffGearPreset, customVal, label, defaultDiffPresets);
+            diffGearSet.value = customVal;
+            if (document.getElementById('indexMethod').value === 'differential') computeIndexing();
+            computeDimensions();
+        }
+    });
+    document.getElementById('removeDiffPreset').addEventListener('click', () => {
+        removeLastPreset('diffPresets', diffGearPreset, defaultDiffPresets);
+        diffGearSet.value = diffGearPreset.value;
+        if (document.getElementById('indexMethod').value === 'differential') computeIndexing();
+        computeDimensions();
+    });
+    document.getElementById('saveLeadPreset').addEventListener('click', () => {
+        const customVal = leadGearSet.value.trim();
+        if (customVal) {
+            let label = `📌 Custom (${customVal.substring(0,20)}${customVal.length>20?'...':''})`;
+            savePreset('leadPresets', leadGearPreset, customVal, label, defaultLeadPresets);
+            leadGearSet.value = customVal;
+            computeDimensions();
+        }
+    });
+    document.getElementById('removeLeadPreset').addEventListener('click', () => {
+        removeLastPreset('leadPresets', leadGearPreset, defaultLeadPresets);
+        leadGearSet.value = leadGearPreset.value;
+        computeDimensions();
+    });
+    diffGearSet.addEventListener('input', () => {
+        if (document.getElementById('indexMethod').value === 'differential') computeIndexing();
+        computeDimensions();
+    });
+    leadGearSet.addEventListener('input', computeDimensions);
+    leadMode.addEventListener('change', () => {
+        manualLeadGroup.style.display = leadMode.value === 'manual' ? 'flex' : 'none';
+        computeDimensions();
+    });
+    manualLead.addEventListener('input', computeDimensions);
+    
     const gearPdfMap = {
         spur: { title: "Spur Milling", page: "10–12" },
         helical: { title: "Helical Milling", page: "13–17" },
@@ -466,7 +643,7 @@
         differential: { title: "Differential indexing", page: "5–7" },
         angular: { title: "Angular indexing", page: "8–9" }
     };
-
+    
     function updatePdfReferences() {
         const gearKey = gearType.value;
         const gearRef = gearPdfMap[gearKey] || { title: "Gear manufacturing", page: "see manual" };
@@ -483,8 +660,6 @@
         return 25.4 / dp;
     }
     function getModuleDisplay() { return isMetric ? `m = ${getModule().toFixed(3)} mm` : `DP = ${dpInput.value}, module = ${getModule().toFixed(3)} mm`; }
-    
-    function gcd(a,b){ a=Math.abs(a); while(b){ let t=b; b=a%b; a=t; } return a; }
     
     function getHoleCircles(){
         let preset = document.getElementById('holePreset').value;
@@ -515,142 +690,124 @@
         return {error:`No hole circle multiple of ${den}`};
     }
     
-    function generateCompoundDrawingTop(firstPair, secondPair) {
-        const [a, b] = firstPair.split('/').map(Number);
-        const [c, d] = secondPair.split('/').map(Number);
-        const width = 600;
-        const height = 300;
-        const centerY = height/2;
-        const x1 = 100, x2 = 280, x3 = 460;
-        const r1 = Math.min(60, 20 + a/2);
-        const r2 = Math.min(60, 20 + b/2);
-        const r3 = Math.min(60, 20 + c/2);
-        const r4 = Math.min(60, 20 + d/2);
-        
+    // Drawing functions for lead gear trains
+    function generateTopDrawingSimple(drive, driven) {
+        const width=600, height=200, centerY=100, x1=200, x2=400;
+        const r1=Math.min(50,20+drive/2), r2=Math.min(50,20+driven/2);
+        let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">`;
+        svg += `<rect width="100%" height="100%" fill="#fafafa" rx="10"/>`;
+        svg += `<line x1="${x1}" y1="30" x2="${x1}" y2="170" stroke="#888" stroke-width="2" stroke-dasharray="4"/>`;
+        svg += `<line x1="${x2}" y1="30" x2="${x2}" y2="170" stroke="#888" stroke-width="2" stroke-dasharray="4"/>`;
+        svg += `<circle cx="${x1}" cy="${centerY}" r="${r1}" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/>`;
+        svg += `<text x="${x1}" y="${centerY-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${drive}</text>`;
+        svg += `<text x="${x1}" y="${centerY+15}" text-anchor="middle" fill="#1e3b4a" font-size="10">Spindle</text>`;
+        svg += `<circle cx="${x2}" cy="${centerY}" r="${r2}" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/>`;
+        svg += `<text x="${x2}" y="${centerY-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${driven}</text>`;
+        svg += `<text x="${x2}" y="${centerY+15}" text-anchor="middle" fill="#1e3b4a" font-size="10">Leadscrew</text>`;
+        svg += `<line x1="${x1+r1-5}" y1="${centerY}" x2="${x2-r2+5}" y2="${centerY}" stroke="#e67e22" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>`;
+        svg += `<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs>`;
+        svg += `<text x="300" y="185" text-anchor="middle" fill="#555" font-size="12">Simple: ${drive}/${driven} = ${(drive/driven).toFixed(4)}</text>`;
+        svg += `</svg>`;
+        return svg;
+    }
+    function generateTopDrawingCompound(first, second) {
+        let [a,b] = first.split('/').map(Number);
+        let [c,d] = second.split('/').map(Number);
+        const width=600, height=300, centerY=150;
+        const x1=100, x2=280, x3=460;
+        const r1=Math.min(50,20+a/2), r2=Math.min(50,20+b/2), r3=Math.min(50,20+c/2), r4=Math.min(50,20+d/2);
         let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:14px;">`;
         svg += `<rect width="100%" height="100%" fill="#fafafa" rx="10"/>`;
         svg += `<line x1="${x1}" y1="${centerY-70}" x2="${x1}" y2="${centerY+70}" stroke="#888" stroke-width="2" stroke-dasharray="4"/>`;
         svg += `<line x1="${x2}" y1="${centerY-80}" x2="${x2}" y2="${centerY+80}" stroke="#888" stroke-width="2" stroke-dasharray="4"/>`;
         svg += `<line x1="${x3}" y1="${centerY-70}" x2="${x3}" y2="${centerY+70}" stroke="#888" stroke-width="2" stroke-dasharray="4"/>`;
-        
         svg += `<circle cx="${x1}" cy="${centerY}" r="${r1}" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/>`;
         svg += `<text x="${x1}" y="${centerY-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${a}</text>`;
-        svg += `<text x="${x1}" y="${centerY+10}" text-anchor="middle" fill="#1e3b4a" font-size="10">Spindle</text>`;
-        
+        svg += `<text x="${x1}" y="${centerY+15}" text-anchor="middle" fill="#1e3b4a" font-size="10">Spindle</text>`;
         svg += `<circle cx="${x2}" cy="${centerY}" r="${r2}" fill="#d9f0ec" stroke="#2c7da0" stroke-width="2"/>`;
         svg += `<text x="${x2}" y="${centerY-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${b}</text>`;
-        svg += `<text x="${x2}" y="${centerY+10}" text-anchor="middle" fill="#1e3b4a" font-size="10">Intermediate</text>`;
-        
+        svg += `<text x="${x2}" y="${centerY+15}" text-anchor="middle" fill="#1e3b4a" font-size="10">Intermediate</text>`;
         svg += `<circle cx="${x2}" cy="${centerY-70}" r="${r3}" fill="#d9f0ec" stroke="#2c7da0" stroke-width="2"/>`;
         svg += `<text x="${x2}" y="${centerY-80}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${c}</text>`;
-        
         svg += `<circle cx="${x3}" cy="${centerY-70}" r="${r4}" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/>`;
         svg += `<text x="${x3}" y="${centerY-80}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${d}</text>`;
-        svg += `<text x="${x3}" y="${centerY-55}" text-anchor="middle" fill="#1e3b4a" font-size="10">Worm shaft</text>`;
-        
+        svg += `<text x="${x3}" y="${centerY-55}" text-anchor="middle" fill="#1e3b4a" font-size="10">Leadscrew</text>`;
         svg += `<line x1="${x1+r1-5}" y1="${centerY}" x2="${x2-r2+5}" y2="${centerY}" stroke="#e67e22" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>`;
         svg += `<line x1="${x2+r3-5}" y1="${centerY-70}" x2="${x3-r4+5}" y2="${centerY-70}" stroke="#e67e22" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>`;
-        svg += `<path d="M ${x1-35} ${centerY-20} A 38 38 0 0 1 ${x1-35} ${centerY+20}" fill="none" stroke="#27ae60" stroke-width="2" marker-end="url(#arrowGreen)"/>`;
-        svg += `<text x="${x1-50}" y="${centerY}" text-anchor="middle" fill="#27ae60" font-size="11">↻</text>`;
-        
-        svg += `<defs>
-            <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-                <polygon points="0 0, 8 4, 0 8" fill="#e67e22"/>
-            </marker>
-            <marker id="arrowGreen" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
-                <polygon points="0 0, 6 3, 0 6" fill="#27ae60"/>
-            </marker>
-        </defs>`;
-        svg += `<text x="300" y="280" text-anchor="middle" fill="#555" font-size="12">Compound train: (${a}/${b}) × (${c}/${d}) = ${(a/b * c/d).toFixed(4)}</text>`;
+        svg += `<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs>`;
+        svg += `<text x="300" y="280" text-anchor="middle" fill="#555" font-size="12">Compound: ${a}/${b} × ${c}/${d} = ${(a/b*c/d).toFixed(4)}</text>`;
         svg += `</svg>`;
         return svg;
     }
+    function generateSideDrawingSimple(drive, driven) { return generateTopDrawingSimple(drive, driven); }
+    function generateSideDrawingCompound(first, second) { return generateTopDrawingCompound(first, second); }
     
-    function generateCompoundDrawingSide(firstPair, secondPair) {
-        const [a, b] = firstPair.split('/').map(Number);
-        const [c, d] = secondPair.split('/').map(Number);
-        const width = 600;
-        const height = 280;
-        const baseY = 150;
-        const shaftX = [150, 300, 450];
-        const shaftLabels = ["Spindle shaft", "Intermediate shaft", "Worm shaft"];
-        const thickness1 = Math.min(40, 20 + a/4);
-        const thickness2 = Math.min(40, 20 + b/4);
-        const thickness3 = Math.min(40, 20 + c/4);
-        const thickness4 = Math.min(40, 20 + d/4);
-        
-        let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="font-family:monospace;font-size:13px;">`;
-        svg += `<rect width="100%" height="100%" fill="#fafafa" rx="10"/>`;
-        for (let i = 0; i < shaftX.length; i++) {
-            svg += `<line x1="${shaftX[i]}" y1="40" x2="${shaftX[i]}" y2="240" stroke="#aaa" stroke-width="3" stroke-dasharray="6"/>`;
-            svg += `<text x="${shaftX[i]}" y="260" text-anchor="middle" fill="#1e3b4a" font-size="11" font-weight="bold">${shaftLabels[i]}</text>`;
-        }
-        svg += `<rect x="${shaftX[0] - thickness1/2}" y="${baseY - 25}" width="${thickness1}" height="50" rx="5" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/>`;
-        svg += `<text x="${shaftX[0]}" y="${baseY + 5}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${a}</text>`;
-        
-        svg += `<rect x="${shaftX[1] - thickness2/2}" y="${baseY - 20}" width="${thickness2}" height="40" rx="5" fill="#d9f0ec" stroke="#2c7da0" stroke-width="2"/>`;
-        svg += `<text x="${shaftX[1]}" y="${baseY + 2}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${b}</text>`;
-        svg += `<rect x="${shaftX[1] - thickness3/2}" y="${baseY - 75}" width="${thickness3}" height="40" rx="5" fill="#d9f0ec" stroke="#2c7da0" stroke-width="2"/>`;
-        svg += `<text x="${shaftX[1]}" y="${baseY - 55}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${c}</text>`;
-        svg += `<line x1="${shaftX[1]}" y1="${baseY - 35}" x2="${shaftX[1]}" y2="${baseY - 40}" stroke="#2c7da0" stroke-width="2"/>`;
-        
-        svg += `<rect x="${shaftX[2] - thickness4/2}" y="${baseY - 80}" width="${thickness4}" height="50" rx="5" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/>`;
-        svg += `<text x="${shaftX[2]}" y="${baseY - 55}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${d}</text>`;
-        
-        svg += `<path d="M 180 ${baseY-5} L 250 ${baseY-5}" stroke="#e67e22" stroke-width="2" marker-end="url(#arrowSide)" fill="none"/>`;
-        svg += `<path d="M 330 ${baseY-65} L 400 ${baseY-65}" stroke="#e67e22" stroke-width="2" marker-end="url(#arrowSide)" fill="none"/>`;
-        svg += `<text x="215" y="${baseY-10}" text-anchor="middle" fill="#e67e22" font-size="10">Drive</text>`;
-        svg += `<text x="365" y="${baseY-70}" text-anchor="middle" fill="#e67e22" font-size="10">Drive</text>`;
-        
-        svg += `<defs>
-            <marker id="arrowSide" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
-                <polygon points="0 0, 8 4, 0 8" fill="#e67e22"/>
-            </marker>
-        </defs>`;
-        svg += `<text x="300" y="275" text-anchor="middle" fill="#555" font-size="11">Side view: gears stacked on shafts (not to scale)</text>`;
-        svg += `</svg>`;
-        return svg;
-    }
-    
-    function applyZoom(wrapperId, scale) {
-        const wrapper = document.getElementById(wrapperId);
-        if (!wrapper) return;
-        const innerDiv = wrapper.querySelector('div'); // the div containing SVG
-        if (!innerDiv) return;
-        innerDiv.style.transform = `scale(${scale})`;
-        innerDiv.style.transformOrigin = 'top left';
-        // adjust overflow to allow scroll
-        wrapper.style.overflow = 'auto';
-    }
-    
-    function setupZoomControls(containerId, wrapperId, isTop) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        const outBtn = container.querySelector('.zoom-controls button:first-child');
-        const resetBtn = container.querySelector('.zoom-controls button:nth-child(2)');
-        const inBtn = container.querySelector('.zoom-controls button:last-child');
-        let scale = 1;
-        const wrapper = document.getElementById(wrapperId);
-        if (!wrapper) return;
-        
-        function updateScale(newScale) {
-            scale = Math.min(3, Math.max(0.5, newScale));
-            const innerDiv = wrapper.querySelector('div');
-            if (innerDiv) {
-                innerDiv.style.transform = `scale(${scale})`;
-                innerDiv.style.transformOrigin = 'top left';
+    // Search for multiple gear train alternatives
+    function findAllSimpleAlternatives(target, gearSet) {
+        let results = [];
+        for (let drv of gearSet) {
+            for (let drn of gearSet) {
+                let ratio = drv/drn;
+                let err = Math.abs(ratio - target);
+                results.push({ type: 'simple', drive: drv, driven: drn, ratio: ratio, error: err });
             }
-            if (isTop) topScale = scale;
-            else sideScale = scale;
         }
-        
-        outBtn.onclick = () => updateScale(scale - 0.2);
-        inBtn.onclick = () => updateScale(scale + 0.2);
-        resetBtn.onclick = () => updateScale(1);
-        // initial
-        updateScale(1);
+        results.sort((a,b)=>a.error - b.error);
+        return results.slice(0,10);
+    }
+    function findAllCompoundAlternatives(target, gearSet) {
+        let results = [];
+        for (let a of gearSet) {
+            for (let b of gearSet) {
+                let first = a/b;
+                let remaining = target / first;
+                for (let c of gearSet) {
+                    for (let d of gearSet) {
+                        let second = c/d;
+                        let ratio = first * second;
+                        let err = Math.abs(ratio - target);
+                        if (err < 0.01) {
+                            results.push({ type: 'compound', first: `${a}/${b}`, second: `${c}/${d}`, ratio: ratio, error: err });
+                        }
+                    }
+                }
+            }
+        }
+        // deduplicate
+        let seen = new Set();
+        let unique = [];
+        for (let r of results) {
+            let key = `${r.first}|${r.second}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                unique.push(r);
+            }
+        }
+        unique.sort((a,b)=>a.error - b.error);
+        return unique.slice(0,8);
     }
     
+    function updateDrawingFromAlternative(alt) {
+        if (!alt) return;
+        let topSvg, sideSvg;
+        if (alt.type === 'simple') {
+            topSvg = generateTopDrawingSimple(alt.drive, alt.driven);
+            sideSvg = generateSideDrawingSimple(alt.drive, alt.driven);
+        } else {
+            topSvg = generateTopDrawingCompound(alt.first, alt.second);
+            sideSvg = generateSideDrawingCompound(alt.first, alt.second);
+        }
+        topViewSvgDiv.innerHTML = topSvg;
+        sideViewSvgDiv.innerHTML = sideSvg;
+        gearDrawingContainer.style.display = 'block';
+        const topInner = topViewWrapper.querySelector('div');
+        const sideInner = sideViewWrapper.querySelector('div');
+        if (topInner) topInner.style.transform = 'scale(1)';
+        if (sideInner) sideInner.style.transform = 'scale(1)';
+        topScale = sideScale = 1;
+    }
+    
+    // ---------- Differential indexing exact matching ----------
     function computeDifferentialExact(ratio, N, A, gearSetArray) {
         if (A === N) return {error: "Approx A must be different from N"};
         let diffRaw = (A - N) * ratio / A;
@@ -660,7 +817,6 @@
         let g = gcd(num, den);
         num /= g;
         den /= g;
-        
         for (let k = 1; k <= 20; k++) {
             let drive = num * k;
             let driven = den * k;
@@ -673,12 +829,10 @@
                 };
             }
         }
-        
         let bestCompound = null;
         let bestError = Infinity;
         for (let a of gearSetArray) {
             for (let b of gearSetArray) {
-                let ratio1 = a / b;
                 let remNum = num * b;
                 let remDen = den * a;
                 let rg = gcd(remNum, remDen);
@@ -692,7 +846,7 @@
                         let err = Math.abs(total - num/den);
                         if (err < bestError && err < 0.00001) {
                             bestError = err;
-                            bestCompound = { first: `${a}/${b}`, second: `${c}/${d2}`, a, b, c, d: d2, k2 };
+                            bestCompound = { first: `${a}/${b}`, second: `${c}/${d2}` };
                         }
                     }
                 }
@@ -706,7 +860,6 @@
                 formula: `(${A} - ${N})*40/${A} = ${diffRaw.toFixed(5)} = ${num}/${den}<br>Compound: (${bestCompound.first}) × (${bestCompound.second}) = ${(num/den).toFixed(6)}`
             };
         }
-        
         let best = { drive: 1, driven: 1, err: Infinity };
         for (let drv of gearSetArray) {
             for (let drn of gearSetArray) {
@@ -722,10 +875,6 @@
         let method = document.getElementById('indexMethod').value;
         let ratio = parseFloat(document.getElementById('headRatio').value);
         if (isNaN(ratio)) ratio = 40;
-        
-        gearDrawingContainer.style.display = 'none';
-        topViewSvgDiv.innerHTML = '';
-        sideViewSvgDiv.innerHTML = '';
         
         if (method === 'direct') {
             let Ndiv = parseInt(document.getElementById('simpleN').value);
@@ -763,15 +912,17 @@
         else if (method === 'differential') {
             let Nreq = parseInt(document.getElementById('diffRequiredN').value);
             let Aapprox = parseInt(document.getElementById('diffApproxA').value);
-            let gearSet = document.getElementById('diffGearSet').value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
+            let gearSet = diffGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
             let circles = getHoleCircles();
             let simpleRes = simpleIndexForDiff(ratio, Aapprox, circles);
             if (simpleRes.error) { indexingOutput.innerHTML = `<span class="warning">${simpleRes.error}</span>`; return; }
-            let simpleHtml = simpleRes.exact ? `Crank for ${Aapprox}: ${simpleRes.msg}` : `Crank for ${Aapprox}: ${simpleRes.fullTurns} turns + ${simpleRes.holes}/${simpleRes.circle}`;
+            let simpleTableHtml = simpleRes.exact ? 
+                `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td style="padding:6px 4px;">—</td><td>${simpleRes.fullTurns}</td><td>0</td></tr></tbody></table>` :
+                `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td>${simpleRes.fullTurns}</td><td>${simpleRes.holes}</td></tr></tbody></table>`;
             let diffRes = computeDifferentialExact(ratio, Nreq, Aapprox, gearSet);
             let html = `<strong>Differential indexing (step by step)</strong><br>
             Step1: Choose A = ${Aapprox} (indexable simply).<br>
-            T = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleHtml}<br>
+            T = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleTableHtml}<br>
             Step2: i = (A - N)*40/A = ${diffRes.formula || `(${Aapprox} - ${Nreq})*40/${Aapprox} = ${((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}`}<br>`;
             if (diffRes.exactMatch) {
                 if (diffRes.compound) {
@@ -781,27 +932,13 @@
                     Installation: (${diffRes.compoundGears.first.split('/')[0]} on spindle, ${diffRes.compoundGears.first.split('/')[1]} on intermediate) THEN (${diffRes.compoundGears.second.split('/')[0]} on intermediate, ${diffRes.compoundGears.second.split('/')[1]} on worm)<br>
                     Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
                     Idler rule (compound): ${diffRes.sign === "positive" ? "zero idler gears" : "one idler gear"}.`;
-                    const topSvg = generateCompoundDrawingTop(diffRes.compoundGears.first, diffRes.compoundGears.second);
-                    const sideSvg = generateCompoundDrawingSide(diffRes.compoundGears.first, diffRes.compoundGears.second);
-                    topViewSvgDiv.innerHTML = topSvg;
-                    sideViewSvgDiv.innerHTML = sideSvg;
-                    gearDrawingContainer.style.display = 'block';
-                    // reset zoom scales and apply
-                    topScale = 1;
-                    sideScale = 1;
-                    const topInner = topViewWrapper.querySelector('div');
-                    const sideInner = sideViewWrapper.querySelector('div');
-                    if (topInner) topInner.style.transform = 'scale(1)';
-                    if (sideInner) sideInner.style.transform = 'scale(1)';
                 } else {
                     html += `<strong>Change gears (simple train): ${diffRes.drive} (on spindle) / ${diffRes.driven} (on worm)</strong><br>
                     Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
                     Idler rule: ${diffRes.sign === "positive" ? "simple train → 1 idler" : "simple train → 2 idlers"}.`;
-                    gearDrawingContainer.style.display = 'none';
                 }
             } else {
                 html += `Exact match not found. ${diffRes.errorMsg}<br>Consider changing A (approx divisions) to a value that yields a factorable ratio.`;
-                gearDrawingContainer.style.display = 'none';
             }
             indexingOutput.innerHTML = html;
         }
@@ -814,7 +951,6 @@
             let full = Math.floor(turns);
             let remainderDeg = (turns - full) * degPerTurn;
             indexingOutput.innerHTML = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${min}'<br>1 crank turn = ${degPerTurn.toFixed(3)}°<br>Crank: ${full} full turn(s) + ${remainderDeg.toFixed(3)}° (${turns.toFixed(5)} turns)`;
-            gearDrawingContainer.style.display = 'none';
         }
         updatePdfReferences();
     }
@@ -838,11 +974,55 @@
             let rad = beta*Math.PI/180;
             let mt = m / Math.cos(rad);
             let d = mt * N;
-            let lead = Math.PI * d / Math.tan(rad);
+            let lead;
+            if (leadMode.value === 'manual') {
+                lead = parseFloat(manualLead.value);
+                if (isNaN(lead)) lead = 450;
+            } else {
+                lead = Math.PI * d / Math.tan(rad);
+            }
             html = `<div class="param-grid"><div class="param-item"><span>Pitch dia</span><strong>${d.toFixed(2)} mm</strong></div>
             <div class="param-item"><span>Helix lead L</span><strong>${lead>0?lead.toFixed(1):'∞'} mm</strong></div></div>`;
             note = `Table angle ${beta}°. Change gears lead = ${lead.toFixed(1)} mm.`;
-            helicalGearOut.innerHTML = `Lead change gears: L/(p*40) = ${(lead/(5*40)).toFixed(4)}.`;
+            
+            let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
+            let requiredRatio = lead / (leadscrewPitch * 40);
+            let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
+            if (gearSet.length === 0) gearSet = [25,30,40,50,60,70,80,90,100];
+            
+            let simpleAlts = findAllSimpleAlternatives(requiredRatio, gearSet);
+            let compoundAlts = findAllCompoundAlternatives(requiredRatio, gearSet);
+            let allAlts = [...simpleAlts, ...compoundAlts];
+            allAlts.sort((a,b)=>a.error - b.error);
+            currentAlternatives = allAlts.slice(0,8);
+            
+            if (currentAlternatives.length === 0) {
+                helicalGearOut.innerHTML = 'No gear trains found. Check your gear set.';
+                altGearSelection.style.display = 'none';
+                gearDrawingContainer.style.display = 'none';
+            } else {
+                altGearSelect.innerHTML = '';
+                for (let i=0; i<currentAlternatives.length; i++) {
+                    let alt = currentAlternatives[i];
+                    let desc = '';
+                    if (alt.type === 'simple') {
+                        desc = `Simple: ${alt.drive}/${alt.driven} = ${alt.ratio.toFixed(6)} (error ${(alt.error*100).toFixed(4)}%)`;
+                    } else {
+                        desc = `Compound: (${alt.first}) × (${alt.second}) = ${alt.ratio.toFixed(6)} (error ${(alt.error*100).toFixed(4)}%)`;
+                    }
+                    let option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = desc;
+                    altGearSelect.appendChild(option);
+                }
+                altGearSelection.style.display = 'block';
+                updateDrawingFromAlternative(currentAlternatives[0]);
+                altGearSelect.onchange = () => {
+                    let idx = parseInt(altGearSelect.value);
+                    updateDrawingFromAlternative(currentAlternatives[idx]);
+                };
+                helicalGearOut.innerHTML = `<strong>${currentAlternatives.length} alternative gear trains found.</strong><br>Select from dropdown to view 2D drawing.`;
+            }
             cutterMsg = `Involute cutter No. ${getCutterNumber(N)}.`;
         } else if(type === 'bevel'){
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
@@ -862,12 +1042,54 @@
             if(isNaN(delta)) delta = Math.atan(Math.sin(shaft*Math.PI/180)/(1+Math.cos(shaft*Math.PI/180))) * 180/Math.PI;
             let psi = parseFloat(document.getElementById('spiralAngle').value) || 35;
             let d = m*N;
-            let lead = (Math.PI * d) / Math.tan(psi*Math.PI/180);
+            let lead;
+            if (leadMode.value === 'manual') {
+                lead = parseFloat(manualLead.value);
+                if (isNaN(lead)) lead = 450;
+            } else {
+                lead = (Math.PI * d) / Math.tan(psi*Math.PI/180);
+            }
             html = `<div class="param-grid"><div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div>
             <div class="param-item"><span>Spiral angle ψ</span><strong>${psi}°</strong></div>
             <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div></div>`;
             note = `Table swivel ψ = ${psi}°, hand ${document.getElementById('spiralHand').value}.`;
-            helicalGearOut.innerHTML = `Lead = ${lead.toFixed(1)} mm → ratio ≈ ${(lead/(5*40)).toFixed(4)}.`;
+            // same lead gear calculation as helical
+            let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
+            let requiredRatio = lead / (leadscrewPitch * 40);
+            let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
+            if (gearSet.length === 0) gearSet = [25,30,40,50,60,70,80,90,100];
+            let simpleAlts = findAllSimpleAlternatives(requiredRatio, gearSet);
+            let compoundAlts = findAllCompoundAlternatives(requiredRatio, gearSet);
+            let allAlts = [...simpleAlts, ...compoundAlts];
+            allAlts.sort((a,b)=>a.error - b.error);
+            currentAlternatives = allAlts.slice(0,8);
+            if (currentAlternatives.length === 0) {
+                helicalGearOut.innerHTML = 'No gear trains found.';
+                altGearSelection.style.display = 'none';
+                gearDrawingContainer.style.display = 'none';
+            } else {
+                altGearSelect.innerHTML = '';
+                for (let i=0; i<currentAlternatives.length; i++) {
+                    let alt = currentAlternatives[i];
+                    let desc = '';
+                    if (alt.type === 'simple') {
+                        desc = `Simple: ${alt.drive}/${alt.driven} = ${alt.ratio.toFixed(6)} (error ${(alt.error*100).toFixed(4)}%)`;
+                    } else {
+                        desc = `Compound: (${alt.first}) × (${alt.second}) = ${alt.ratio.toFixed(6)} (error ${(alt.error*100).toFixed(4)}%)`;
+                    }
+                    let option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = desc;
+                    altGearSelect.appendChild(option);
+                }
+                altGearSelection.style.display = 'block';
+                updateDrawingFromAlternative(currentAlternatives[0]);
+                altGearSelect.onchange = () => {
+                    let idx = parseInt(altGearSelect.value);
+                    updateDrawingFromAlternative(currentAlternatives[idx]);
+                };
+                helicalGearOut.innerHTML = `<strong>${currentAlternatives.length} alternative gear trains found.</strong><br>Select from dropdown to view 2D drawing.`;
+            }
             cutterMsg = `Spiral bevel cutter.`;
         } else if(type === 'wormShaft'){
             let starts = parseInt(document.getElementById('wormStarts').value) || 1;
@@ -909,7 +1131,11 @@
         dimOutput.innerHTML = html + `<hr><span class="badge">${getModuleDisplay()}</span>`;
         manufactureNote.innerHTML = note;
         cutterOut.innerHTML = cutterMsg;
-        if(type !== 'helical' && type !== 'spiralBevel') helicalGearOut.innerHTML = 'Select helical/spiral bevel for lead change gears.';
+        if(type !== 'helical' && type !== 'spiralBevel') {
+            helicalGearOut.innerHTML = 'Select helical/spiral bevel for lead change gears.';
+            altGearSelection.style.display = 'none';
+            gearDrawingContainer.style.display = 'none';
+        }
         updatePdfReferences();
     }
     
@@ -920,7 +1146,7 @@
     
     function updateVisibility(){
         let t = gearType.value;
-        helicalDiv.style.display = (t==='helical') ? 'block' : 'none';
+        helicalDiv.style.display = (t==='helical' || t==='spiralBevel') ? 'block' : 'none';
         bevelDiv.style.display = (t==='bevel' || t==='spiralBevel') ? 'block' : 'none';
         spiralDiv.style.display = (t==='spiralBevel') ? 'block' : 'none';
         wormDiv.style.display = (t==='wormShaft') ? 'block' : 'none';
@@ -965,6 +1191,7 @@
     moduleInput.addEventListener('input', computeDimensions);
     dpInput.addEventListener('input', computeDimensions);
     document.getElementById('helixAngle')?.addEventListener('input', computeDimensions);
+    document.getElementById('leadscrewPitch')?.addEventListener('input', computeDimensions);
     document.getElementById('shaftAngle')?.addEventListener('input', computeDimensions);
     document.getElementById('pitchCone')?.addEventListener('input', computeDimensions);
     document.getElementById('spiralAngle')?.addEventListener('input', computeDimensions);
@@ -975,18 +1202,6 @@
     document.getElementById('rollerDia')?.addEventListener('input', computeDimensions);
     document.getElementById('holePreset')?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); });
     document.getElementById('customHoles')?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); });
-    // Change gear preset sync
-    const diffGearPreset = document.getElementById('diffGearPreset');
-    const diffGearSet = document.getElementById('diffGearSet');
-    if (diffGearPreset) {
-        diffGearPreset.addEventListener('change', function() {
-            diffGearSet.value = this.value;
-            if (document.getElementById('indexMethod').value === 'differential') computeIndexing();
-        });
-    }
-    diffGearSet?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='differential') computeIndexing(); });
-    document.getElementById('diffRequiredN')?.addEventListener('input', ()=>{ syncTeeth(); if(document.getElementById('indexMethod').value==='differential') computeIndexing(); });
-    document.getElementById('diffApproxA')?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='differential') computeIndexing(); });
     metricBtn.addEventListener('click', ()=>setMetric(true));
     imperialBtn.addEventListener('click', ()=>setMetric(false));
     
@@ -996,7 +1211,31 @@
     syncTeeth();
     updatePdfReferences();
     
-    // Setup zoom after DOM ready
+    // Zoom controls setup
+    function setupZoomControls(containerId, wrapperId, isTop) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const btns = container.querySelectorAll('.zoom-controls button');
+        if (btns.length < 3) return;
+        const outBtn = btns[0], resetBtn = btns[1], inBtn = btns[2];
+        let scale = 1;
+        const wrapper = document.getElementById(wrapperId);
+        if (!wrapper) return;
+        function updateScale(newScale) {
+            scale = Math.min(3, Math.max(0.5, newScale));
+            const innerDiv = wrapper.querySelector('div');
+            if (innerDiv) {
+                innerDiv.style.transform = `scale(${scale})`;
+                innerDiv.style.transformOrigin = 'top left';
+            }
+            if (isTop) topScale = scale;
+            else sideScale = scale;
+        }
+        outBtn.onclick = () => updateScale(scale - 0.2);
+        inBtn.onclick = () => updateScale(scale + 0.2);
+        resetBtn.onclick = () => updateScale(1);
+        updateScale(1);
+    }
     setTimeout(() => {
         setupZoomControls('topViewContainer', 'topViewWrapper', true);
         setupZoomControls('sideViewContainer', 'sideViewWrapper', false);
