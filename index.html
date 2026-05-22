@@ -294,6 +294,68 @@
             border-radius: 40px;
             width: 100%;
         }
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0.5in;
+            }
+            .header, .flex-grid > .card:first-child, .mode-switch, .input-group, button, .small-btn, .pdf-btn, .pdf-ref, .zoom-controls, .alt-gears select, #printSummaryBtn, .small-note:last-child {
+                display: none !important;
+            }
+            .flex-grid {
+                display: block;
+            }
+            .card {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+                background: white;
+            }
+            .result-box {
+                background: #f5f5f5;
+                color: black;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+            .result-box h3 {
+                color: #1e3b4a;
+            }
+            .gear-drawing {
+                background: white;
+                padding: 0;
+            }
+            .svg-wrapper svg {
+                max-width: 100%;
+                height: auto;
+            }
+            .param-item {
+                border-bottom: 1px solid #ccc;
+            }
+        }
+        .print-summary {
+            background: #1e2a36;
+            border-radius: 1.4rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #eef4ff;
+            cursor: pointer;
+            text-align: center;
+        }
+        .print-summary:hover {
+            background: #2c5a6e;
+        }
+        .procedure-step {
+            margin: 6px 0;
+            padding-left: 20px;
+            list-style-type: decimal;
+        }
         @media (max-width: 700px) {
             body { padding: 12px; }
             .header { flex-direction: column; align-items: stretch; }
@@ -321,7 +383,7 @@
     </div>
     <div class="sub">Spur · Helical · Bevel · Spiral Bevel · Worm · Rack · Sprocket | Indexing: Direct, Simple, Differential, Angular</div>
     <div class="flex-grid">
-        <!-- LEFT CARD: COMPONENT DATA -->
+        <!-- LEFT CARD: COMPONENT DATA (kept but hidden in print) -->
         <div class="card">
             <h2>📐 Component & Data</h2>
             <div class="input-group">
@@ -335,6 +397,16 @@
                     <option value="wormWheel">🐛 Worm wheel</option>
                     <option value="rack">📏 Rack</option>
                     <option value="sprocket">🔗 Sprocket</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Material :</label>
+                <select id="materialSelect">
+                    <option value="carbon">Carbon steel (C40, 1045)</option>
+                    <option value="alloy">Alloy steel (4140, 4340)</option>
+                    <option value="cast">Cast iron (GG25)</option>
+                    <option value="aluminum">Aluminum (6061, 7075)</option>
+                    <option value="brass">Brass / Bronze</option>
                 </select>
             </div>
             <div class="mode-switch" id="modDpSwitch">
@@ -434,6 +506,14 @@
             <div id="angularDiv" style="display:none;"><div class="input-group"><label>Angle (deg) :</label><input type="number" id="angleDeg" value="15" step="0.5"></div><div class="input-group"><label>Minutes :</label><input type="number" id="angleMin" value="0" step="1" min="0" max="59"></div></div>
             <button id="computeIndexingBtn">⚙️ Compute Indexing Settings</button>
             <div class="result-box"><h3>🔧 Indexing result</h3><div id="indexingOutput">—</div></div>
+            
+            <!-- NEW: 2D drawing for differential indexing change gears -->
+            <div class="result-box" id="diffGearDrawingBox" style="display:none;">
+                <h3>📐 Indexing change gears (differential)</h3>
+                <div id="diffGearDrawingSvg"></div>
+                <div class="small-note" id="diffGearDirection"></div>
+            </div>
+            
             <div class="gear-drawing" id="gearDrawingContainer" style="display:none;">
                 <div id="topViewContainer" class="drawing-container">
                     <div class="drawing-title">
@@ -472,6 +552,17 @@
             </div>
             <div class="result-box"><h3>📌 Manufacturing note</h3><div id="manufactureNote">—</div></div>
             <div class="result-box"><h3>🪚 Cutter recommendation</h3><div id="cutterOut">—</div></div>
+            <div class="result-box" id="cuttingParamsBox">
+                <h3>⚙️ Cutting parameters (Speed & Feed)</h3>
+                <div id="cuttingParamsOutput">—</div>
+            </div>
+            <div class="result-box" id="procedureBox">
+                <h3>📋 Step‑by‑step milling procedure</h3>
+                <div id="procedureOutput">—</div>
+            </div>
+            <div class="print-summary" id="printSummaryBtn">
+                🖨️ Generate printable report (gear data, indexing, change gears, drawing, notes, parameters, procedure)
+            </div>
             <div class="pdf-ref" id="pdfRefIndexing"></div>
         </div>
     </div>
@@ -558,6 +649,11 @@
     const leadMode = document.getElementById('leadMode');
     const manualLeadGroup = document.getElementById('manualLeadGroup');
     const manualLead = document.getElementById('manualLead');
+    
+    // New drawing box elements
+    const diffGearDrawingBox = document.getElementById('diffGearDrawingBox');
+    const diffGearDrawingSvg = document.getElementById('diffGearDrawingSvg');
+    const diffGearDirection = document.getElementById('diffGearDirection');
     
     let isMetric = true;
     let topScale = 1, sideScale = 1;
@@ -690,7 +786,7 @@
         return {error:`No hole circle multiple of ${den}`};
     }
     
-    // Drawing functions for lead gear trains
+    // Drawing functions for lead gear trains (reused for differential)
     function generateTopDrawingSimple(drive, driven) {
         const width=600, height=200, centerY=100, x1=200, x2=400;
         const r1=Math.min(50,20+drive/2), r2=Math.min(50,20+driven/2);
@@ -703,7 +799,7 @@
         svg += `<text x="${x1}" y="${centerY+15}" text-anchor="middle" fill="#1e3b4a" font-size="10">Spindle</text>`;
         svg += `<circle cx="${x2}" cy="${centerY}" r="${r2}" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/>`;
         svg += `<text x="${x2}" y="${centerY-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${driven}</text>`;
-        svg += `<text x="${x2}" y="${centerY+15}" text-anchor="middle" fill="#1e3b4a" font-size="10">Leadscrew</text>`;
+        svg += `<text x="${x2}" y="${centerY+15}" text-anchor="middle" fill="#1e3b4a" font-size="10">Worm Shaft</text>`;
         svg += `<line x1="${x1+r1-5}" y1="${centerY}" x2="${x2-r2+5}" y2="${centerY}" stroke="#e67e22" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>`;
         svg += `<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs>`;
         svg += `<text x="300" y="185" text-anchor="middle" fill="#555" font-size="12">Simple: ${drive}/${driven} = ${(drive/driven).toFixed(4)}</text>`;
@@ -731,7 +827,7 @@
         svg += `<text x="${x2}" y="${centerY-80}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${c}</text>`;
         svg += `<circle cx="${x3}" cy="${centerY-70}" r="${r4}" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/>`;
         svg += `<text x="${x3}" y="${centerY-80}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${d}</text>`;
-        svg += `<text x="${x3}" y="${centerY-55}" text-anchor="middle" fill="#1e3b4a" font-size="10">Leadscrew</text>`;
+        svg += `<text x="${x3}" y="${centerY-55}" text-anchor="middle" fill="#1e3b4a" font-size="10">Worm Shaft</text>`;
         svg += `<line x1="${x1+r1-5}" y1="${centerY}" x2="${x2-r2+5}" y2="${centerY}" stroke="#e67e22" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>`;
         svg += `<line x1="${x2+r3-5}" y1="${centerY-70}" x2="${x3-r4+5}" y2="${centerY-70}" stroke="#e67e22" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>`;
         svg += `<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs>`;
@@ -876,6 +972,9 @@
         let ratio = parseFloat(document.getElementById('headRatio').value);
         if (isNaN(ratio)) ratio = 40;
         
+        // Hide differential drawing box initially
+        diffGearDrawingBox.style.display = 'none';
+        
         if (method === 'direct') {
             let Ndiv = parseInt(document.getElementById('simpleN').value);
             if (24 % Ndiv !== 0) indexingOutput.innerHTML = `<span class="warning">Direct: N must divide 24. 24/${Ndiv} = ${24/Ndiv} holes (not integer).</span>`;
@@ -924,21 +1023,35 @@
             Step1: Choose A = ${Aapprox} (indexable simply).<br>
             T = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleTableHtml}<br>
             Step2: i = (A - N)*40/A = ${diffRes.formula || `(${Aapprox} - ${Nreq})*40/${Aapprox} = ${((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}`}<br>`;
+            
+            // Prepare drawing for differential change gears
+            let drawingHtml = '';
+            let directionText = '';
             if (diffRes.exactMatch) {
                 if (diffRes.compound) {
+                    let compound = diffRes.compoundGears;
+                    drawingHtml = generateTopDrawingCompound(compound.first, compound.second);
+                    directionText = `Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
+                                    Idler rule (compound): ${diffRes.sign === "positive" ? "zero idler gears" : "one idler gear"}.`;
                     html += `<strong>🔧 Compound change gears (exact match):</strong><br>
-                    First pair: ${diffRes.compoundGears.first}<br>
-                    Second pair: ${diffRes.compoundGears.second}<br>
-                    Installation: (${diffRes.compoundGears.first.split('/')[0]} on spindle, ${diffRes.compoundGears.first.split('/')[1]} on intermediate) THEN (${diffRes.compoundGears.second.split('/')[0]} on intermediate, ${diffRes.compoundGears.second.split('/')[1]} on worm)<br>
-                    Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
-                    Idler rule (compound): ${diffRes.sign === "positive" ? "zero idler gears" : "one idler gear"}.`;
+                    First pair: ${compound.first}<br>
+                    Second pair: ${compound.second}<br>
+                    Installation: (${compound.first.split('/')[0]} on spindle, ${compound.first.split('/')[1]} on intermediate) THEN (${compound.second.split('/')[0]} on intermediate, ${compound.second.split('/')[1]} on worm)<br>
+                    ${directionText}`;
                 } else {
+                    drawingHtml = generateTopDrawingSimple(diffRes.drive, diffRes.driven);
+                    directionText = `Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
+                                    Idler rule: ${diffRes.sign === "positive" ? "simple train → 1 idler" : "simple train → 2 idlers"}.`;
                     html += `<strong>Change gears (simple train): ${diffRes.drive} (on spindle) / ${diffRes.driven} (on worm)</strong><br>
-                    Direction: ${diffRes.sign === "positive" ? "index plate SAME direction as crank" : "index plate OPPOSITE direction"}<br>
-                    Idler rule: ${diffRes.sign === "positive" ? "simple train → 1 idler" : "simple train → 2 idlers"}.`;
+                    ${directionText}`;
                 }
+                // Show drawing box
+                diffGearDrawingBox.style.display = 'block';
+                diffGearDrawingSvg.innerHTML = drawingHtml;
+                diffGearDirection.innerHTML = directionText;
             } else {
                 html += `Exact match not found. ${diffRes.errorMsg}<br>Consider changing A (approx divisions) to a value that yields a factorable ratio.`;
+                diffGearDrawingBox.style.display = 'none';
             }
             indexingOutput.innerHTML = html;
         }
@@ -953,6 +1066,93 @@
             indexingOutput.innerHTML = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${min}'<br>1 crank turn = ${degPerTurn.toFixed(3)}°<br>Crank: ${full} full turn(s) + ${remainderDeg.toFixed(3)}° (${turns.toFixed(5)} turns)`;
         }
         updatePdfReferences();
+    }
+    
+    // Cutting speed & feed calculation
+    function computeCuttingParams() {
+        const material = document.getElementById('materialSelect').value;
+        let surfaceSpeed = 0; // m/min
+        switch(material) {
+            case 'carbon': surfaceSpeed = 25; break;
+            case 'alloy': surfaceSpeed = 18; break;
+            case 'cast': surfaceSpeed = 20; break;
+            case 'aluminum': surfaceSpeed = 80; break;
+            case 'brass': surfaceSpeed = 60; break;
+            default: surfaceSpeed = 25;
+        }
+        const type = gearType.value;
+        let cutterDia = 0; // mm (approximate)
+        let m = getModule();
+        if (isNaN(m)) m = 2.5;
+        if (type === 'spur' || type === 'helical' || type === 'spiralBevel') {
+            cutterDia = 80;
+        } else if (type === 'bevel') {
+            cutterDia = 60;
+        } else if (type === 'wormShaft') {
+            cutterDia = 50;
+        } else if (type === 'wormWheel') {
+            cutterDia = 70;
+        } else if (type === 'rack') {
+            cutterDia = 80;
+        } else if (type === 'sprocket') {
+            cutterDia = 80;
+        }
+        let rpm = (surfaceSpeed * 1000) / (Math.PI * cutterDia);
+        rpm = Math.min(2000, Math.max(60, Math.round(rpm)));
+        let feedPerTooth = 0.05;
+        let numTeethCutter = 8;
+        let feedRate = feedPerTooth * numTeethCutter * rpm;
+        feedRate = Math.round(feedRate);
+        let fluid = (material === 'aluminum' || material === 'brass') ? 'optional (air or mist)' : 'recommended (soluble oil)';
+        return { rpm: rpm, feed: feedRate, fluid: fluid, surfaceSpeed: surfaceSpeed };
+    }
+    
+    function getProcedureText(type, N, m, beta) {
+        let steps = [];
+        if (type === 'spur') {
+            steps.push("1. Mount blank on arbor between centers or collet, indicate true.");
+            steps.push("2. Select involute cutter No. " + getCutterNumber(N) + " (module "+m.toFixed(2)+" mm).");
+            steps.push("3. Set dividing head with simple indexing: 40/N turns per tooth.");
+            steps.push("4. Touch cutter to blank, zero dial, then cut one tooth to full depth (2.25×module).");
+            steps.push("5. Index to next space, repeat until all teeth are rough cut.");
+            steps.push("6. Finish with light pass (0.1–0.2 mm) to improve surface finish.");
+        } else if (type === 'helical') {
+            steps.push("1. Swivel universal table to helix angle β = "+beta+"°.");
+            steps.push("2. Install change gears between leadscrew and dividing head using computed ratio.");
+            steps.push("3. Mount blank and set dividing head to neutral (disengage index plate).");
+            steps.push("4. Engage half‑nut and make first cut; the blank rotates automatically.");
+            steps.push("5. Return table, then rotate blank manually using index plate for next tooth.");
+            steps.push("6. Continue until all teeth are cut. Check lead with dial indicator.");
+        } else if (type === 'bevel') {
+            steps.push("1. Tilt dividing head to pitch cone angle δ (approx).");
+            steps.push("2. Mount blank and set dividing head for simple indexing (40/N).");
+            steps.push("3. Gash all tooth spaces using straight bevel cutter (full depth at large end).");
+            steps.push("4. Tilt head again to cut one side of teeth (offset), repeat for opposite side.");
+            steps.push("5. Finish with light cuts, checking tooth thickness with gear vernier.");
+        } else if (type === 'wormShaft') {
+            steps.push("1. Use lathe with thread chasing attachment, or milling machine with universal head.");
+            steps.push("2. Set compound rest to lead angle γ.");
+            steps.push("3. For milling: set change gears for lead = π×m×starts.");
+            steps.push("4. Cut multiple passes (0.1–0.2 mm depth) until full thread depth.");
+        } else if (type === 'wormWheel') {
+            steps.push("1. Mount blank on dividing head with simple indexing (40/N).");
+            steps.push("2. Use hob or fly cutter, align with worm lead angle.");
+            steps.push("3. For hobbing: feed radially while rotating blank in sync (differential).");
+            steps.push("4. For fly cutting: index manually, cut each tooth with fly cutter.");
+        } else if (type === 'rack') {
+            steps.push("1. Clamp rack blank on table, align parallel to travel.");
+            steps.push("2. Mount rack form cutter in arbor, set depth = 2.25×module.");
+            steps.push("3. Mill first tooth, then shift table linearly by circular pitch (π×module).");
+            steps.push("4. Repeat until full length is achieved.");
+        } else if (type === 'sprocket') {
+            steps.push("1. Mount blank, set dividing head for simple indexing (40/N).");
+            steps.push("2. Use sprocket cutter matching chain pitch and roller diameter.");
+            steps.push("3. Cut each tooth space to full depth (from pitch diameter to root).");
+            steps.push("4. Deburr and check roller seating with chain segment.");
+        } else {
+            steps.push("Refer to gear type specific instructions.");
+        }
+        return steps.join("<br>");
     }
     
     function computeDimensions(){
@@ -1136,6 +1336,16 @@
             altGearSelection.style.display = 'none';
             gearDrawingContainer.style.display = 'none';
         }
+        // Update cutting parameters and procedure
+        let params = computeCuttingParams();
+        document.getElementById('cuttingParamsOutput').innerHTML = `<div class="param-grid">
+            <div class="param-item"><span>Surface speed</span><strong>${params.surfaceSpeed} m/min</strong></div>
+            <div class="param-item"><span>Spindle RPM</span><strong>${params.rpm}</strong></div>
+            <div class="param-item"><span>Feed rate</span><strong>${params.feed} mm/min</strong></div>
+            <div class="param-item"><span>Coolant</span><strong>${params.fluid}</strong></div>
+        </div>`;
+        let proc = getProcedureText(type, N, m, parseFloat(document.getElementById('helixAngle')?.value || 0));
+        document.getElementById('procedureOutput').innerHTML = `<div class="procedure-step">${proc.replace(/<br>/g, '<br>')}</div>`;
         updatePdfReferences();
     }
     
@@ -1182,6 +1392,106 @@
         if(diffReq) diffReq.value = teethVal;
     }
     
+    // Print summary function (unchanged but includes the new drawing)
+    function printSummary() {
+        const gearParamsDiv = document.getElementById('dimensionsOutput').cloneNode(true);
+        const indexingResultDiv = document.getElementById('indexingOutput').cloneNode(true);
+        let changeGearHtml = '';
+        let drawingSvg = '';
+        if ((gearType.value === 'helical' || gearType.value === 'spiralBevel') && currentAlternatives.length > 0 && altGearSelect.selectedIndex >= 0) {
+            const selectedIdx = altGearSelect.selectedIndex;
+            const alt = currentAlternatives[selectedIdx];
+            if (alt) {
+                changeGearHtml = `<div><strong>Selected gear train:</strong><br>`;
+                if (alt.type === 'simple') {
+                    changeGearHtml += `Simple: ${alt.drive}/${alt.driven} = ${alt.ratio.toFixed(6)} (error ${(alt.error*100).toFixed(4)}%)`;
+                } else {
+                    changeGearHtml += `Compound: (${alt.first}) × (${alt.second}) = ${alt.ratio.toFixed(6)} (error ${(alt.error*100).toFixed(4)}%)`;
+                }
+                changeGearHtml += `</div>`;
+                const topSvgElem = document.querySelector('#topViewSvg svg');
+                if (topSvgElem) drawingSvg = topSvgElem.outerHTML;
+            }
+        } else {
+            changeGearHtml = '<em>No helical/spiral change gears selected.</em>';
+        }
+        // capture differential gear drawing if visible
+        let diffDrawingSvg = '';
+        if (diffGearDrawingBox.style.display !== 'none') {
+            const diffSvgElem = diffGearDrawingSvg.querySelector('svg');
+            if (diffSvgElem) diffDrawingSvg = diffSvgElem.outerHTML;
+        }
+        const manufacturingNoteDiv = document.getElementById('manufactureNote').cloneNode(true);
+        const cutterDiv = document.getElementById('cutterOut').cloneNode(true);
+        const cuttingParamsDiv = document.getElementById('cuttingParamsOutput').cloneNode(true);
+        const procedureDiv = document.getElementById('procedureOutput').cloneNode(true);
+        const indexingMethod = document.getElementById('indexMethod').options[document.getElementById('indexMethod').selectedIndex].text;
+        
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Gear Manufacturing Report</title>
+                <style>
+                    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 2rem; line-height: 1.4; }
+                    h1 { color: #1f3b4c; border-bottom: 2px solid #2c7da0; display: inline-block; }
+                    h2 { color: #1f3b4c; margin-top: 1.5rem; }
+                    .section { margin-bottom: 1.5rem; page-break-inside: avoid; }
+                    .param-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; }
+                    .param-item { display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; padding: 0.2rem 0; }
+                    .warning { color: #c9302c; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
+                    th, td { border: 1px solid #aaa; padding: 0.3rem; text-align: left; }
+                    .gear-drawing { margin: 1rem 0; text-align: center; }
+                    svg { max-width: 100%; height: auto; background: #f9f9f9; }
+                    .procedure-step { margin-top: 0.5rem; }
+                    hr { margin: 1rem 0; }
+                </style>
+            </head>
+            <body>
+                <h1>⚙️ Gear Manufacturing Report</h1>
+                <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+                <hr>
+                <div class="section">
+                    <h2>📊 Gear Parameters</h2>
+                    ${gearParamsDiv.innerHTML}
+                </div>
+                <div class="section">
+                    <h2>🔄 Indexing Method: ${indexingMethod}</h2>
+                    ${indexingResultDiv.innerHTML}
+                </div>
+                ${diffDrawingSvg ? `<div class="section"><h2>📐 Indexing Change Gears (Differential)</h2><div class="gear-drawing">${diffDrawingSvg}</div></div>` : ''}
+                <div class="section">
+                    <h2>⚙️ Helical / Spiral Change Gears (Lead)</h2>
+                    ${changeGearHtml}
+                    ${drawingSvg ? `<div class="gear-drawing"><strong>Change gear arrangement (top view):</strong><br>${drawingSvg}</div>` : ''}
+                </div>
+                <div class="section">
+                    <h2>📌 Manufacturing Note</h2>
+                    ${manufacturingNoteDiv.innerHTML}
+                </div>
+                <div class="section">
+                    <h2>🪚 Cutter Recommendation</h2>
+                    ${cutterDiv.innerHTML}
+                </div>
+                <div class="section">
+                    <h2>⚙️ Cutting Parameters (Speed & Feed)</h2>
+                    ${cuttingParamsDiv.innerHTML}
+                </div>
+                <div class="section">
+                    <h2>📋 Milling Procedure</h2>
+                    ${procedureDiv.innerHTML}
+                </div>
+                <hr>
+                <p><em>Generated by Gear Manufacturing Workshop</em></p>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+    
     // Event listeners
     gearType.addEventListener('change', updateVisibility);
     document.getElementById('computeDimensionsBtn').addEventListener('click', computeDimensions);
@@ -1204,6 +1514,8 @@
     document.getElementById('customHoles')?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); });
     metricBtn.addEventListener('click', ()=>setMetric(true));
     imperialBtn.addEventListener('click', ()=>setMetric(false));
+    document.getElementById('materialSelect').addEventListener('change', computeDimensions);
+    document.getElementById('printSummaryBtn').addEventListener('click', printSummary);
     
     updateVisibility();
     updateMethodUI();
