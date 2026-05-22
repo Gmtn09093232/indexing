@@ -294,51 +294,6 @@
             border-radius: 40px;
             width: 100%;
         }
-        /* Print styles */
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-                margin: 0;
-            }
-            .container {
-                max-width: 100%;
-                margin: 0;
-                padding: 0.5in;
-            }
-            .header, .flex-grid > .card:first-child, .mode-switch, .input-group, button, .small-btn, .pdf-btn, .pdf-ref, .zoom-controls, .alt-gears select, #printSummaryBtn, .small-note:last-child {
-                display: none !important;
-            }
-            .flex-grid {
-                display: block;
-            }
-            .card {
-                box-shadow: none;
-                padding: 0;
-                margin: 0;
-                background: white;
-            }
-            .result-box {
-                background: #f5f5f5;
-                color: black;
-                border: 1px solid #ccc;
-                page-break-inside: avoid;
-            }
-            .result-box h3 {
-                color: #1e3b4a;
-            }
-            .gear-drawing {
-                background: white;
-                padding: 0;
-            }
-            .svg-wrapper svg {
-                max-width: 100%;
-                height: auto;
-            }
-            .param-item {
-                border-bottom: 1px solid #ccc;
-            }
-        }
         .print-summary {
             background: #1e2a36;
             border-radius: 1.4rem;
@@ -356,6 +311,7 @@
             padding-left: 20px;
             list-style-type: decimal;
         }
+        /* Mobile responsiveness */
         @media (max-width: 700px) {
             body { padding: 12px; }
             .header { flex-direction: column; align-items: stretch; }
@@ -373,6 +329,66 @@
             .indexing-tab th, .indexing-tab td { padding: 6px 2px; }
             .zoom-controls button { padding: 2px 8px; font-size: 0.7rem; }
         }
+        /* Print styles: clean, single column, hide interactive elements, scale drawings */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0.5in;
+            }
+            /* Hide header buttons and left card completely */
+            .header, .flex-grid > .card:first-child, .mode-switch, .input-group, button, .small-btn, .pdf-btn, .pdf-ref, .zoom-controls, .alt-gears select, .print-summary, .small-note:last-child {
+                display: none !important;
+            }
+            /* Make right card the only visible one, remove shadows */
+            .flex-grid {
+                display: block;
+            }
+            .card {
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+                background: white;
+            }
+            .result-box {
+                background: #f5f5f5;
+                color: black;
+                border: 1px solid #ccc;
+                page-break-inside: avoid;
+                margin-top: 1rem;
+            }
+            .result-box h3 {
+                color: #1e3b4a;
+            }
+            .gear-drawing {
+                background: white;
+                padding: 0;
+            }
+            .svg-wrapper svg {
+                max-width: 100%;
+                height: auto;
+                transform: scale(1);
+            }
+            .param-item {
+                border-bottom: 1px solid #ccc;
+            }
+            .drawing-container {
+                border: 1px solid #aaa;
+                break-inside: avoid;
+            }
+            /* Force all text to be readable */
+            body, .result-box, .param-item, table, .small-note {
+                font-size: 10pt;
+            }
+            .procedure-step {
+                font-size: 10pt;
+            }
+        }
     </style>
 </head>
 <body>
@@ -383,7 +399,7 @@
     </div>
     <div class="sub">Spur · Helical · Bevel · Spiral Bevel · Worm · Rack · Sprocket | Indexing: Direct, Simple, Differential, Angular</div>
     <div class="flex-grid">
-        <!-- LEFT CARD: COMPONENT DATA (kept but hidden in print) -->
+        <!-- LEFT CARD: COMPONENT DATA (hidden in print) -->
         <div class="card">
             <h2>📐 Component & Data</h2>
             <div class="input-group">
@@ -461,7 +477,7 @@
             <div class="pdf-ref" id="pdfRefDimensions"></div>
         </div>
 
-        <!-- RIGHT CARD: INDEXING -->
+        <!-- RIGHT CARD: INDEXING (visible in print) -->
         <div class="card">
             <h2>🔄 Dividing Head Indexing</h2>
             <div class="input-group"><label>Method :</label>
@@ -507,7 +523,7 @@
             <button id="computeIndexingBtn">⚙️ Compute Indexing Settings</button>
             <div class="result-box"><h3>🔧 Indexing result</h3><div id="indexingOutput">—</div></div>
             
-            <!-- NEW: 2D drawing for differential indexing change gears -->
+            <!-- Drawing for differential indexing change gears -->
             <div class="result-box" id="diffGearDrawingBox" style="display:none;">
                 <h3>📐 Indexing change gears (differential)</h3>
                 <div id="diffGearDrawingSvg"></div>
@@ -650,14 +666,13 @@
     const manualLeadGroup = document.getElementById('manualLeadGroup');
     const manualLead = document.getElementById('manualLead');
     
-    // New drawing box elements
     const diffGearDrawingBox = document.getElementById('diffGearDrawingBox');
     const diffGearDrawingSvg = document.getElementById('diffGearDrawingSvg');
     const diffGearDirection = document.getElementById('diffGearDirection');
     
     let isMetric = true;
     let topScale = 1, sideScale = 1;
-    let currentAlternatives = []; // stored for dropdown
+    let currentAlternatives = [];
     
     const defaultDiffPresets = [
         { value: "25,25,30,35,40,50,55,60,70,80,90,100", label: "🔧 Standard set (25‑100)" },
@@ -786,7 +801,7 @@
         return {error:`No hole circle multiple of ${den}`};
     }
     
-    // Drawing functions for lead gear trains (reused for differential)
+    // Drawing functions for gear trains
     function generateTopDrawingSimple(drive, driven) {
         const width=600, height=200, centerY=100, x1=200, x2=400;
         const r1=Math.min(50,20+drive/2), r2=Math.min(50,20+driven/2);
@@ -838,7 +853,6 @@
     function generateSideDrawingSimple(drive, driven) { return generateTopDrawingSimple(drive, driven); }
     function generateSideDrawingCompound(first, second) { return generateTopDrawingCompound(first, second); }
     
-    // Search for multiple gear train alternatives
     function findAllSimpleAlternatives(target, gearSet) {
         let results = [];
         for (let drv of gearSet) {
@@ -869,7 +883,6 @@
                 }
             }
         }
-        // deduplicate
         let seen = new Set();
         let unique = [];
         for (let r of results) {
@@ -903,7 +916,6 @@
         topScale = sideScale = 1;
     }
     
-    // ---------- Differential indexing exact matching ----------
     function computeDifferentialExact(ratio, N, A, gearSetArray) {
         if (A === N) return {error: "Approx A must be different from N"};
         let diffRaw = (A - N) * ratio / A;
@@ -951,7 +963,7 @@
         if (bestCompound) {
             return {
                 exactMatch: true, compound: true, sign,
-                compoundGears: { first: bestCompound.first, second: bestCompound.second },
+                compoundGears: bestCompound,
                 rawFraction: `${num}/${den}`,
                 formula: `(${A} - ${N})*40/${A} = ${diffRaw.toFixed(5)} = ${num}/${den}<br>Compound: (${bestCompound.first}) × (${bestCompound.second}) = ${(num/den).toFixed(6)}`
             };
@@ -972,7 +984,6 @@
         let ratio = parseFloat(document.getElementById('headRatio').value);
         if (isNaN(ratio)) ratio = 40;
         
-        // Hide differential drawing box initially
         diffGearDrawingBox.style.display = 'none';
         
         if (method === 'direct') {
@@ -1016,7 +1027,7 @@
             let simpleRes = simpleIndexForDiff(ratio, Aapprox, circles);
             if (simpleRes.error) { indexingOutput.innerHTML = `<span class="warning">${simpleRes.error}</span>`; return; }
             let simpleTableHtml = simpleRes.exact ? 
-                `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td style="padding:6px 4px;">—</td><td>${simpleRes.fullTurns}</td><td>0</td></tr></tbody></table>` :
+                `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td style="padding:6px 4px;">—</td><td>${simpleRes.fullTurns}</td><td>0</td></tr></tbody>~` :
                 `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td>${simpleRes.fullTurns}</td><td>${simpleRes.holes}</td></tr></tbody></table>`;
             let diffRes = computeDifferentialExact(ratio, Nreq, Aapprox, gearSet);
             let html = `<strong>Differential indexing (step by step)</strong><br>
@@ -1024,10 +1035,9 @@
             T = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleTableHtml}<br>
             Step2: i = (A - N)*40/A = ${diffRes.formula || `(${Aapprox} - ${Nreq})*40/${Aapprox} = ${((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}`}<br>`;
             
-            // Prepare drawing for differential change gears
-            let drawingHtml = '';
-            let directionText = '';
             if (diffRes.exactMatch) {
+                let drawingHtml = '';
+                let directionText = '';
                 if (diffRes.compound) {
                     let compound = diffRes.compoundGears;
                     drawingHtml = generateTopDrawingCompound(compound.first, compound.second);
@@ -1045,7 +1055,6 @@
                     html += `<strong>Change gears (simple train): ${diffRes.drive} (on spindle) / ${diffRes.driven} (on worm)</strong><br>
                     ${directionText}`;
                 }
-                // Show drawing box
                 diffGearDrawingBox.style.display = 'block';
                 diffGearDrawingSvg.innerHTML = drawingHtml;
                 diffGearDirection.innerHTML = directionText;
@@ -1068,10 +1077,9 @@
         updatePdfReferences();
     }
     
-    // Cutting speed & feed calculation
     function computeCuttingParams() {
         const material = document.getElementById('materialSelect').value;
-        let surfaceSpeed = 0; // m/min
+        let surfaceSpeed = 0;
         switch(material) {
             case 'carbon': surfaceSpeed = 25; break;
             case 'alloy': surfaceSpeed = 18; break;
@@ -1081,27 +1089,17 @@
             default: surfaceSpeed = 25;
         }
         const type = gearType.value;
-        let cutterDia = 0; // mm (approximate)
+        let cutterDia = 80;
         let m = getModule();
         if (isNaN(m)) m = 2.5;
-        if (type === 'spur' || type === 'helical' || type === 'spiralBevel') {
-            cutterDia = 80;
-        } else if (type === 'bevel') {
-            cutterDia = 60;
-        } else if (type === 'wormShaft') {
-            cutterDia = 50;
-        } else if (type === 'wormWheel') {
-            cutterDia = 70;
-        } else if (type === 'rack') {
-            cutterDia = 80;
-        } else if (type === 'sprocket') {
-            cutterDia = 80;
-        }
+        if (type === 'bevel') cutterDia = 60;
+        else if (type === 'wormShaft') cutterDia = 50;
+        else if (type === 'wormWheel') cutterDia = 70;
+        else if (type === 'rack') cutterDia = 80;
+        else if (type === 'sprocket') cutterDia = 80;
         let rpm = (surfaceSpeed * 1000) / (Math.PI * cutterDia);
         rpm = Math.min(2000, Math.max(60, Math.round(rpm)));
-        let feedPerTooth = 0.05;
-        let numTeethCutter = 8;
-        let feedRate = feedPerTooth * numTeethCutter * rpm;
+        let feedRate = 0.05 * 8 * rpm;
         feedRate = Math.round(feedRate);
         let fluid = (material === 'aluminum' || material === 'brass') ? 'optional (air or mist)' : 'recommended (soluble oil)';
         return { rpm: rpm, feed: feedRate, fluid: fluid, surfaceSpeed: surfaceSpeed };
@@ -1253,7 +1251,6 @@
             <div class="param-item"><span>Spiral angle ψ</span><strong>${psi}°</strong></div>
             <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div></div>`;
             note = `Table swivel ψ = ${psi}°, hand ${document.getElementById('spiralHand').value}.`;
-            // same lead gear calculation as helical
             let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
             let requiredRatio = lead / (leadscrewPitch * 40);
             let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
@@ -1336,7 +1333,6 @@
             altGearSelection.style.display = 'none';
             gearDrawingContainer.style.display = 'none';
         }
-        // Update cutting parameters and procedure
         let params = computeCuttingParams();
         document.getElementById('cuttingParamsOutput').innerHTML = `<div class="param-grid">
             <div class="param-item"><span>Surface speed</span><strong>${params.surfaceSpeed} m/min</strong></div>
@@ -1392,7 +1388,6 @@
         if(diffReq) diffReq.value = teethVal;
     }
     
-    // Print summary function (unchanged but includes the new drawing)
     function printSummary() {
         const gearParamsDiv = document.getElementById('dimensionsOutput').cloneNode(true);
         const indexingResultDiv = document.getElementById('indexingOutput').cloneNode(true);
@@ -1415,7 +1410,6 @@
         } else {
             changeGearHtml = '<em>No helical/spiral change gears selected.</em>';
         }
-        // capture differential gear drawing if visible
         let diffDrawingSvg = '';
         if (diffGearDrawingBox.style.display !== 'none') {
             const diffSvgElem = diffGearDrawingSvg.querySelector('svg');
@@ -1523,7 +1517,6 @@
     syncTeeth();
     updatePdfReferences();
     
-    // Zoom controls setup
     function setupZoomControls(containerId, wrapperId, isTop) {
         const container = document.getElementById(containerId);
         if (!container) return;
