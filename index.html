@@ -378,6 +378,7 @@
                         <option value="25,25,30,35,40,50,55,60,70,80,90,100">🔧 Standard set (25‑100)</option>
                         <option value="24,24,28,32,40,44,48,56,64,72,86,100">📐 Alternative set (24‑100)</option>
                         <option value="20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120">🔄 Extended set (20‑120)</option>
+                        <option value="10,20,30,40,50,60,70,80,90,100,110,120">📈 10‑120 step 10 (new)</option>
                         <option value="custom">✏️ Any gear (use custom list below)</option>
                     </select>
                 </div>
@@ -494,7 +495,7 @@
 <script>
     // ---------------------------- Helper functions (preserved) ----------------------------
     function gcd(a,b){ a=Math.abs(a); while(b){ let t=b; b=a%b; a=t; } return a; }
-    function loadPresets(storageKey, selectElement, defaultPresets) { /* unchanged */ const saved = localStorage.getItem(storageKey); let presets = saved ? JSON.parse(saved) : defaultPresets; selectElement.innerHTML = ''; for (let p of presets) { let option = document.createElement('option'); option.value = p.value; option.textContent = p.label; selectElement.appendChild(option); } return presets; }
+    function loadPresets(storageKey, selectElement, defaultPresets) { const saved = localStorage.getItem(storageKey); let presets = saved ? JSON.parse(saved) : defaultPresets; selectElement.innerHTML = ''; for (let p of presets) { let option = document.createElement('option'); option.value = p.value; option.textContent = p.label; selectElement.appendChild(option); } return presets; }
     function savePreset(storageKey, selectElement, newValue, newLabel, defaultPresets) { let presets = loadPresets(storageKey, selectElement, defaultPresets); if (!presets.some(p => p.value === newValue)) { presets.push({ value: newValue, label: newLabel }); localStorage.setItem(storageKey, JSON.stringify(presets)); loadPresets(storageKey, selectElement, defaultPresets); selectElement.value = newValue; return true; } return false; }
     function removeLastPreset(storageKey, selectElement, defaultPresets) { let presets = loadPresets(storageKey, selectElement, defaultPresets); if (presets.length > defaultPresets.length) { presets.pop(); localStorage.setItem(storageKey, JSON.stringify(presets)); loadPresets(storageKey, selectElement, defaultPresets); selectElement.selectedIndex = 0; return true; } return false; }
     // DOM refs shortened for brevity, existing behaviour retained 
@@ -504,9 +505,23 @@
     const gearDrawingContainer = document.getElementById('gearDrawingContainer'), topViewSvgDiv = document.getElementById('topViewSvg'), sideViewSvgDiv = document.getElementById('sideViewSvg');
     const diffGearPreset = document.getElementById('diffGearPreset'), diffGearSet = document.getElementById('diffGearSet'), leadGearPreset = document.getElementById('leadGearPreset'), leadGearSet = document.getElementById('leadGearSet'), leadMode = document.getElementById('leadMode'), manualLeadGroup = document.getElementById('manualLeadGroup'), manualLead = document.getElementById('manualLead');
     let isMetric = true, topScale = 1, sideScale = 1, currentAlternatives = [];
-    const defaultDiffPresets = [{ value: "25,25,30,35,40,50,55,60,70,80,90,100", label: "🔧 Standard set (25‑100)" },{ value: "24,24,28,32,40,44,48,56,64,72,86,100", label: "📐 Alternative set (24‑100)" },{ value: "20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120", label: "🔄 Extended set (20‑120)" }];
-    const defaultLeadPresets = [...defaultDiffPresets];
-    loadPresets('diffPresets', diffGearPreset, defaultDiffPresets); loadPresets('leadPresets', leadGearPreset, defaultLeadPresets);
+    
+    // Updated default presets for LEAD change gears: include new 10-120 step 10
+    const defaultLeadPresets = [
+        { value: "25,25,30,35,40,50,55,60,70,80,90,100", label: "🔧 Standard set (25‑100)" },
+        { value: "24,24,28,32,40,44,48,56,64,72,86,100", label: "📐 Alternative set (24‑100)" },
+        { value: "20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120", label: "🔄 Extended set (20‑120)" },
+        { value: "10,20,30,40,50,60,70,80,90,100,110,120", label: "📈 10‑120 step 10 (new)" }
+    ];
+    const defaultDiffPresets = [
+        { value: "25,25,30,35,40,50,55,60,70,80,90,100", label: "🔧 Standard set (25‑100)" },
+        { value: "24,24,28,32,40,44,48,56,64,72,86,100", label: "📐 Alternative set (24‑100)" },
+        { value: "20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120", label: "🔄 Extended set (20‑120)" }
+    ];
+    
+    loadPresets('leadPresets', leadGearPreset, defaultLeadPresets);
+    loadPresets('diffPresets', diffGearPreset, defaultDiffPresets);
+    
     diffGearPreset.addEventListener('change', () => { diffGearSet.value = diffGearPreset.value; computeIndexing(); computeDimensions(); });
     leadGearPreset.addEventListener('change', () => { if (leadGearPreset.value !== 'custom') leadGearSet.value = leadGearPreset.value; computeDimensions(); });
     document.getElementById('saveDiffPreset').addEventListener('click', () => { let customVal = diffGearSet.value.trim(); if(customVal) savePreset('diffPresets', diffGearPreset, customVal, `📌 Custom (${customVal.substring(0,20)})`, defaultDiffPresets); computeIndexing(); });
@@ -527,11 +542,11 @@
     function computeIndexing() {
         let method = document.getElementById('indexMethod').value, ratio = parseFloat(document.getElementById('headRatio').value) || 40;
         if (method === 'direct') { let Ndiv = parseInt(document.getElementById('simpleN').value); if (24 % Ndiv !== 0) indexingOutput.innerHTML = `<span class="warning">Direct: N must divide 24. 24/${Ndiv} = ${24/Ndiv} holes (not integer).</span>`; else indexingOutput.innerHTML = `<strong>Direct indexing</strong><br>Crank movement = ${24/Ndiv} holes on direct plate.`; updatePdfReferences(); return; }
-        else if (method === 'simple') { let Ndiv = parseInt(document.getElementById('simpleN').value), circles = getHoleCircles(), turns = ratio / Ndiv, full = Math.floor(turns), rem = ratio % Ndiv; if (rem === 0) indexingOutput.innerHTML = `<strong>Simple indexing</strong><br>${full} full turn(s) of crank.`; else { let num = rem, den = Ndiv, g = gcd(num,den); num/=g; den/=g; let options = []; for(let hc of circles) if(hc % den === 0){ let mult = hc/den, holes = num * mult, extraFull = 0; if(holes >= hc){ extraFull = Math.floor(holes/hc); holes %= hc; } options.push({circle:hc, full:full+extraFull, holes:holes}); } if(options.length===0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`; else { let html = `<strong>Simple indexing</strong><br>Crank = ${ratio}/${Ndiv}<br><table class="indexing-tab"><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr>`; options.forEach(opt => { html += `<tr><td>${opt.circle}</td><td>${opt.full}</td><td>${opt.holes}</td></tr>`; }); indexingOutput.innerHTML = html + `</table>`; } } updatePdfReferences(); return; }
+        else if (method === 'simple') { let Ndiv = parseInt(document.getElementById('simpleN').value), circles = getHoleCircles(), turns = ratio / Ndiv, full = Math.floor(turns), rem = ratio % Ndiv; if (rem === 0) indexingOutput.innerHTML = `<strong>Simple indexing</strong><br>${full} full turn(s) of crank.`; else { let num = rem, den = Ndiv, g = gcd(num,den); num/=g; den/=g; let options = []; for(let hc of circles) if(hc % den === 0){ let mult = hc/den, holes = num * mult, extraFull = 0; if(holes >= hc){ extraFull = Math.floor(holes/hc); holes %= hc; } options.push({circle:hc, full:full+extraFull, holes:holes}); } if(options.length===0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`; else { let html = `<strong>Simple indexing</strong><br>Crank = ${ratio}/${Ndiv}<br><table class="indexing-tab"><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr>`; options.forEach(opt => { html += `<tr><td>${opt.circle}</td><td>${opt.full}</td><td>${opt.holes}</td>`; }); indexingOutput.innerHTML = html + `</table>`; } } updatePdfReferences(); return; }
         else if (method === 'angular') { let deg = parseFloat(document.getElementById('angleDeg').value)||0, min = parseFloat(document.getElementById('angleMin').value)||0, totalDeg = deg + min/60, degPerTurn = 360/ratio, turns = totalDeg / degPerTurn, full = Math.floor(turns), remainderDeg = (turns - full) * degPerTurn; indexingOutput.innerHTML = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${min}'<br>1 crank turn = ${degPerTurn.toFixed(3)}°<br>Crank: ${full} full turn(s) + ${remainderDeg.toFixed(3)}° (${turns.toFixed(5)} turns)`; updatePdfReferences(); return; }
         else if (method === 'differential') {
             let Nreq = parseInt(document.getElementById('diffRequiredN').value), Aapprox = parseInt(document.getElementById('diffApproxA').value), gearSet = diffGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v)), circles = getHoleCircles(), simpleRes = simpleIndexForDiff(ratio, Aapprox, circles); if (simpleRes.error) { indexingOutput.innerHTML = `<span class="warning">${simpleRes.error}</span>`; return; }
-            let simpleTableHtml = simpleRes.exact ? `<table><tr><td>Full turns: ${simpleRes.fullTurns}</td></tr></table>` : `<table class="indexing-tab"><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr><tr><td>${simpleRes.circle}</td><td>${simpleRes.fullTurns}</td><td>${simpleRes.holes}</td></tr></table>`;
+            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </tr></table>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td>${simpleRes.circle}</td><td>${simpleRes.fullTurns}</td><td>${simpleRes.holes}</td></tr></tbody></table>`;
             let diffRes = computeDifferentialExact(ratio, Nreq, Aapprox, gearSet); let html = `<strong>⚙️ Differential indexing</strong><br>Step1: Approx divisions A = ${Aapprox} (simply indexable)<br>Turn = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleTableHtml}<br>Step2: i = (A-N)*40/A = ${diffRes.formula || ((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}<br>`;
             if (diffRes.exactMatch) {
                 if (diffRes.compound && diffRes.compoundGears) { html += `<strong>🔧 Compound change gears (exact):</strong><br> ${diffRes.compoundGears.first}  ×  ${diffRes.compoundGears.second}<br>Installation: first pair spindle → intermediate, second pair intermediate → worm.<br>Direction: ${diffRes.sign === "positive" ? "index plate SAME as crank (zero idlers in compound arrangement)" : "plate OPPOSITE direction (use one idler)"}.`; let drawing = generateDiffCompoundDrawing(diffRes.compoundGears.first, diffRes.compoundGears.second, diffRes.sign); html += `<div class="diff-gear-drawing">${drawing}</div>`; }
