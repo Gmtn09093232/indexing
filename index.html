@@ -353,7 +353,7 @@
                 <div class="mode-chip" id="imperialModeBtn">🔩 Imperial (DP)</div>
             </div>
             <div id="commonFields">
-                <div class="input-group"><label>Number of teeth (N) :</label><input type="number" id="teeth" value="28" step="1" min="1"></div>
+                <div class="input-group"><label>Number of teeth (N1) :</label><input type="number" id="teeth" value="28" step="1" min="1"></div>
                 <div id="metricBlock"><div class="input-group"><label>Module (m) mm :</label><input type="number" id="module" value="2.5" step="0.1" min="0.3"></div></div>
                 <div id="imperialBlock" style="display:none;"><div class="input-group"><label>Diametral Pitch (DP) :</label><input type="number" id="dp" value="10" step="0.5" min="2"></div></div>
                 <!-- Rack specific: circular pitch input (shown only when rack is selected) -->
@@ -398,8 +398,8 @@
             <div id="bevelExtra" style="display:none;">
                 <div class="input-group"><label>Shaft angle Σ (deg) :</label><input type="number" id="shaftAngle" value="90"></div>
                 <div class="input-group"><label>Pitch cone δ (auto if blank) :</label><input type="number" id="pitchCone" placeholder="auto"></div>
-                <div class="input-group"><label>Tooth length (face width, mm) :</label><input type="number" id="bevelFaceWidth" value="30" step="1"></div>
-                <div class="small-note">Face width influences cone distance and cutting conditions.</div>
+                <div class="input-group"><label>Mating gear teeth (N2) :</label><input type="number" id="matingTeeth" placeholder="optional, for pinion/gear relation"></div>
+                <div class="small-note">Face width (recommended) = 0.3 × cone distance.</div>
             </div>
             <div id="spiralExtra" style="display:none;"><div class="input-group"><label>Spiral angle ψ (deg) :</label><input type="number" id="spiralAngle" value="35"></div><div class="input-group"><label>Hand :</label><select id="spiralHand"><option>Right</option><option>Left</option></select></div></div>
             <div id="wormExtra" style="display:none;">
@@ -436,7 +436,6 @@
             </div>
             <div id="sprocketExtra" style="display:none;"><div class="input-group"><label>Chain pitch P (mm) :</label><input type="number" id="chainPitch" value="12.7"></div><div class="input-group"><label>Roller dia Dr (mm) :</label><input type="number" id="rollerDia" value="7.92"></div></div>
             <div id="rackExtra" style="display:none;">
-                <!-- No extra fields needed; the circular pitch is already in rackPitchBlock -->
                 <div class="small-note">Rack length = N × P. Module = P / π. All other dimensions derived from module.</div>
             </div>
             <button id="computeDimensionsBtn">⟳ Compute dimensions</button>
@@ -633,7 +632,7 @@
                     let options = findHoleOptions(num, den, circles, full);
                     if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`;
                     else {
-                        let html = `<strong>Worm shaft indexing (simple)</strong><br>Starts = ${starts}<br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
+                        let html = `<strong>Worm shaft indexing (simple)</strong><br>Starts = ${starts}<br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></td></thead><tbody>`;
                         options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td>`; });
                         indexingOutput.innerHTML = html + `</tbody></table>`;
                     }
@@ -661,9 +660,9 @@
                 let options = findHoleOptions(num, den, circles, full);
                 if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`;
                 else {
-                    let html = `<strong>Simple indexing</strong><br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th><tr></thead><tbody>`;
+                    let html = `<strong>Simple indexing</strong><br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
                     options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td>`; });
-                    indexingOutput.innerHTML = html + `</tbody></tr>`;
+                    indexingOutput.innerHTML = html + `</tbody><tr>`;
                 }
             }
             updatePdfReferences(); return;
@@ -706,7 +705,7 @@
             let Nreq = parseInt(document.getElementById('diffRequiredN').value), Aapprox = parseInt(document.getElementById('diffApproxA').value), gearSet = diffGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v)), circles = getHoleCircles(false);
             let simpleRes = (() => { let turns = ratio / Aapprox, full = Math.floor(turns), rem = ratio % Aapprox; if (rem===0) return {exact:true, fullTurns:full}; let num=rem, den=Aapprox, g=gcd(num,den); num/=g; den/=g; for(let hc of circles) if(hc % den === 0){ let mult = hc/den, holes = num * mult, extraFull = 0; if(holes >= hc){ extraFull = Math.floor(holes/hc); holes %= hc; } return {exact:false, fullTurns:full+extraFull, holes:holes, circle:hc}; } return {error:true}; })();
             if(simpleRes.error) { indexingOutput.innerHTML = `<span class="warning">No hole circle for simple indexing of A=${Aapprox}</span>`; return; }
-            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </td></tr>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td style="padding:6px 4px;">${simpleRes.fullTurns}</td><td style="padding:6px 4px;">${simpleRes.holes}</td></tr></tbody></table>`;
+            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </td></table>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></td></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td style="padding:6px 4px;">${simpleRes.fullTurns}</td><td style="padding:6px 4px;">${simpleRes.holes}</td></tr></tbody></table>`;
             let diffRes = computeDifferentialExact(ratio, Nreq, Aapprox, gearSet);
             let html = `<strong>⚙️ Differential indexing</strong><br>Step1: Approx divisions A = ${Aapprox}<br>Turn = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleTableHtml}<br>Step2: i = (A-N)*40/A = ${diffRes.formula || ((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}<br>`;
             if (diffRes.exactMatch) {
@@ -865,13 +864,28 @@
             // Back cone angle = 90° - delta
             let backConeAngle = 90 - delta;
             
-            // Face width (tooth length) from user input
-            let faceWidth = parseFloat(document.getElementById('bevelFaceWidth').value);
-            if (isNaN(faceWidth) || faceWidth <= 0) faceWidth = 30;
+            // Recommended face width (0.3 * R)
+            let faceWidth = 0.3 * R;
             
-            // Root angle (already from original code)
+            // Root angle
             let thetaF = Math.atan(2.4 * Math.sin(delta*Math.PI/180) / N) * 180/Math.PI;
             let rootAngle = delta - thetaF;
+            
+            // Pinion and gear relation (if mating teeth provided)
+            let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
+            let pinionAngle = delta;
+            let gearAngle = null;
+            let ratioInfo = '';
+            if (!isNaN(matingTeeth) && matingTeeth > 0) {
+                // For 90° shaft angle, δ_pinion = arctan(N1/N2), δ_gear = 90° - δ_pinion
+                let ratio = matingTeeth / N;
+                let deltaPinion = Math.atan(N / matingTeeth) * 180/Math.PI;
+                let deltaGear = 90 - deltaPinion;
+                ratioInfo = `<div class="param-item"><span>Pinion pitch cone (N1)</span><strong>${deltaPinion.toFixed(2)}°</strong></div>
+                            <div class="param-item"><span>Gear pitch cone (N2=${matingTeeth})</span><strong>${deltaGear.toFixed(2)}°</strong></div>`;
+            } else {
+                ratioInfo = `<div class="param-item"><span>Pinion cone (current)</span><strong>${delta.toFixed(2)}°</strong></div>`;
+            }
             
             html = `<div class="param-grid">
                 <div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div>
@@ -879,13 +893,14 @@
                 <div class="param-item"><span>Back cone angle</span><strong>${backConeAngle.toFixed(2)}°</strong></div>
                 <div class="param-item"><span>Root angle (setup)</span><strong>${rootAngle.toFixed(2)}°</strong></div>
                 <div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Face width (recommended)</span><strong>${faceWidth.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(0.3×R)</span></div>
                 <div class="param-item"><span>Pitch dia (large end)</span><strong>${d.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Outside dia (large end)</span><strong>${outsideDia.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Root diameter (approx)</span><strong>${dr.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Tooth thickness (large end)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Tooth length (face width)</span><strong>${faceWidth.toFixed(1)} mm</strong></div>
+                ${ratioInfo}
             </div>`;
-            note = `Tilt dividing head to ${rootAngle.toFixed(1)}°. Face width should not exceed 0.3×R = ${(0.3*R).toFixed(1)} mm for proper tooth form.`;
+            note = `Tilt dividing head to ${rootAngle.toFixed(1)}°. Face width should not exceed ${faceWidth.toFixed(1)} mm to maintain proper tooth form.`;
             cutterMsg = `Straight bevel cutter (Gleason type). Use standard involute cutter No. ${getCutterNumber(N)}.`;
         } 
         else if(type === 'spiralBevel'){
@@ -1099,7 +1114,7 @@
     function syncTeeth(){ let idxN=document.getElementById('simpleN'); if(teethInput.value) idxN.value=teethInput.value; let diffReq=document.getElementById('diffRequiredN'); if(diffReq) diffReq.value=teethInput.value; }
     function updatePdfReferences(){ let gearKey = gearType.value; let gearRef = { spur:"Spur Milling", helical:"Helical Milling", bevel:"Bevel Milling", spiralBevel:"Spiral Bevel", wormShaft:"Worm shaft", wormWheel:"Worm wheel", rack:"Rack milling", sprocket:"Sprocket" }[gearKey] || "Gear manufacturing"; pdfRefDimensions.innerHTML = `📖 <strong>Check in PDF:</strong> <a href="/manual" target="_blank" style="color:#ffc107;">Open manual →</a> Section "${gearRef}" for formulas.`; let method = document.getElementById('indexMethod').value; let idxRef = { direct:"Direct indexing", simple:"Simple indexing", differential:"Differential indexing", angular:"Angular indexing" }[method]; pdfRefIndexing.innerHTML = `📖 <strong>Verify indexing:</strong> See "<a href="/manual" target="_blank" style="color:#ffc107;">${idxRef}</a>" in the PDF.`; }
     gearType.addEventListener('change', updateVisibility); document.getElementById('computeDimensionsBtn').addEventListener('click', computeDimensions); document.getElementById('computeIndexingBtn').addEventListener('click', computeIndexing); document.getElementById('indexMethod').addEventListener('change', updateMethodUI); teethInput.addEventListener('input', ()=>{ syncTeeth(); computeDimensions(); }); moduleInput.addEventListener('input', computeDimensions); dpInput.addEventListener('input', computeDimensions); metricBtn.addEventListener('click', ()=>setMetric(true)); imperialBtn.addEventListener('click', ()=>setMetric(false)); rackCircularPitch.addEventListener('input', computeDimensions);
-    document.getElementById('helixAngle')?.addEventListener('input', computeDimensions); document.getElementById('leadscrewPitch')?.addEventListener('input', computeDimensions); document.getElementById('shaftAngle')?.addEventListener('input', computeDimensions); document.getElementById('pitchCone')?.addEventListener('input', computeDimensions); document.getElementById('bevelFaceWidth')?.addEventListener('input', computeDimensions);
+    document.getElementById('helixAngle')?.addEventListener('input', computeDimensions); document.getElementById('leadscrewPitch')?.addEventListener('input', computeDimensions); document.getElementById('shaftAngle')?.addEventListener('input', computeDimensions); document.getElementById('pitchCone')?.addEventListener('input', computeDimensions); document.getElementById('matingTeeth')?.addEventListener('input', computeDimensions);
     document.getElementById('spiralAngle')?.addEventListener('input', computeDimensions); document.getElementById('wormStarts')?.addEventListener('input', computeDimensions); document.getElementById('wormOD')?.addEventListener('input', computeDimensions); document.getElementById('wormLengthFormula')?.addEventListener('change', computeDimensions); document.getElementById('wwStarts')?.addEventListener('input', computeDimensions); document.getElementById('wormPD')?.addEventListener('input', computeDimensions); document.getElementById('profileShift')?.addEventListener('input', computeDimensions); throatFormula?.addEventListener('change', computeDimensions); document.getElementById('chainPitch')?.addEventListener('input', computeDimensions); document.getElementById('rollerDia')?.addEventListener('input', computeDimensions); holePresetSimple?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); }); customHolesSimple?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); }); holePresetAngular?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); }); customHolesAngular?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); });
     
     // Initial state for profile shift group visibility
