@@ -634,7 +634,7 @@
                     else {
                         let html = `<strong>Worm shaft indexing (simple)</strong><br>Starts = ${starts}<br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
                         options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td>`; });
-                        indexingOutput.innerHTML = html + `</tbody></table>`;
+                        indexingOutput.innerHTML = html + `</tbody></tr>`;
                     }
                 }
                 updatePdfReferences(); return;
@@ -694,7 +694,7 @@
             if(best && best.options.length > 0) {
                 let html = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}' (${totalDeg.toFixed(4)}°)<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank movement = ${totalTurns.toFixed(6)} turns = ${fullTurns} full turn(s) + ${best.fraction} turn<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></td></thead><tbody>`;
                 best.options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td>`; });
-                html += `</tbody></table>`;
+                html += `</tbody></tr>`;
                 indexingOutput.innerHTML = html;
             } else {
                 indexingOutput.innerHTML = `<span class="warning">No suitable hole circle found for fractional turn ${fractional.toFixed(6)}. Try adding more hole circles or adjust angle.</span>`;
@@ -705,7 +705,7 @@
             let Nreq = parseInt(document.getElementById('diffRequiredN').value), Aapprox = parseInt(document.getElementById('diffApproxA').value), gearSet = diffGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v)), circles = getHoleCircles(false);
             let simpleRes = (() => { let turns = ratio / Aapprox, full = Math.floor(turns), rem = ratio % Aapprox; if (rem===0) return {exact:true, fullTurns:full}; let num=rem, den=Aapprox, g=gcd(num,den); num/=g; den/=g; for(let hc of circles) if(hc % den === 0){ let mult = hc/den, holes = num * mult, extraFull = 0; if(holes >= hc){ extraFull = Math.floor(holes/hc); holes %= hc; } return {exact:false, fullTurns:full+extraFull, holes:holes, circle:hc}; } return {error:true}; })();
             if(simpleRes.error) { indexingOutput.innerHTML = `<span class="warning">No hole circle for simple indexing of A=${Aapprox}</span>`; return; }
-            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </td></tr>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th><tr></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td style="padding:6px 4px;">${simpleRes.fullTurns}</td><td style="padding:6px 4px;">${simpleRes.holes}</td></tr></tbody></table>`;
+            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </td></tr>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></td></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td style="padding:6px 4px;">${simpleRes.fullTurns}</td><td style="padding:6px 4px;">${simpleRes.holes}</td></tr></tbody></tr>`;
             let diffRes = computeDifferentialExact(ratio, Nreq, Aapprox, gearSet);
             let html = `<strong>⚙️ Differential indexing</strong><br>Step1: Approx divisions A = ${Aapprox}<br>Turn = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleTableHtml}<br>Step2: i = (A-N)*40/A = ${diffRes.formula || ((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}<br>`;
             if (diffRes.exactMatch) {
@@ -785,10 +785,14 @@
             let Do = m*(N+2);
             let dr = d - 2.5*m;
             let toothThickness = Math.PI * m / 2;
+            let addendum = m;
+            let dedendum = 1.25 * m;
             html = `<div class="param-grid">
                 <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Outside dia Do</span><strong>${Do.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Root diameter dr</span><strong>${dr.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Addendum (m)</span><strong>${addendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Dedendum (1.25m)</span><strong>${dedendum.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Tooth thickness (pitch)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Whole depth</span><strong>${(2.25*m).toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Circular pitch</span><strong>${(Math.PI*m).toFixed(3)} mm</strong></div>
@@ -1067,13 +1071,15 @@
             let Do = d + (N>19?0.9:0.8)*Dr;
             let dr = d - Dr;
             let toothThickness = 0.93 * P - 0.15;
+            let equivModule = P / Math.PI;
             html = `<div class="param-grid">
                 <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Outside dia Do</span><strong>${Do.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Root diameter</span><strong>${dr.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Tooth thickness (approx)</span><strong>${toothThickness.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Equivalent module (P/π)</span><strong>${equivModule.toFixed(4)} mm</strong></div>
             </div>`;
-            note = `Indexing T = 40/${N}. Use sprocket cutter or form tool.`;
+            note = `Indexing T = 40/${N}. Use sprocket cutter or form tool. Equivalent module shown for reference only.`;
             cutterMsg = `Sprocket form cutter, pitch ${P}mm, roller dia ${Dr}mm.`;
         }
         dimOutput.innerHTML = html + `<hr><span class="badge">${type === 'rack' ? `Circular pitch P = ${rackP.toFixed(3)} mm → module = ${m.toFixed(4)} mm` : getModuleDisplay()}</span>`;
