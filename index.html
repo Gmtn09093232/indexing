@@ -390,6 +390,11 @@
                     <div class="small-note">Distance between teeth. Module = P / π. Rack length = N × P.</div>
                 </div>
             </div>
+            <!-- Spur gear extra: mating teeth for center distance & contact ratio -->
+            <div id="spurExtra" style="display:none;">
+                <div class="input-group"><label>Mating gear teeth (N₂) :</label><input type="number" id="spurMatingTeeth" placeholder="optional for center distance & contact ratio"></div>
+                <div class="small-note">Enter mating gear teeth to calculate center distance and contact ratio.</div>
+            </div>
             <div id="helicalExtra" style="display:none;">
                 <div class="input-group"><label>Helix angle β (deg) :</label><input type="number" id="helixAngle" value="20"></div>
                 <div class="input-group"><label>Face width (mm) :</label><input type="number" id="faceWidth" value="30"></div>
@@ -576,7 +581,6 @@
 
 <script>
     // ---------------------------- Helper functions ----------------------------
-    // Secret number access (change the number as needed)
     const SECRET_NUMBER = "1712";  // <-- change this to your desired secret code
     function checkAccess() {
         const stored = sessionStorage.getItem('workshop_access');
@@ -594,30 +598,11 @@
         if (input === SECRET_NUMBER) {
             sessionStorage.setItem('workshop_access', SECRET_NUMBER);
             checkAccess();
-            // Re-initialize UI after unlock
             updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth(); updatePdfReferences();
         } else {
             alert('Wrong secret number. Access denied.');
         }
     });
-    // Hide module/DP block when sprocket is selected
-    function updateSprocketVisibility() {
-        const isSprocket = (gearType.value === 'sprocket');
-        const modDpSwitch = document.getElementById('modDpSwitch');
-        const metricBlock = document.getElementById('metricBlock');
-        const imperialBlock = document.getElementById('imperialBlock');
-        if (isSprocket) {
-            modDpSwitch.style.display = 'none';
-            metricBlock.style.display = 'none';
-            imperialBlock.style.display = 'none';
-        } else {
-            modDpSwitch.style.display = 'flex';
-            if (gearType.value !== 'rack') {
-                if (isMetric) metricBlock.style.display = 'block';
-                else imperialBlock.style.display = 'block';
-            }
-        }
-    }
     
     function gcd(a,b){ a=Math.abs(a); while(b){ let t=b; b=a%b; a=t; } return a; }
     function loadPresets(storageKey, selectElement, defaultPresets) { const saved = localStorage.getItem(storageKey); let presets = saved ? JSON.parse(saved) : defaultPresets; selectElement.innerHTML = ''; for (let p of presets) { let option = document.createElement('option'); option.value = p.value; option.textContent = p.label; selectElement.appendChild(option); } return presets; }
@@ -628,6 +613,7 @@
     const rackPitchBlock = document.getElementById('rackPitchBlock');
     const rackCircularPitch = document.getElementById('rackCircularPitch');
     const modDpSwitch = document.getElementById('modDpSwitch');
+    const spurExtra = document.getElementById('spurExtra');
     const helicalDiv = document.getElementById('helicalExtra'), bevelDiv = document.getElementById('bevelExtra'), spiralDiv = document.getElementById('spiralExtra'), wormDiv = document.getElementById('wormExtra'), wormWheelDiv = document.getElementById('wormWheelExtra'), sprocketDiv = document.getElementById('sprocketExtra'), rackExtra = document.getElementById('rackExtra');
     const dimOutput = document.getElementById('dimensionsOutput'), indexingOutput = document.getElementById('indexingOutput'), helicalGearOut = document.getElementById('helicalGearOutput'), altGearSelection = document.getElementById('altGearSelection'), altGearSelect = document.getElementById('altGearSelect'), manufactureNote = document.getElementById('manufactureNote'), cutterOut = document.getElementById('cutterOut'), pdfRefDimensions = document.getElementById('pdfRefDimensions'), pdfRefIndexing = document.getElementById('pdfRefIndexing');
     const gearDrawingContainer = document.getElementById('gearDrawingContainer'), topViewSvgDiv = document.getElementById('topViewSvg'), sideViewSvgDiv = document.getElementById('sideViewSvg');
@@ -777,7 +763,7 @@
             let Nreq = parseInt(document.getElementById('diffRequiredN').value), Aapprox = parseInt(document.getElementById('diffApproxA').value), gearSet = diffGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v)), circles = getHoleCircles(false);
             let simpleRes = (() => { let turns = ratio / Aapprox, full = Math.floor(turns), rem = ratio % Aapprox; if (rem===0) return {exact:true, fullTurns:full}; let num=rem, den=Aapprox, g=gcd(num,den); num/=g; den/=g; for(let hc of circles) if(hc % den === 0){ let mult = hc/den, holes = num * mult, extraFull = 0; if(holes >= hc){ extraFull = Math.floor(holes/hc); holes %= hc; } return {exact:false, fullTurns:full+extraFull, holes:holes, circle:hc}; } return {error:true}; })();
             if(simpleRes.error) { indexingOutput.innerHTML = `<span class="warning">No hole circle for simple indexing of A=${Aapprox}</span>`; return; }
-            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </td></tr>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></td></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td style="padding:6px 4px;">${simpleRes.fullTurns}</td><td style="padding:6px 4px;">${simpleRes.holes}</td></tr></tbody></table>`;
+            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </td></tr>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td style="padding:6px 4px;">${simpleRes.fullTurns}</td><td style="padding:6px 4px;">${simpleRes.holes}</td></tr></tbody></table>`;
             let diffRes = computeDifferentialExact(ratio, Nreq, Aapprox, gearSet);
             let html = `<strong>⚙️ Differential indexing</strong><br>Step1: Approx divisions A = ${Aapprox}<br>Turn = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleTableHtml}<br>Step2: i = (A-N)*40/A = ${diffRes.formula || ((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}<br>`;
             if (diffRes.exactMatch) {
@@ -798,7 +784,21 @@
     function generateDiffSimpleDrawing(drive, driven, sign) { let w=500, h=200, cy=100, x1=160, x2=340, r1=Math.min(48,20+drive/2), r2=Math.min(48,20+driven/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="20" x2="${x1}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="20" x2="${x2}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cy}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${drive}</text><text x="${x1}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cy}" r="${r2}" fill="#d9f0ec" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${driven}</text><text x="${x2}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm shaft</text><line x1="${x1+r1-4}" y1="${cy}" x2="${x2-r2+4}" y2="${cy}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="250" y="190" text-anchor="middle" fill="#2c7da0" font-size="12">${sign === "positive" ? "🔄 Same direction (use 1 idler)" : "🔁 Opposite direction (use 2 idlers)"}</text></svg>`; }
     function generateDiffCompoundDrawing(first, second, sign) { let [a,b] = first.split('/').map(Number), [c,d] = second.split('/').map(Number); let w=540, h=280, cyMain=120, cyUpper=40, x1=100, x2=270, x3=440; let r1=Math.min(42,18+a/2), r2=Math.min(42,18+b/2), r3=Math.min(42,18+c/2), r4=Math.min(42,18+d/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="15" x2="${x1}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="5" x2="${x2}" y2="220" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x3}" y1="15" x2="${x3}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cyMain}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${a}</text><text x="${x1}" y="${cyMain+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cyMain}" r="${r2}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${b}</text><circle cx="${x2}" cy="${cyUpper}" r="${r3}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${c}</text><circle cx="${x3}" cy="${cyUpper}" r="${r4}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x3}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${d}</text><text x="${x3}" y="${cyUpper+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm</text><line x1="${x1+r1-4}" y1="${cyMain}" x2="${x2-r2+4}" y2="${cyMain}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><line x1="${x2+r3-4}" y1="${cyUpper}" x2="${x3-r4+4}" y2="${cyUpper}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="270" y="265" text-anchor="middle" fill="#2c7da0" font-size="11">${sign === "positive" ? "🔄 Same direction (zero idlers compound)" : "🔁 Opposite direction (one idler)"}</text></svg>`; }
     
-    // Handle visibility of module/DP vs rack circular pitch
+    function updateSprocketVisibility() {
+        const isSprocket = (gearType.value === 'sprocket');
+        if (isSprocket) {
+            modDpSwitch.style.display = 'none';
+            metricBlock.style.display = 'none';
+            imperialBlock.style.display = 'none';
+        } else {
+            modDpSwitch.style.display = 'flex';
+            if (gearType.value !== 'rack' && gearType.value !== 'sprocket') {
+                if (isMetric) metricBlock.style.display = 'block';
+                else imperialBlock.style.display = 'block';
+            }
+        }
+    }
+    
     function updateRackInputVisibility() {
         const isRack = (gearType.value === 'rack');
         if (isRack) {
@@ -807,7 +807,6 @@
             modDpSwitch.style.display = 'none';
             rackPitchBlock.style.display = 'block';
         } else {
-            // For sprocket, modDpSwitch and metric/imperial are hidden in separate function
             if (gearType.value !== 'sprocket') {
                 modDpSwitch.style.display = 'flex';
                 if (isMetric) metricBlock.style.display = 'block';
@@ -818,7 +817,7 @@
         updateSprocketVisibility();
     }
     
-    // Geometry & cutter functions with rack using circular pitch and derived module
+    // Geometry & cutter functions
     function computeDimensions(){
         let type = gearType.value;
         let N = parseInt(teethInput.value);
@@ -851,20 +850,57 @@
             let toothThickness = Math.PI * m / 2;
             let addendum = m;
             let dedendum = 1.25 * m;
+            let wholeDepth = 2.25 * m;
+            let circularPitch = Math.PI * m;
+            let pressureAngle = 20; // degrees
+            let baseCircle = d * Math.cos(pressureAngle * Math.PI/180);
+            
+            // Mating gear data for center distance & contact ratio
+            let matingTeeth = parseInt(document.getElementById('spurMatingTeeth').value);
+            let centerDist = null;
+            let contactRatio = null;
+            if (!isNaN(matingTeeth) && matingTeeth > 0 && N > 0) {
+                centerDist = m * (N + matingTeeth) / 2;
+                // Approximate contact ratio for external spur gears (without profile shift)
+                let ra1 = Do/2;
+                let ra2 = m*(matingTeeth+2)/2;
+                let rb1 = baseCircle/2;
+                let rb2 = m*matingTeeth/2 * Math.cos(pressureAngle * Math.PI/180);
+                let alpha_w = pressureAngle; // assuming standard center distance
+                let alpha_rad = alpha_w * Math.PI/180;
+                let Za = Math.sqrt(ra1*ra1 - rb1*rb1) + Math.sqrt(ra2*ra2 - rb2*rb2);
+                let Zp = (d/2 + m*matingTeeth/2) * Math.sin(alpha_rad);
+                contactRatio = Za / (Math.PI * m * Math.cos(alpha_rad));
+                contactRatio = Math.min(2.0, contactRatio); // clamp for display
+            }
+            
             html = `<div class="param-grid">
-                <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Outside dia Do</span><strong>${Do.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Root diameter dr</span><strong>${dr.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Addendum (m)</span><strong>${addendum.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Dedendum (1.25m)</span><strong>${dedendum.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Tooth thickness (pitch)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Whole depth</span><strong>${(2.25*m).toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Circular pitch</span><strong>${(Math.PI*m).toFixed(3)} mm</strong></div>
-            </div>`;
-            note = `Spur: T = 40/${N}. Cutter No. ${getCutterNumber(N)}.`;
-            cutterMsg = `Involute cutter No. ${getCutterNumber(N)}.`;
+                <div class="param-item"><span>Module m</span><strong>${m.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Pressure angle α</span><strong>${pressureAngle}°</strong></div>
+                <div class="param-item"><span>Number of teeth z</span><strong>${N}</strong></div>
+                <div class="param-item"><span>Pitch diameter d</span><strong>${d.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Base circle diameter d<sub>b</sub></span><strong>${baseCircle.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outside diameter d<sub>a</sub></span><strong>${Do.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Root diameter d<sub>f</sub></span><strong>${dr.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Addendum h<sub>a</sub> (m)</span><strong>${addendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Dedendum h<sub>f</sub> (1.25m)</span><strong>${dedendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Whole depth h</span><strong>${wholeDepth.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Circular pitch p</span><strong>${circularPitch.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness (pitch) s</span><strong>${toothThickness.toFixed(3)} mm</strong></div>`;
+            
+            if (!isNaN(matingTeeth) && matingTeeth > 0) {
+                html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div>
+                         <div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div>
+                         <div class="param-item"><span>Contact ratio ε</span><strong>${contactRatio ? contactRatio.toFixed(3) : '—'}</strong> <span style="font-size:0.7rem;">(approx)</span></div>`;
+            } else {
+                html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above</strong></div>`;
+            }
+            html += `</div>`;
+            note = `Spur: T = 40/${N}. Cutter No. ${getCutterNumber(N)}. Pressure angle = ${pressureAngle}°. Milling depth = ${wholeDepth.toFixed(2)} mm.`;
+            cutterMsg = `Involute cutter No. ${getCutterNumber(N)} (module ${m.toFixed(3)} mm, pressure angle ${pressureAngle}°).`;
         } 
         else if(type === 'helical'){
+            // (unchanged from original)
             let beta = parseFloat(document.getElementById('helixAngle').value) || 0;
             let rad = beta*Math.PI/180;
             let mt = m / Math.cos(rad);
@@ -909,6 +945,7 @@
             cutterMsg = `Involute cutter No. ${getCutterNumber(N)} (normal module).`;
         } 
         else if(type === 'bevel'){
+            // unchanged from original
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
             let delta = parseFloat(document.getElementById('pitchCone').value);
             let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
@@ -969,6 +1006,7 @@
             cutterMsg = `Straight bevel cutter (Gleason type). Use standard involute cutter No. ${getCutterNumber(N)}.`;
         } 
         else if(type === 'spiralBevel'){
+            // unchanged
             let psi = parseFloat(document.getElementById('spiralAngle').value) || 35;
             let psiRad = psi * Math.PI/180;
             let mn = m;
@@ -1057,6 +1095,7 @@
             cutterMsg = `Spiral bevel cutter (face mill/hob). Recommended face width ${faceWidth.toFixed(1)} mm. Root angle = ${rootAngle.toFixed(1)}°.`;
         } 
         else if(type === 'wormShaft'){
+            // unchanged
             let starts = parseInt(document.getElementById('wormStarts').value) || 1;
             let wormOD = parseFloat(document.getElementById('wormOD').value);
             let d = wormOD ? wormOD - 2*m : 40 - 2*m;
@@ -1090,6 +1129,7 @@
             cutterMsg = `Single-point cutter, tip width ${tipWidth.toFixed(2)} mm (standard for module ${m.toFixed(2)}).`;
         } 
         else if(type === 'wormWheel'){
+            // unchanged
             let starts = parseInt(document.getElementById('wwStarts').value) || 1;
             let d_worm = parseFloat(document.getElementById('wormPD').value);
             if(isNaN(d_worm)) d_worm = 40 - 2*m;
@@ -1123,6 +1163,7 @@
             cutterMsg = `Hob or involute cutter (throated). Face width = ${faceWidth.toFixed(1)} mm influences hob traverse.`;
         } 
         else if(type === 'rack'){
+            // unchanged
             let p = rackP;
             let toothThickness = p / 2;
             let addendum = m;
@@ -1141,6 +1182,7 @@
             cutterMsg = `Rack form cutter (milling or shaping).`;
         } 
         else if(type === 'sprocket'){
+            // unchanged fully
             let P = parseFloat(document.getElementById('chainPitch').value);
             let Dr = parseFloat(document.getElementById('rollerDia').value);
             if(isNaN(P) || isNaN(Dr)){ dimOutput.innerHTML='<span class="warning">Enter chain pitch and roller diameter</span>'; updatePdfReferences(); return; }
@@ -1202,6 +1244,7 @@
     function generateSideDrawingSimple(drive, driven) { return generateTopDrawingSimple(drive, driven); }
     function updateVisibility(){ 
         let t = gearType.value; 
+        spurExtra.style.display = (t === 'spur') ? 'block' : 'none';
         helicalDiv.style.display = (t==='helical' || t==='spiralBevel') ? 'block' : 'none'; 
         bevelDiv.style.display = (t==='bevel' || t==='spiralBevel') ? 'block' : 'none'; 
         spiralDiv.style.display = (t==='spiralBevel') ? 'block' : 'none'; 
@@ -1227,7 +1270,8 @@
     function updatePdfReferences(){ let gearKey = gearType.value; let gearRef = { spur:"Spur Milling", helical:"Helical Milling", bevel:"Bevel Milling", spiralBevel:"Spiral Bevel", wormShaft:"Worm shaft", wormWheel:"Worm wheel", rack:"Rack milling", sprocket:"Sprocket" }[gearKey] || "Gear manufacturing"; pdfRefDimensions.innerHTML = `📖 <strong>Check in PDF:</strong> <a href="/manual" target="_blank" style="color:#ffc107;">Open manual →</a> Section "${gearRef}" for formulas.`; let method = document.getElementById('indexMethod').value; let idxRef = { direct:"Direct indexing", simple:"Simple indexing", differential:"Differential indexing", angular:"Angular indexing" }[method]; pdfRefIndexing.innerHTML = `📖 <strong>Verify indexing:</strong> See "<a href="/manual" target="_blank" style="color:#ffc107;">${idxRef}</a>" in the PDF.`; }
     gearType.addEventListener('change', updateVisibility); document.getElementById('computeDimensionsBtn').addEventListener('click', computeDimensions); document.getElementById('computeIndexingBtn').addEventListener('click', computeIndexing); document.getElementById('indexMethod').addEventListener('change', updateMethodUI); teethInput.addEventListener('input', ()=>{ syncTeeth(); computeDimensions(); }); moduleInput.addEventListener('input', computeDimensions); dpInput.addEventListener('input', computeDimensions); metricBtn.addEventListener('click', ()=>setMetric(true)); imperialBtn.addEventListener('click', ()=>setMetric(false)); rackCircularPitch.addEventListener('input', computeDimensions);
     document.getElementById('helixAngle')?.addEventListener('input', computeDimensions); document.getElementById('leadscrewPitch')?.addEventListener('input', computeDimensions); document.getElementById('shaftAngle')?.addEventListener('input', computeDimensions); document.getElementById('pitchCone')?.addEventListener('input', computeDimensions); document.getElementById('matingTeeth')?.addEventListener('input', computeDimensions);
-    document.getElementById('spiralAngle')?.addEventListener('input', computeDimensions); document.getElementById('wormStarts')?.addEventListener('input', computeDimensions); document.getElementById('wormOD')?.addEventListener('input', computeDimensions); document.getElementById('wormLengthFormula')?.addEventListener('change', computeDimensions); document.getElementById('wwStarts')?.addEventListener('input', computeDimensions); document.getElementById('wormPD')?.addEventListener('input', computeDimensions); document.getElementById('profileShift')?.addEventListener('input', computeDimensions); throatFormula?.addEventListener('change', computeDimensions); document.getElementById('chainPitch')?.addEventListener('input', computeDimensions); document.getElementById('rollerDia')?.addEventListener('input', computeDimensions); holePresetSimple?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); }); customHolesSimple?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); }); holePresetAngular?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); }); customHolesAngular?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); });
+    document.getElementById('spiralAngle')?.addEventListener('input', computeDimensions); document.getElementById('wormStarts')?.addEventListener('input', computeDimensions); document.getElementById('wormOD')?.addEventListener('input', computeDimensions); document.getElementById('wormLengthFormula')?.addEventListener('change', computeDimensions); document.getElementById('wwStarts')?.addEventListener('input', computeDimensions); document.getElementById('wormPD')?.addEventListener('input', computeDimensions); document.getElementById('profileShift')?.addEventListener('input', computeDimensions); throatFormula?.addEventListener('change', computeDimensions); document.getElementById('chainPitch')?.addEventListener('input', computeDimensions); document.getElementById('rollerDia')?.addEventListener('input', computeDimensions); document.getElementById('spurMatingTeeth')?.addEventListener('input', computeDimensions);
+    holePresetSimple?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); }); customHolesSimple?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); }); holePresetAngular?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); }); customHolesAngular?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); });
     
     if (throatFormula.value === 'shift') {
         profileShiftGroup.style.display = 'flex';
@@ -1235,9 +1279,8 @@
         profileShiftGroup.style.display = 'none';
     }
     
-    // Access control: initially check if already authenticated
     if (!checkAccess()) {
-        // Wait for unlock
+        // wait
     } else {
         updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth(); updatePdfReferences();
     }
