@@ -328,7 +328,7 @@
 <div class="container">
     <div class="header">
         <h1>⚙️ Gear Manufacturing Workshop (Milling Machine)</h1>
-
+    
     </div>
     <div class="sub">Spur · Helical · Bevel · Spiral Bevel · Worm · Rack · Sprocket | Indexing: Direct, Simple, Differential, Angular</div>
     <div class="flex-grid">
@@ -632,7 +632,7 @@
                     if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`;
                     else {
                         let html = `<strong>Worm shaft indexing (simple)</strong><br>Starts = ${starts}<br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
-                        options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td></tr>`; });
+                        options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td>`; });
                         indexingOutput.innerHTML = html + `</tbody></table>`;
                     }
                 }
@@ -660,7 +660,7 @@
                 if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`;
                 else {
                     let html = `<strong>Simple indexing</strong><br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
-                    options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td></tr>`; });
+                    options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td>`; });
                     indexingOutput.innerHTML = html + `</tbody></table>`;
                 }
             }
@@ -692,7 +692,7 @@
             }
             if(best && best.options.length > 0) {
                 let html = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}' (${totalDeg.toFixed(4)}°)<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank movement = ${totalTurns.toFixed(6)} turns = ${fullTurns} full turn(s) + ${best.fraction} turn<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
-                best.options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td></tr>`; });
+                best.options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td>`; });
                 html += `</tbody></table>`;
                 indexingOutput.innerHTML = html;
             } else {
@@ -892,16 +892,16 @@
             cutterMsg = `Straight bevel cutter (Gleason type). Use standard involute cutter No. ${getCutterNumber(N)}.`;
         } 
         else if(type === 'spiralBevel'){
+            // ----- CORRECTED: normal module input -> transverse module for pitch diameter -----
+            let psi = parseFloat(document.getElementById('spiralAngle').value) || 35;
+            let psiRad = psi * Math.PI/180;
+            let mn = m;                        // user inputs normal module
+            let mt = mn / Math.cos(psiRad);    // transverse module at outer cone
+            let d = mt * N;                    // correct outer pitch diameter
+            
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
             let deltaInput = parseFloat(document.getElementById('pitchCone').value);
             let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
-            let psi = parseFloat(document.getElementById('spiralAngle').value) || 35;
-            let d = m*N;
-            let drOld = d - 2.2*m;   // keep approximate root dia for legacy
-            let toothThicknessLarge = Math.PI * m / 2;
-            let lead;
-            if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450;
-            else lead = (Math.PI * d) / Math.tan(psi*Math.PI/180);
             
             // Pitch cone angle determination
             let delta = deltaInput;
@@ -915,9 +915,9 @@
             let outerConeDist = d / (2 * Math.sin(deltaRad));
             let faceWidth = 0.3 * outerConeDist;
             let meanConeDist = outerConeDist - faceWidth/2;
-            let addendum = m;
-            let dedendum = 1.25 * m;
-            let clearance = 0.25 * m;
+            let addendum = mn;                 // addendum = normal module
+            let dedendum = 1.25 * mn;
+            let clearance = 0.25 * mn;
             let wholeDepth = addendum + dedendum;
             let addendumAngle = Math.atan(addendum / outerConeDist) * 180/Math.PI;
             let dedendumAngle = Math.atan(dedendum / outerConeDist) * 180/Math.PI;
@@ -926,15 +926,20 @@
             let outerAddendumDia = d + 2*addendum*Math.cos(deltaRad);
             let outerRootDia = d - 2*dedendum*Math.cos(deltaRad);
             let backConeAngle = 90 - delta;
-            let meanNormalModule = m * Math.cos(psi * Math.PI/180);
+            let meanNormalModule = mn * Math.cos(psiRad);   // consistent
+            let toothThicknessLarge = Math.PI * mt / 2;      // transverse circular tooth thickness at outer pitch circle
+            
+            // Lead calculation (using correct pitch diameter d)
+            let lead;
+            if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450;
+            else lead = (Math.PI * d) / Math.tan(psiRad);
             
             html = `<div class="param-grid">
+                <div class="param-item"><span>Normal module mₙ</span><strong>${mn.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Transverse module mₜ</span><strong>${mt.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Pitch cone δ₁</span><strong>${delta.toFixed(2)}°</strong></div>
                 <div class="param-item"><span>Spiral angle ψ</span><strong>${psi}°</strong></div>
-                <div class="param-item"><span>Pitch dia d (outer)</span><strong>${d.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Root dia (approx)</span><strong>${drOld.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Tooth thickness (large end)</span><strong>${toothThicknessLarge.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div>
+                <div class="param-item"><span>Outer pitch diameter dₑ</span><strong>${d.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Outer cone distance Rₑ</span><strong>${outerConeDist.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Recommended face width b</span><strong>${faceWidth.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(0.3×Rₑ)</span></div>
                 <div class="param-item"><span>Mean cone distance Rₘ</span><strong>${meanConeDist.toFixed(2)} mm</strong></div>
@@ -948,8 +953,12 @@
                 <div class="param-item"><span>Outer root diameter d_fₑ</span><strong>${outerRootDia.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Back cone angle (δ_b)</span><strong>${backConeAngle.toFixed(2)}°</strong></div>
                 <div class="param-item"><span>Mean normal module mₙₘ</span><strong>${meanNormalModule.toFixed(4)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness (large end, transverse)</span><strong>${toothThicknessLarge.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div>
             </div>`;
             note = `Swivel ψ = ${psi}°, hand ${document.getElementById('spiralHand').value}. Face width b ≈ ${faceWidth.toFixed(1)} mm, root angle = ${rootAngle.toFixed(1)}° for setup.`;
+            
+            // Lead change gears calculation using corrected lead
             let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
             let requiredRatio = lead / (leadscrewPitch * 40);
             let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
@@ -967,11 +976,14 @@
                 updateDrawingFromAlternative(currentAlternatives[0]);
                 altGearSelect.onchange=()=>updateDrawingFromAlternative(currentAlternatives[parseInt(altGearSelect.value)]);
                 helicalGearOut.innerHTML=`${currentAlternatives.length} alternatives.`;
+            } else {
+                helicalGearOut.innerHTML = 'No gear trains';
+                altGearSelection.style.display = 'none';
+                gearDrawingContainer.style.display = 'none';
             }
             cutterMsg = `Spiral bevel cutter (face mill/hob). Recommended face width ${faceWidth.toFixed(1)} mm. Root angle = ${rootAngle.toFixed(1)}°.`;
         } 
         else if(type === 'wormShaft'){
-            // unchanged
             let starts = parseInt(document.getElementById('wormStarts').value) || 1;
             let wormOD = parseFloat(document.getElementById('wormOD').value);
             let d = wormOD ? wormOD - 2*m : 40 - 2*m;
@@ -1005,7 +1017,6 @@
             cutterMsg = `Single-point cutter, tip width ${tipWidth.toFixed(2)} mm (standard for module ${m.toFixed(2)}).`;
         } 
         else if(type === 'wormWheel'){
-            // unchanged
             let starts = parseInt(document.getElementById('wwStarts').value) || 1;
             let d_worm = parseFloat(document.getElementById('wormPD').value);
             if(isNaN(d_worm)) d_worm = 40 - 2*m;
