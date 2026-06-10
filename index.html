@@ -328,7 +328,7 @@
 <div class="container">
     <div class="header">
         <h1>⚙️ Gear Manufacturing Workshop (Milling Machine)</h1>
-    
+        
     </div>
     <div class="sub">Spur · Helical · Bevel · Spiral Bevel · Worm · Rack · Sprocket | Indexing: Direct, Simple, Differential, Angular</div>
     <div class="flex-grid">
@@ -704,7 +704,7 @@
             let Nreq = parseInt(document.getElementById('diffRequiredN').value), Aapprox = parseInt(document.getElementById('diffApproxA').value), gearSet = diffGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v)), circles = getHoleCircles(false);
             let simpleRes = (() => { let turns = ratio / Aapprox, full = Math.floor(turns), rem = ratio % Aapprox; if (rem===0) return {exact:true, fullTurns:full}; let num=rem, den=Aapprox, g=gcd(num,den); num/=g; den/=g; for(let hc of circles) if(hc % den === 0){ let mult = hc/den, holes = num * mult, extraFull = 0; if(holes >= hc){ extraFull = Math.floor(holes/hc); holes %= hc; } return {exact:false, fullTurns:full+extraFull, holes:holes, circle:hc}; } return {error:true}; })();
             if(simpleRes.error) { indexingOutput.innerHTML = `<span class="warning">No hole circle for simple indexing of A=${Aapprox}</span>`; return; }
-            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </td></tr>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td style="padding:6px 4px;">${simpleRes.fullTurns}</td><td style="padding:6px 4px;">${simpleRes.holes}</td></tr></tbody></table>`;
+            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </td></tr>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></td></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td style="padding:6px 4px;">${simpleRes.fullTurns}</td><td style="padding:6px 4px;">${simpleRes.holes}</td></tr></tbody></table>`;
             let diffRes = computeDifferentialExact(ratio, Nreq, Aapprox, gearSet);
             let html = `<strong>⚙️ Differential indexing</strong><br>Step1: Approx divisions A = ${Aapprox}<br>Turn = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleTableHtml}<br>Step2: i = (A-N)*40/A = ${diffRes.formula || ((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}<br>`;
             if (diffRes.exactMatch) {
@@ -892,18 +892,16 @@
             cutterMsg = `Straight bevel cutter (Gleason type). Use standard involute cutter No. ${getCutterNumber(N)}.`;
         } 
         else if(type === 'spiralBevel'){
-            // ----- CORRECTED: normal module input -> transverse module for pitch diameter -----
             let psi = parseFloat(document.getElementById('spiralAngle').value) || 35;
             let psiRad = psi * Math.PI/180;
-            let mn = m;                        // user inputs normal module
-            let mt = mn / Math.cos(psiRad);    // transverse module at outer cone
-            let d = mt * N;                    // correct outer pitch diameter
+            let mn = m;
+            let mt = mn / Math.cos(psiRad);
+            let d = mt * N;
             
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
             let deltaInput = parseFloat(document.getElementById('pitchCone').value);
             let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
             
-            // Pitch cone angle determination
             let delta = deltaInput;
             let sigma = shaft;
             if (!isNaN(matingTeeth) && matingTeeth > 0) {
@@ -915,7 +913,7 @@
             let outerConeDist = d / (2 * Math.sin(deltaRad));
             let faceWidth = 0.3 * outerConeDist;
             let meanConeDist = outerConeDist - faceWidth/2;
-            let addendum = mn;                 // addendum = normal module
+            let addendum = mn;
             let dedendum = 1.25 * mn;
             let clearance = 0.25 * mn;
             let wholeDepth = addendum + dedendum;
@@ -926,10 +924,9 @@
             let outerAddendumDia = d + 2*addendum*Math.cos(deltaRad);
             let outerRootDia = d - 2*dedendum*Math.cos(deltaRad);
             let backConeAngle = 90 - delta;
-            let meanNormalModule = mn * Math.cos(psiRad);   // consistent
-            let toothThicknessLarge = Math.PI * mt / 2;      // transverse circular tooth thickness at outer pitch circle
+            let meanNormalModule = mn * Math.cos(psiRad);
+            let toothThicknessLarge = Math.PI * mt / 2;
             
-            // Lead calculation (using correct pitch diameter d)
             let lead;
             if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450;
             else lead = (Math.PI * d) / Math.tan(psiRad);
@@ -958,7 +955,6 @@
             </div>`;
             note = `Swivel ψ = ${psi}°, hand ${document.getElementById('spiralHand').value}. Face width b ≈ ${faceWidth.toFixed(1)} mm, root angle = ${rootAngle.toFixed(1)}° for setup.`;
             
-            // Lead change gears calculation using corrected lead
             let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
             let requiredRatio = lead / (leadscrewPitch * 40);
             let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
@@ -1068,26 +1064,62 @@
             cutterMsg = `Rack form cutter (milling or shaping).`;
         } 
         else if(type === 'sprocket'){
+            // --------------------------------------------------------------
+            // UPDATED SPROCKET SECTION: full geometrical parameters, no "module"
+            // --------------------------------------------------------------
             let P = parseFloat(document.getElementById('chainPitch').value);
             let Dr = parseFloat(document.getElementById('rollerDia').value);
-            if(isNaN(P)){ dimOutput.innerHTML='<span class="warning">Enter chain pitch</span>'; updatePdfReferences(); return; }
-            let theta = 360/N;
-            let d = P / Math.sin((theta/2)*Math.PI/180);
-            let Do = d + (N>19?0.9:0.8)*Dr;
-            let dr = d - Dr;
+            if(isNaN(P) || isNaN(Dr)){ dimOutput.innerHTML='<span class="warning">Enter chain pitch and roller diameter</span>'; updatePdfReferences(); return; }
+            let z = N;
+            if(z < 5) { dimOutput.innerHTML='<span class="warning">Minimum teeth for sprocket is 5</span>'; updatePdfReferences(); return; }
+            
+            // Pitch circle diameter
+            let d = P / Math.sin(Math.PI / z);
+            // Outside diameter (tooth tip) – standard factor based on tooth count
+            let factor = (z > 19) ? 0.8 : 0.9;
+            let da = d + factor * Dr;
+            // Root diameter
+            let df = d - Dr;
+            // Tooth thickness at pitch line (approx for standard roller chains)
             let toothThickness = 0.93 * P - 0.15;
-            let equivModule = P / Math.PI;
+            // Roller seating radius (root radius)
+            let ri = 0.505 * Dr;
+            // Tooth flank radius (typical value)
+            let re = 0.12 * Dr;
+            // Addendum (tooth height above pitch circle)
+            let addendum = (da - d) / 2;
+            // Dedendum (depth below pitch circle)
+            let dedendum = (d - df) / 2;
+            // Whole tooth depth
+            let wholeDepth = addendum + dedendum;
+            // Pressure angle (standard for sprockets)
+            let pressureAngle = 30;
+            // Tooth angle (angular pitch)
+            let toothAngle = 360 / z;
+            // Chordal pitch (same as chain pitch)
+            let chordalPitch = P;
+            
             html = `<div class="param-grid">
-                <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Outside dia Do</span><strong>${Do.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Root diameter</span><strong>${dr.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Tooth thickness (approx)</span><strong>${toothThickness.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Equivalent module (P/π)</span><strong>${equivModule.toFixed(4)} mm</strong></div>
+                <div class="param-item"><span>Number of teeth z</span><strong>${z}</strong></div>
+                <div class="param-item"><span>Chain pitch P</span><strong>${P.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Roller diameter Dᵣ</span><strong>${Dr.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Pitch circle diameter d</span><strong>${d.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outside diameter dₐ</span><strong>${da.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(factor ${factor})</span></div>
+                <div class="param-item"><span>Root diameter d_f</span><strong>${df.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness (pitch line)</span><strong>${toothThickness.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Roller seating radius rᵢ</span><strong>${ri.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(≈0.505·Dᵣ)</span></div>
+                <div class="param-item"><span>Tooth flank radius rₑ</span><strong>${re.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(≈0.12·Dᵣ)</span></div>
+                <div class="param-item"><span>Addendum hₐ</span><strong>${addendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Dedendum h_f</span><strong>${dedendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Whole tooth depth h</span><strong>${wholeDepth.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Pressure angle α</span><strong>${pressureAngle}°</strong></div>
+                <div class="param-item"><span>Tooth angle (360°/z)</span><strong>${toothAngle.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Chordal pitch (chain pitch)</span><strong>${chordalPitch.toFixed(3)} mm</strong></div>
             </div>`;
-            note = `Indexing T = 40/${N}. Use sprocket cutter or form tool. Equivalent module shown for reference only.`;
-            cutterMsg = `Sprocket form cutter, pitch ${P}mm, roller dia ${Dr}mm.`;
+            note = `Indexing: ${40/z} turns per tooth (simple indexing). Use a sprocket form cutter or side milling cutter with the calculated radii. Tooth thickness at pitch line = ${toothThickness.toFixed(2)} mm.`;
+            cutterMsg = `Sprocket form cutter for pitch ${P.toFixed(2)} mm, roller dia ${Dr.toFixed(2)} mm. Root radius = ${ri.toFixed(2)} mm, flank radius = ${re.toFixed(2)} mm.`;
         }
-        dimOutput.innerHTML = html + `<hr><span class="badge">${type === 'rack' ? `Circular pitch P = ${rackP.toFixed(3)} mm → module = ${m.toFixed(4)} mm` : getModuleDisplay()}</span>`;
+        dimOutput.innerHTML = html + `<hr><span class="badge">${type === 'rack' ? `Circular pitch P = ${rackP.toFixed(3)} mm → module = ${m.toFixed(4)} mm` : (type !== 'sprocket' ? getModuleDisplay() : 'Chain sprocket')}</span>`;
         manufactureNote.innerHTML = note;
         cutterOut.innerHTML = cutterMsg;
         if(type !== 'helical' && type !== 'spiralBevel') {
