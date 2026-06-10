@@ -322,13 +322,42 @@
             .indexing-tab th, .indexing-tab td { padding: 6px 2px; }
             .zoom-controls button { padding: 2px 8px; font-size: 0.7rem; }
         }
+        /* Access denied overlay */
+        #accessDenied {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #1a2a33;
+            color: white;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+        #accessDenied button {
+            width: auto;
+            margin-top: 20px;
+            background: #d9534f;
+        }
+        .workshop-content {
+            display: none;
+        }
     </style>
 </head>
 <body>
+<div id="accessDenied">
+    <div>🔒 Access Restricted</div>
+    <div style="font-size:1rem; margin:20px;">Enter secret number to continue</div>
+    <input type="password" id="secretInput" placeholder="Secret number" style="background:white; color:black; width:200px;">
+    <button id="submitSecret">Unlock Workshop</button>
+</div>
+<div class="workshop-content" id="workshopContent">
 <div class="container">
     <div class="header">
         <h1>⚙️ Gear Manufacturing Workshop (Milling Machine)</h1>
-        
+        <a href="/manual" target="_blank" class="pdf-btn">📖 Open Reference Manual (PDF)</a>
     </div>
     <div class="sub">Spur · Helical · Bevel · Spiral Bevel · Worm · Rack · Sprocket | Indexing: Direct, Simple, Differential, Angular</div>
     <div class="flex-grid">
@@ -543,9 +572,53 @@
         ✅ Lead change gears: multiple alternatives (simple/compound) with true relative error (%). Select any to see 2D drawing.
     </div>
 </div>
+</div>
 
 <script>
     // ---------------------------- Helper functions ----------------------------
+    // Secret number access (change the number as needed)
+    const SECRET_NUMBER = "1712";  // <-- change this to your desired secret code
+    function checkAccess() {
+        const stored = sessionStorage.getItem('workshop_access');
+        if (stored === SECRET_NUMBER) {
+            document.getElementById('accessDenied').style.display = 'none';
+            document.getElementById('workshopContent').style.display = 'block';
+            return true;
+        }
+        document.getElementById('accessDenied').style.display = 'flex';
+        document.getElementById('workshopContent').style.display = 'none';
+        return false;
+    }
+    document.getElementById('submitSecret').addEventListener('click', () => {
+        const input = document.getElementById('secretInput').value;
+        if (input === SECRET_NUMBER) {
+            sessionStorage.setItem('workshop_access', SECRET_NUMBER);
+            checkAccess();
+            // Re-initialize UI after unlock
+            updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth(); updatePdfReferences();
+        } else {
+            alert('Wrong secret number. Access denied.');
+        }
+    });
+    // Hide module/DP block when sprocket is selected
+    function updateSprocketVisibility() {
+        const isSprocket = (gearType.value === 'sprocket');
+        const modDpSwitch = document.getElementById('modDpSwitch');
+        const metricBlock = document.getElementById('metricBlock');
+        const imperialBlock = document.getElementById('imperialBlock');
+        if (isSprocket) {
+            modDpSwitch.style.display = 'none';
+            metricBlock.style.display = 'none';
+            imperialBlock.style.display = 'none';
+        } else {
+            modDpSwitch.style.display = 'flex';
+            if (gearType.value !== 'rack') {
+                if (isMetric) metricBlock.style.display = 'block';
+                else imperialBlock.style.display = 'block';
+            }
+        }
+    }
+    
     function gcd(a,b){ a=Math.abs(a); while(b){ let t=b; b=a%b; a=t; } return a; }
     function loadPresets(storageKey, selectElement, defaultPresets) { const saved = localStorage.getItem(storageKey); let presets = saved ? JSON.parse(saved) : defaultPresets; selectElement.innerHTML = ''; for (let p of presets) { let option = document.createElement('option'); option.value = p.value; option.textContent = p.label; selectElement.appendChild(option); } return presets; }
     function savePreset(storageKey, selectElement, newValue, newLabel, defaultPresets) { let presets = loadPresets(storageKey, selectElement, defaultPresets); if (!presets.some(p => p.value === newValue)) { presets.push({ value: newValue, label: newLabel }); localStorage.setItem(storageKey, JSON.stringify(presets)); loadPresets(storageKey, selectElement, defaultPresets); selectElement.value = newValue; return true; } return false; }
@@ -734,11 +807,15 @@
             modDpSwitch.style.display = 'none';
             rackPitchBlock.style.display = 'block';
         } else {
-            metricBlock.style.display = isMetric ? 'block' : 'none';
-            imperialBlock.style.display = isMetric ? 'none' : 'block';
-            modDpSwitch.style.display = 'flex';
+            // For sprocket, modDpSwitch and metric/imperial are hidden in separate function
+            if (gearType.value !== 'sprocket') {
+                modDpSwitch.style.display = 'flex';
+                if (isMetric) metricBlock.style.display = 'block';
+                else imperialBlock.style.display = 'block';
+            }
             rackPitchBlock.style.display = 'none';
         }
+        updateSprocketVisibility();
     }
     
     // Geometry & cutter functions with rack using circular pitch and derived module
@@ -757,7 +834,7 @@
             }
             m = rackP / Math.PI;
         } else {
-            if (isNaN(m) || m <= 0) {
+            if (type !== 'sprocket' && (isNaN(m) || m <= 0)) {
                 dimOutput.innerHTML = '<span class="warning">Enter module/DP</span>';
                 updatePdfReferences();
                 return;
@@ -1064,59 +1141,48 @@
             cutterMsg = `Rack form cutter (milling or shaping).`;
         } 
         else if(type === 'sprocket'){
-            // --------------------------------------------------------------
-            // UPDATED SPROCKET SECTION: full geometrical parameters, no "module"
-            // --------------------------------------------------------------
             let P = parseFloat(document.getElementById('chainPitch').value);
             let Dr = parseFloat(document.getElementById('rollerDia').value);
             if(isNaN(P) || isNaN(Dr)){ dimOutput.innerHTML='<span class="warning">Enter chain pitch and roller diameter</span>'; updatePdfReferences(); return; }
             let z = N;
             if(z < 5) { dimOutput.innerHTML='<span class="warning">Minimum teeth for sprocket is 5</span>'; updatePdfReferences(); return; }
             
-            // Pitch circle diameter
             let d = P / Math.sin(Math.PI / z);
-            // Outside diameter (tooth tip) – standard factor based on tooth count
-            let factor = (z > 19) ? 0.8 : 0.9;
-            let da = d + factor * Dr;
-            // Root diameter
+            let k = (z > 19) ? 0.8 : 0.9;
+            let da_common = d + k * Dr;
+            let da_exact = P * (0.6 + 1 / Math.tan(Math.PI / z));
             let df = d - Dr;
-            // Tooth thickness at pitch line (approx for standard roller chains)
             let toothThickness = 0.93 * P - 0.15;
-            // Roller seating radius (root radius)
             let ri = 0.505 * Dr;
-            // Tooth flank radius (typical value)
             let re = 0.12 * Dr;
-            // Addendum (tooth height above pitch circle)
-            let addendum = (da - d) / 2;
-            // Dedendum (depth below pitch circle)
+            let addendum = (da_common - d) / 2;
             let dedendum = (d - df) / 2;
-            // Whole tooth depth
             let wholeDepth = addendum + dedendum;
-            // Pressure angle (standard for sprockets)
             let pressureAngle = 30;
-            // Tooth angle (angular pitch)
             let toothAngle = 360 / z;
-            // Chordal pitch (same as chain pitch)
             let chordalPitch = P;
+            let equivModule = P / Math.PI;
             
             html = `<div class="param-grid">
                 <div class="param-item"><span>Number of teeth z</span><strong>${z}</strong></div>
                 <div class="param-item"><span>Chain pitch P</span><strong>${P.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Roller diameter Dᵣ</span><strong>${Dr.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Pitch circle diameter d</span><strong>${d.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Outside diameter dₐ</span><strong>${da.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(factor ${factor})</span></div>
+                <div class="param-item"><span style="color:#ffd966;">📐 Outer diameter (common, workshop)</span><strong>${da_common.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(d + ${k}·Dᵣ)</span></div>
+                <div class="param-item"><span style="color:#bbe4f0;">⚙️ Outer diameter (exact ISO)</span><strong>${da_exact.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">P·(0.6 + cot(180/z))</span></div>
                 <div class="param-item"><span>Root diameter d_f</span><strong>${df.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Tooth thickness (pitch line)</span><strong>${toothThickness.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Roller seating radius rᵢ</span><strong>${ri.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(≈0.505·Dᵣ)</span></div>
                 <div class="param-item"><span>Tooth flank radius rₑ</span><strong>${re.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(≈0.12·Dᵣ)</span></div>
-                <div class="param-item"><span>Addendum hₐ</span><strong>${addendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Addendum hₐ (common method)</span><strong>${addendum.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Dedendum h_f</span><strong>${dedendum.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Whole tooth depth h</span><strong>${wholeDepth.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Pressure angle α</span><strong>${pressureAngle}°</strong></div>
                 <div class="param-item"><span>Tooth angle (360°/z)</span><strong>${toothAngle.toFixed(2)}°</strong></div>
                 <div class="param-item"><span>Chordal pitch (chain pitch)</span><strong>${chordalPitch.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>🔁 Equivalent module (P/π)</span><strong>${equivModule.toFixed(4)} mm</strong> <span style="font-size:0.7rem;">(reference only)</span></div>
             </div>`;
-            note = `Indexing: ${40/z} turns per tooth (simple indexing). Use a sprocket form cutter or side milling cutter with the calculated radii. Tooth thickness at pitch line = ${toothThickness.toFixed(2)} mm.`;
+            note = `Indexing: ${40/z} turns per tooth (simple indexing). Use a sprocket form cutter or side milling cutter. Outer diameter: workshop formula = ${da_common.toFixed(2)} mm (recommended for manual machining), ISO exact = ${da_exact.toFixed(2)} mm. Equivalent module = ${equivModule.toFixed(4)} mm (for informational use only – do not use as gear module).`;
             cutterMsg = `Sprocket form cutter for pitch ${P.toFixed(2)} mm, roller dia ${Dr.toFixed(2)} mm. Root radius = ${ri.toFixed(2)} mm, flank radius = ${re.toFixed(2)} mm.`;
         }
         dimOutput.innerHTML = html + `<hr><span class="badge">${type === 'rack' ? `Circular pitch P = ${rackP.toFixed(3)} mm → module = ${m.toFixed(4)} mm` : (type !== 'sprocket' ? getModuleDisplay() : 'Chain sprocket')}</span>`;
@@ -1150,7 +1216,7 @@
         isMetric = active; 
         metricBtn.classList.toggle('active-mode', active); 
         imperialBtn.classList.toggle('active-mode', !active); 
-        if (gearType.value !== 'rack') {
+        if (gearType.value !== 'rack' && gearType.value !== 'sprocket') {
             metricBlock.style.display = active ? 'block' : 'none';
             imperialBlock.style.display = active ? 'none' : 'block';
         }
@@ -1169,7 +1235,12 @@
         profileShiftGroup.style.display = 'none';
     }
     
-    updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth(); updatePdfReferences();
+    // Access control: initially check if already authenticated
+    if (!checkAccess()) {
+        // Wait for unlock
+    } else {
+        updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth(); updatePdfReferences();
+    }
     setTimeout(() => { let topC = document.getElementById('topViewContainer'); let sideC = document.getElementById('sideViewContainer'); if(topC) { let btns = topC.querySelectorAll('.zoom-controls button'); if(btns[0]) btns[0].onclick = ()=>{ topScale = Math.max(0.5, topScale-0.2); let inner = document.querySelector('#topViewWrapper div'); if(inner) inner.style.transform = `scale(${topScale})`; }; if(btns[2]) btns[2].onclick = ()=>{ topScale = Math.min(3, topScale+0.2); let inner = document.querySelector('#topViewWrapper div'); if(inner) inner.style.transform = `scale(${topScale})`; }; if(btns[1]) btns[1].onclick = ()=>{ topScale=1; let inner = document.querySelector('#topViewWrapper div'); if(inner) inner.style.transform = 'scale(1)'; }; } }, 100);
 </script>
 </body>
