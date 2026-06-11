@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gear Quality Inspection Tool | ISO 1328</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: #1e3b4c;
+            color: white;
+            padding: 1.5rem 2rem;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        .header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.8;
+        }
+        .content {
+            padding: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .input-panel {
+            flex: 1.2;
+            min-width: 280px;
+        }
+        .result-panel {
+            flex: 2;
+            min-width: 400px;
+        }
+        .card {
+            background: #f9fbfd;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #1e3b4c;
+            border-left: 4px solid #2c7da0;
+            padding-left: 12px;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+        .input-group label {
+            width: 140px;
+            font-weight: 600;
+            color: #1e3b4a;
+        }
+        input, select {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 40px;
+            background: white;
+            font-size: 0.9rem;
+        }
+        button {
+            background: #2c7da0;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            font-size: 1rem;
+        }
+        button:hover {
+            background: #1f617e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 10px 6px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        th {
+            background: #eef2f7;
+            color: #1e3b4c;
+        }
+        .status-pass {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .status-fail {
+            color: #c62828;
+            font-weight: bold;
+        }
+        .tolerance-info {
+            font-size: 0.75rem;
+            color: #5a6e7a;
+            margin-top: 8px;
+        }
+        .badge {
+            background: #2c7da0;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+        hr {
+            margin: 15px 0;
+            border-color: #e2e8f0;
+        }
+        @media (max-width: 700px) {
+            .content { flex-direction: column; }
+            .input-group label { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🔍 Gear Quality Inspection Tool</h1>
+        <p>ISO 1328 based tolerance check | Spur | Helical | Bevel | Worm | Sprocket</p>
+    </div>
+    <div class="content">
+        <!-- LEFT PANEL: INPUT -->
+        <div class="input-panel">
+            <div class="card">
+                <h3>⚙️ Gear Data</h3>
+                <div class="input-group">
+                    <label>Gear type:</label>
+                    <select id="gearType">
+                        <option value="spur">Spur gear</option>
+                        <option value="helical">Helical gear</option>
+                        <option value="bevel">Straight bevel gear</option>
+                        <option value="wormShaft">Worm shaft</option>
+                        <option value="wormWheel">Worm wheel</option>
+                        <option value="sprocket">Sprocket</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Module (mm):</label>
+                    <input type="number" id="module" value="2.5" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label>Number of teeth:</label>
+                    <input type="number" id="teeth" value="28" step="1">
+                </div>
+                <div id="extraParams"></div>
+                <div class="input-group">
+                    <label>Tolerance class (ISO 1328):</label>
+                    <select id="toleranceClass">
+                        <option value="5">5 (fine)</option>
+                        <option value="6">6 (medium)</option>
+                        <option value="7" selected>7 (normal)</option>
+                        <option value="8">8 (coarse)</option>
+                        <option value="9">9 (very coarse)</option>
+                    </select>
+                </div>
+                <button id="computeTheoretical">📐 Compute Theoretical Dimensions</button>
+            </div>
+            <div class="card">
+                <h3>📏 Measured Values</h3>
+                <div id="measuredInputs"></div>
+                <button id="runInspection">✅ Run Inspection</button>
+                <div class="tolerance-info">
+                    Tolerances are approximate based on ISO 1328-1 for tooth thickness and diameter deviations.<br>
+                    For sprockets, workshop tolerances apply.
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: RESULTS -->
+        <div class="result-panel">
+            <div class="card">
+                <h3>📊 Theoretical Parameters</h3>
+                <div id="theoreticalDisplay">—</div>
+            </div>
+            <div class="card">
+                <h3>🔧 Inspection Results</h3>
+                <div id="inspectionResults">—</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Helper to compute theoretical values based on gear type
+    let currentTheoretical = {};
+    
+    function computeTheoretical() {
+        const type = document.getElementById('gearType').value;
+        const m = parseFloat(document.getElementById('module').value);
+        const z = parseInt(document.getElementById('teeth').value);
+        if (isNaN(m) || m <= 0 || isNaN(z) || z < 3) {
+            alert("Enter valid module (>0) and number of teeth (≥3)");
+            return false;
+        }
+        
+        let theo = {};
+        if (type === 'spur') {
+            theo.pitchDia = m * z;
+            theo.outsideDia = m * (z + 2);
+            theo.rootDia = m * (z - 2.5);
+            theo.toothThickness = Math.PI * m / 2;
+            theo.wholeDepth = 2.25 * m;
+            theo.addendum = m;
+            theo.dedendum = 1.25 * m;
+        } 
+        else if (type === 'helical') {
+            // need helix angle – add extra input
+            let beta = parseFloat(document.getElementById('helixAngle')?.value);
+            if (isNaN(beta)) beta = 20;
+            const betaRad = beta * Math.PI/180;
+            const mt = m / Math.cos(betaRad);
+            theo.pitchDia = mt * z;
+            theo.outsideDia = theo.pitchDia + 2*m;
+            theo.rootDia = theo.pitchDia - 2.5*m;
+            theo.toothThickness = Math.PI * m / 2; // normal thickness
+            theo.lead = Math.PI * theo.pitchDia / Math.tan(betaRad);
+            theo.helixAngle = beta;
+        }
+        else if (type === 'bevel') {
+            // straight bevel, assuming 90° shaft angle, no mating teeth
+            const delta = Math.atan(z / (z+1)) * 180/Math.PI; // approximate
+            const d = m * z;
+            const R = d / (2 * Math.sin(delta * Math.PI/180));
+            theo.pitchDia = d;
+            theo.outsideDia = d + 2 * m * Math.cos(delta * Math.PI/180);
+            theo.rootDia = d - 2.4 * m;
+            theo.toothThickness = Math.PI * m / 2;
+            theo.coneDistance = R;
+            theo.faceWidth = 0.3 * R;
+        }
+        else if (type === 'wormShaft') {
+            const starts = parseFloat(document.getElementById('wormStarts')?.value) || 1;
+            const d = 40 - 2*m; // typical pitch dia approx
+            theo.pitchDia = d;
+            theo.rootDia = d - 2.2*m;
+            theo.lead = Math.PI * m * starts;
+            theo.toothThickness = Math.PI * m / 2;
+        }
+        else if (type === 'wormWheel') {
+            const d = m * z;
+            theo.pitchDia = d;
+            theo.throatDia = m * (z + 2);
+            theo.faceWidth = 0.45 * (d + 30); // rough
+            theo.toothThickness = Math.PI * m / 2;
+        }
+        else if (type === 'sprocket') {
+            const P = parseFloat(document.getElementById('chainPitch')?.value) || 12.7;
+            const Dr = parseFloat(document.getElementById('rollerDia')?.value) || 7.92;
+            const d = P / Math.sin(Math.PI / z);
+            const k = (z > 19) ? 0.8 : 0.9;
+            theo.pitchDia = d;
+            theo.outsideDia = d + k * Dr;
+            theo.rootDia = d - Dr;
+            theo.toothThickness = 0.93 * P - 0.15;
+            theo.chainPitch = P;
+            theo.rollerDia = Dr;
+        }
+        
+        currentTheoretical = theo;
+        displayTheoretical();
+        buildMeasuredInputs();
+        return true;
+    }
+    
+    function displayTheoretical() {
+        const div = document.getElementById('theoreticalDisplay');
+        let html = '<table class="inspect-table"><thead><tr><th>Parameter</th><th>Value (mm)</th></tr></thead><tbody>';
+        for (let [key, val] of Object.entries(currentTheoretical)) {
+            let name = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            if (key === 'helixAngle') name = 'Helix angle (°)';
+            if (key === 'lead') name = 'Lead (mm)';
+            if (key === 'coneDistance') name = 'Cone distance (mm)';
+            if (key === 'faceWidth') name = 'Face width (mm)';
+            if (key === 'throatDia') name = 'Throat diameter (mm)';
+            if (key === 'chainPitch') name = 'Chain pitch (mm)';
+            if (key === 'rollerDia') name = 'Roller dia (mm)';
+            if (key === 'toothThickness') name = 'Tooth thickness';
+            if (key === 'outsideDia') name = 'Outside diameter';
+            if (key === 'pitchDia') name = 'Pitch diameter';
+            if (key === 'rootDia') name = 'Root diameter';
+            if (key === 'wholeDepth') name = 'Whole depth';
+            html += `<tr><td>${name}</td><td><strong>${val.toFixed(3)}</strong></td></tr>`;
+        }
+        html += '</tbody></table>';
+        div.innerHTML = html;
+    }
+    
+    function buildMeasuredInputs() {
+        const container = document.getElementById('measuredInputs');
+        let html = '<table class="inspect-table"><thead><tr><th>Parameter</th><th>Measured (mm)</th><th>Tolerance (±mm)</th></tr></thead><tbody>';
+        const type = document.getElementById('gearType').value;
+        // determine which parameters to inspect
+        let params = [];
+        if (type === 'spur' || type === 'helical') {
+            params = ['pitchDia', 'outsideDia', 'rootDia', 'toothThickness'];
+            if (type === 'helical') params.push('lead');
+        } else if (type === 'bevel') {
+            params = ['pitchDia', 'outsideDia', 'coneDistance', 'faceWidth'];
+        } else if (type === 'wormShaft') {
+            params = ['pitchDia', 'rootDia', 'lead', 'toothThickness'];
+        } else if (type === 'wormWheel') {
+            params = ['pitchDia', 'throatDia', 'faceWidth'];
+        } else if (type === 'sprocket') {
+            params = ['pitchDia', 'outsideDia', 'rootDia', 'toothThickness'];
+        }
+        for (let p of params) {
+            let name = p.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            if (p === 'outsideDia') name = 'Outside diameter';
+            if (p === 'pitchDia') name = 'Pitch diameter';
+            if (p === 'rootDia') name = 'Root diameter';
+            if (p === 'toothThickness') name = 'Tooth thickness';
+            if (p === 'lead') name = 'Lead';
+            if (p === 'coneDistance') name = 'Cone distance';
+            if (p === 'faceWidth') name = 'Face width';
+            if (p === 'throatDia') name = 'Throat diameter';
+            html += `<tr>
+                        <td>${name}</td>
+                        <td><input type="number" step="0.001" class="meas-input" data-key="${p}" placeholder="enter value"></td>
+                        <td id="tol_${p}">—</td>
+                    </tr>`;
+        }
+        html += '</tbody></table>';
+        container.innerHTML = html;
+        // update tolerance display after theoretical & class change
+        updateToleranceDisplay();
+    }
+    
+    function updateToleranceDisplay() {
+        if (Object.keys(currentTheoretical).length === 0) return;
+        const tolClass = parseInt(document.getElementById('toleranceClass').value);
+        const m = parseFloat(document.getElementById('module').value);
+        const factor = Math.pow(2, (tolClass - 7)/1.5);
+        const baseTolDia = 0.02 * m * factor;
+        const tolDia = Math.max(0.01, baseTolDia);
+        const tolTooth = 0.04 * factor;
+        const type = document.getElementById('gearType').value;
+        let params = [];
+        if (type === 'spur' || type === 'helical') {
+            params = ['pitchDia', 'outsideDia', 'rootDia', 'toothThickness'];
+            if (type === 'helical') params.push('lead');
+        } else if (type === 'bevel') {
+            params = ['pitchDia', 'outsideDia', 'coneDistance', 'faceWidth'];
+        } else if (type === 'wormShaft') {
+            params = ['pitchDia', 'rootDia', 'lead', 'toothThickness'];
+        } else if (type === 'wormWheel') {
+            params = ['pitchDia', 'throatDia', 'faceWidth'];
+        } else if (type === 'sprocket') {
+            params = ['pitchDia', 'outsideDia', 'rootDia', 'toothThickness'];
+        }
+        for (let p of params) {
+            let tol;
+            if (p === 'toothThickness') tol = tolTooth;
+            else if (p === 'lead') tol = 0.5 * factor;
+            else if (p === 'faceWidth') tol = 0.2;
+            else if (p === 'coneDistance') tol = tolDia * 2;
+            else tol = tolDia;
+            const span = document.getElementById(`tol_${p}`);
+            if (span) span.innerText = `±${tol.toFixed(3)}`;
+        }
+    }
+    
+    function runInspection() {
+        if (Object.keys(currentTheoretical).length === 0) {
+            alert('Compute theoretical dimensions first.');
+            return;
+        }
+        const tolClass = parseInt(document.getElementById('toleranceClass').value);
+        const m = parseFloat(document.getElementById('module').value);
+        const factor = Math.pow(2, (tolClass - 7)/1.5);
+        const baseTolDia = 0.02 * m * factor;
+        const tolDia = Math.max(0.01, baseTolDia);
+        const tolTooth = 0.04 * factor;
+        const inputs = document.querySelectorAll('.meas-input');
+        let resultsHtml = '<table class="inspect-table"><thead><tr><th>Parameter</th><th>Theoretical (mm)</th><th>Measured (mm)</th><th>Deviation (mm)</th><th>Tolerance (±mm)</th><th>Status</th></tr></thead><tbody>';
+        let passCount = 0, totalCount = 0;
+        for (let inp of inputs) {
+            const key = inp.getAttribute('data-key');
+            const theoretical = currentTheoretical[key];
+            if (theoretical === undefined) continue;
+            const measured = parseFloat(inp.value);
+            if (isNaN(measured)) continue;
+            let tol;
+            if (key === 'toothThickness') tol = tolTooth;
+            else if (key === 'lead') tol = 0.5 * factor;
+            else if (key === 'faceWidth') tol = 0.2;
+            else if (key === 'coneDistance') tol = tolDia * 2;
+            else tol = tolDia;
+            const dev = measured - theoretical;
+            const absDev = Math.abs(dev);
+            const pass = absDev <= tol;
+            if (pass) passCount++;
+            totalCount++;
+            let name = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            if (key === 'outsideDia') name = 'Outside diameter';
+            if (key === 'pitchDia') name = 'Pitch diameter';
+            if (key === 'rootDia') name = 'Root diameter';
+            if (key === 'toothThickness') name = 'Tooth thickness';
+            if (key === 'lead') name = 'Lead';
+            if (key === 'coneDistance') name = 'Cone distance';
+            if (key === 'faceWidth') name = 'Face width';
+            if (key === 'throatDia') name = 'Throat diameter';
+            resultsHtml += `<tr>
+                                <td>${name}</td>
+                                <td>${theoretical.toFixed(3)}</td>
+                                <td>${measured.toFixed(3)}</td>
+                                <td>${dev.toFixed(3)}</td>
+                                <td>±${tol.toFixed(3)}</td>
+                                <td class="${pass ? 'status-pass' : 'status-fail'}">${pass ? '✓ PASS' : '✗ FAIL'}</td>
+                            </tr>`;
+        }
+        resultsHtml += `</tbody></table><hr><div><strong>Summary:</strong> ${passCount}/${totalCount} dimensions within tolerance.</div>`;
+        document.getElementById('inspectionResults').innerHTML = resultsHtml;
+    }
+    
+    // dynamic extra fields depending on gear type
+    function updateExtraFields() {
+        const type = document.getElementById('gearType').value;
+        const extraDiv = document.getElementById('extraParams');
+        let html = '';
+        if (type === 'helical') {
+            html = `<div class="input-group"><label>Helix angle β (deg):</label><input type="number" id="helixAngle" value="20" step="1"></div>`;
+        } else if (type === 'wormShaft') {
+            html = `<div class="input-group"><label>Number of starts:</label><input type="number" id="wormStarts" value="1" step="1" min="1"></div>`;
+        } else if (type === 'sprocket') {
+            html = `<div class="input-group"><label>Chain pitch P (mm):</label><input type="number" id="chainPitch" value="12.7" step="0.1"></div>
+                    <div class="input-group"><label>Roller dia Dr (mm):</label><input type="number" id="rollerDia" value="7.92" step="0.1"></div>`;
+        } else if (type === 'bevel') {
+            html = `<div class="input-group"><label>Shaft angle (deg) [default 90]:</label><input type="number" id="shaftAngle" value="90" step="1"></div>`;
+        }
+        extraDiv.innerHTML = html;
+        // recompute theoretical if needed
+        if (Object.keys(currentTheoretical).length) computeTheoretical();
+    }
+    
+    document.getElementById('gearType').addEventListener('change', () => {
+        updateExtraFields();
+        computeTheoretical();
+    });
+    document.getElementById('module').addEventListener('input', () => computeTheoretical());
+    document.getElementById('teeth').addEventListener('input', () => computeTheoretical());
+    document.getElementById('toleranceClass').addEventListener('change', () => {
+        updateToleranceDisplay();
+        runInspection();
+    });
+    document.getElementById('computeTheoretical').addEventListener('click', () => computeTheoretical());
+    document.getElementById('runInspection').addEventListener('click', () => runInspection());
+    
+    // initial load
+    updateExtraFields();
+    computeTheoretical();
+</script>
+</body>
+</html>
