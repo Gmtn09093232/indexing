@@ -179,23 +179,15 @@
             border-radius: 28px;
             font-size: 0.85rem;
         }
-        table.indexing-tab, table.inspect-table {
+        table.indexing-tab {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.75rem;
         }
-        .indexing-tab th, .indexing-tab td, .inspect-table th, .inspect-table td {
+        .indexing-tab th, .indexing-tab td {
             padding: 8px 4px;
             text-align: left;
             border-bottom: 1px solid #3e6275;
-        }
-        .inspect-pass {
-            color: #8bc34a;
-            font-weight: bold;
-        }
-        .inspect-fail {
-            color: #ff8a80;
-            font-weight: bold;
         }
         hr {
             margin: 12px 0;
@@ -386,14 +378,6 @@
         .workshop-content {
             display: none;
         }
-        .inspect-input {
-            width: 90px;
-            padding: 4px 8px;
-            background: #2a3a44;
-            color: white;
-            border: 1px solid #5a7a8a;
-            border-radius: 20px;
-        }
     </style>
 </head>
 <body>
@@ -448,7 +432,7 @@
                 <div class="input-group"><label>Mating gear teeth (N₂) :</label><input type="number" id="spurMatingTeeth" placeholder="optional for center distance & contact ratio"></div>
                 <div class="small-note">Enter mating gear teeth to calculate center distance and contact ratio.</div>
             </div>
-            <!-- Helical gear extra: mating teeth and face width -->
+            <!-- Helical gear extra: mating teeth and face width (face width already exists) -->
             <div id="helicalExtra" style="display:none;">
                 <div class="input-group"><label>Helix angle β (deg) :</label><input type="number" id="helixAngle" value="20"></div>
                 <div class="input-group"><label>Face width (mm) :</label><input type="number" id="faceWidth" value="30"></div>
@@ -532,7 +516,7 @@
             <div class="pdf-ref" id="pdfRefDimensions"></div>
         </div>
 
-        <!-- RIGHT CARD: INDEXING & INSPECTION -->
+        <!-- RIGHT CARD: INDEXING -->
         <div class="card">
             <h2>🔄 Dividing Head Indexing</h2>
             <div class="input-group"><label>Method :</label>
@@ -626,25 +610,6 @@
             </div>
             <div class="result-box"><h3>📌 Manufacturing note</h3><div id="manufactureNote">—</div></div>
             <div class="result-box"><h3>🪚 Cutter recommendation</h3><div id="cutterOut">—</div></div>
-            
-            <!-- QUALITY INSPECTION TOOL -->
-            <div class="result-box" id="inspectionBox">
-                <h3>🔍 Quality Inspection Tool</h3>
-                <div class="input-group">
-                    <label>Tolerance class (ISO 1328):</label>
-                    <select id="toleranceClass">
-                        <option value="5">5 (fine)</option>
-                        <option value="6">6 (medium)</option>
-                        <option value="7" selected>7 (normal)</option>
-                        <option value="8">8 (coarse)</option>
-                        <option value="9">9 (very coarse)</option>
-                    </select>
-                </div>
-                <div id="inspectionTableContainer">
-                    <p class="small-note">Select a gear type and compute dimensions first. Then enter measured values below.</p>
-                </div>
-                <button id="runInspectionBtn">📏 Run Inspection</button>
-            </div>
             <div class="pdf-ref" id="pdfRefIndexing"></div>
         </div>
     </div>
@@ -673,7 +638,7 @@
         if (input === SECRET_NUMBER) {
             sessionStorage.setItem('workshop_access', SECRET_NUMBER);
             checkAccess();
-            updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth(); updatePdfReferences(); buildInspectionUI();
+            updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth(); updatePdfReferences();
         } else {
             alert('Wrong secret number. Access denied.');
         }
@@ -800,7 +765,7 @@
                 else {
                     let html = `<strong>Simple indexing</strong><br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
                     options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td>`; });
-                    indexingOutput.innerHTML = html + `</tbody></table>`;
+                    indexingOutput.innerHTML = html + `</tbody><table>`;
                 }
             }
             updatePdfReferences(); return;
@@ -830,7 +795,7 @@
                 }
             }
             if(best && best.options.length > 0) {
-                let html = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}' (${totalDeg.toFixed(4)}°)<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank movement = ${totalTurns.toFixed(6)} turns = ${fullTurns} full turn(s) + ${best.fraction} turn<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></table></thead><tbody>`;
+                let html = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}' (${totalDeg.toFixed(4)}°)<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank movement = ${totalTurns.toFixed(6)} turns = ${fullTurns} full turn(s) + ${best.fraction} turn<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
                 best.options.forEach(opt => { html += `<tr><td style="padding:6px 4px;">${opt.circle}</td><td style="padding:6px 4px;">${opt.full}</td><td style="padding:6px 4px;">${opt.holes}</td>`; });
                 html += `</tbody></table>`;
                 indexingOutput.innerHTML = html;
@@ -843,7 +808,7 @@
             let Nreq = parseInt(document.getElementById('diffRequiredN').value), Aapprox = parseInt(document.getElementById('diffApproxA').value), gearSet = diffGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v)), circles = getHoleCircles(false);
             let simpleRes = (() => { let turns = ratio / Aapprox, full = Math.floor(turns), rem = ratio % Aapprox; if (rem===0) return {exact:true, fullTurns:full}; let num=rem, den=Aapprox, g=gcd(num,den); num/=g; den/=g; for(let hc of circles) if(hc % den === 0){ let mult = hc/den, holes = num * mult, extraFull = 0; if(holes >= hc){ extraFull = Math.floor(holes/hc); holes %= hc; } return {exact:false, fullTurns:full+extraFull, holes:holes, circle:hc}; } return {error:true}; })();
             if(simpleRes.error) { indexingOutput.innerHTML = `<span class="warning">No hole circle for simple indexing of A=${Aapprox}</span>`; return; }
-            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </tr></tr>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td style="padding:6px 4px;">${simpleRes.fullTurns}</td><td style="padding:6px 4px;">${simpleRes.holes}</td></tr></tbody><tr>`;
+            let simpleTableHtml = simpleRes.exact ? `<table class="indexing-tab"><tr><td>Full turns: ${simpleRes.fullTurns} </table></tr>` : `<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td style="padding:6px 4px;">${simpleRes.circle}</td><td style="padding:6px 4px;">${simpleRes.fullTurns}</td><td style="padding:6px 4px;">${simpleRes.holes}</td></tr></tbody></table>`;
             let diffRes = computeDifferentialExact(ratio, Nreq, Aapprox, gearSet);
             let html = `<strong>⚙️ Differential indexing</strong><br>Step1: Approx divisions A = ${Aapprox}<br>Turn = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleTableHtml}<br>Step2: i = (A-N)*40/A = ${diffRes.formula || ((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}<br>`;
             if (diffRes.exactMatch) {
@@ -863,268 +828,6 @@
     
     function generateDiffSimpleDrawing(drive, driven, sign) { let w=500, h=200, cy=100, x1=160, x2=340, r1=Math.min(48,20+drive/2), r2=Math.min(48,20+driven/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="20" x2="${x1}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="20" x2="${x2}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cy}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${drive}</text><text x="${x1}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cy}" r="${r2}" fill="#d9f0ec" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${driven}</text><text x="${x2}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm shaft</text><line x1="${x1+r1-4}" y1="${cy}" x2="${x2-r2+4}" y2="${cy}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="250" y="190" text-anchor="middle" fill="#2c7da0" font-size="12">${sign === "positive" ? "🔄 Same direction (use 1 idler)" : "🔁 Opposite direction (use 2 idlers)"}</text></svg>`; }
     function generateDiffCompoundDrawing(first, second, sign) { let [a,b] = first.split('/').map(Number), [c,d] = second.split('/').map(Number); let w=540, h=280, cyMain=120, cyUpper=40, x1=100, x2=270, x3=440; let r1=Math.min(42,18+a/2), r2=Math.min(42,18+b/2), r3=Math.min(42,18+c/2), r4=Math.min(42,18+d/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="15" x2="${x1}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="5" x2="${x2}" y2="220" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x3}" y1="15" x2="${x3}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cyMain}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${a}</text><text x="${x1}" y="${cyMain+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cyMain}" r="${r2}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${b}</text><circle cx="${x2}" cy="${cyUpper}" r="${r3}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${c}</text><circle cx="${x3}" cy="${cyUpper}" r="${r4}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x3}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${d}</text><text x="${x3}" y="${cyUpper+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm</text><line x1="${x1+r1-4}" y1="${cyMain}" x2="${x2-r2+4}" y2="${cyMain}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><line x1="${x2+r3-4}" y1="${cyUpper}" x2="${x3-r4+4}" y2="${cyUpper}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="270" y="265" text-anchor="middle" fill="#2c7da0" font-size="11">${sign === "positive" ? "🔄 Same direction (zero idlers compound)" : "🔁 Opposite direction (one idler)"}</text></svg>`; }
-    
-    // Store current theoretical parameters for inspection (populated by computeDimensions)
-    let currentTheoretical = {};
-    
-    function buildInspectionUI() {
-        let t = gearType.value;
-        let container = document.getElementById('inspectionTableContainer');
-        let html = `<div class="input-group"><label>Tolerance class (ISO 1328):</label><select id="toleranceClass" style="width:auto;">${[5,6,7,8,9].map(g => `<option value="${g}" ${g==7?'selected':''}>${g} (${g<=5?'fine':g>=8?'coarse':'medium'})</option>`).join('')}</select></div>`;
-        html += `<table class="inspect-table"><thead><tr><th>Parameter</th><th>Theoretical (mm)</th><th>Measured (mm)</th><th>Deviation</th><th>Tolerance (±mm)</th><th>Status</th></tr></thead><tbody id="inspectRows"></tbody></table>`;
-        container.innerHTML = html;
-        // populate rows based on current theoretical
-        updateInspectionRows();
-    }
-    
-    function updateInspectionRows() {
-        if (!currentTheoretical || Object.keys(currentTheoretical).length === 0) return;
-        let tolClass = parseInt(document.getElementById('toleranceClass')?.value || 7);
-        // ISO 1328-1:1995 typical tooth thickness tolerance (for module 1-10 mm) - simplified
-        // For simplicity, we use approximate grade multipliers: grade 6 ~ 0.025mm, grade 7 ~ 0.04mm, grade 8 ~ 0.06mm, grade 9 ~ 0.10mm
-        let baseTol = 0.04; // mm for grade 7
-        let factor = Math.pow(2, (tolClass - 7)/1.5); // empirical scaling
-        let tolTooth = baseTol * factor;
-        // For diameters: roughly 0.02 * module * factor
-        let module = getModule();
-        let tolDia = 0.02 * module * factor;
-        if (tolDia < 0.01) tolDia = 0.01;
-        
-        let rows = '';
-        let t = gearType.value;
-        if (t === 'spur' || t === 'helical') {
-            let params = [
-                {name: 'Pitch diameter', key: 'pitchDia', theoretical: currentTheoretical.pitchDia, tol: tolDia},
-                {name: 'Outside diameter', key: 'outsideDia', theoretical: currentTheoretical.outsideDia, tol: tolDia},
-                {name: 'Root diameter', key: 'rootDia', theoretical: currentTheoretical.rootDia, tol: tolDia},
-                {name: 'Tooth thickness (pitch)', key: 'toothThickness', theoretical: currentTheoretical.toothThickness, tol: tolTooth}
-            ];
-            if (t === 'helical' && currentTheoretical.lead) {
-                params.push({name: 'Lead', key: 'lead', theoretical: currentTheoretical.lead, tol: 0.5 * factor});
-            }
-            for (let p of params) {
-                if (p.theoretical === undefined) continue;
-                let measuredId = `inspect_${p.key}`;
-                rows += `<tr>
-                    <td>${p.name}</td>
-                    <td>${p.theoretical.toFixed(3)}</td>
-                    <td><input type="number" step="0.001" class="inspect-input" id="${measuredId}" placeholder="Measured"></td>
-                    <td id="dev_${p.key}">—</td>
-                    <td>±${p.tol.toFixed(3)}</td>
-                    <td id="stat_${p.key}">—</td>
-                </tr>`;
-            }
-        } else if (t === 'bevel' || t === 'spiralBevel') {
-            let params = [
-                {name: 'Pitch diameter (outer)', key: 'pitchDia', theoretical: currentTheoretical.pitchDia, tol: tolDia},
-                {name: 'Outside diameter (outer)', key: 'outsideDia', theoretical: currentTheoretical.outsideDia, tol: tolDia},
-                {name: 'Cone distance', key: 'coneDistance', theoretical: currentTheoretical.coneDistance, tol: tolDia*2},
-                {name: 'Face width', key: 'faceWidth', theoretical: currentTheoretical.faceWidth, tol: 0.2}
-            ];
-            for (let p of params) {
-                if (p.theoretical === undefined) continue;
-                let measuredId = `inspect_${p.key}`;
-                rows += `<tr>
-                    <td>${p.name}</td>
-                    <td>${p.theoretical.toFixed(3)}</td>
-                    <td><input type="number" step="0.001" class="inspect-input" id="${measuredId}" placeholder="Measured"></td>
-                    <td id="dev_${p.key}">—</td>
-                    <td>±${p.tol.toFixed(3)}</td>
-                    <td id="stat_${p.key}">—</td>
-                </tr>`;
-            }
-        } else if (t === 'wormShaft') {
-            let params = [
-                {name: 'Pitch diameter', key: 'pitchDia', theoretical: currentTheoretical.pitchDia, tol: tolDia},
-                {name: 'Root diameter', key: 'rootDia', theoretical: currentTheoretical.rootDia, tol: tolDia},
-                {name: 'Lead', key: 'lead', theoretical: currentTheoretical.lead, tol: 0.1},
-                {name: 'Tooth thickness (axial)', key: 'toothThickness', theoretical: currentTheoretical.toothThickness, tol: tolTooth}
-            ];
-            for (let p of params) {
-                if (p.theoretical === undefined) continue;
-                let measuredId = `inspect_${p.key}`;
-                rows += `<tr>
-                    <td>${p.name}</td>
-                    <td>${p.theoretical.toFixed(3)}</td>
-                    <td><input type="number" step="0.001" class="inspect-input" id="${measuredId}" placeholder="Measured"></td>
-                    <td id="dev_${p.key}">—</td>
-                    <td>±${p.tol.toFixed(3)}</td>
-                    <td id="stat_${p.key}">—</td>
-                </tr>`;
-            }
-        } else if (t === 'wormWheel') {
-            let params = [
-                {name: 'Pitch diameter', key: 'pitchDia', theoretical: currentTheoretical.pitchDia, tol: tolDia},
-                {name: 'Throat diameter', key: 'throatDia', theoretical: currentTheoretical.throatDia, tol: tolDia},
-                {name: 'Face width', key: 'faceWidth', theoretical: currentTheoretical.faceWidth, tol: 0.2}
-            ];
-            for (let p of params) {
-                if (p.theoretical === undefined) continue;
-                let measuredId = `inspect_${p.key}`;
-                rows += `<tr>
-                    <td>${p.name}</td>
-                    <td>${p.theoretical.toFixed(3)}</td>
-                    <td><input type="number" step="0.001" class="inspect-input" id="${measuredId}" placeholder="Measured"></td>
-                    <td id="dev_${p.key}">—</td>
-                    <td>±${p.tol.toFixed(3)}</td>
-                    <td id="stat_${p.key}">—</td>
-                </tr>`;
-            }
-        } else if (t === 'rack') {
-            let params = [
-                {name: 'Circular pitch', key: 'circularPitch', theoretical: currentTheoretical.circularPitch, tol: 0.05},
-                {name: 'Tooth thickness', key: 'toothThickness', theoretical: currentTheoretical.toothThickness, tol: tolTooth},
-                {name: 'Rack length', key: 'rackLength', theoretical: currentTheoretical.rackLength, tol: 0.5}
-            ];
-            for (let p of params) {
-                if (p.theoretical === undefined) continue;
-                let measuredId = `inspect_${p.key}`;
-                rows += `<tr>
-                    <td>${p.name}</td>
-                    <td>${p.theoretical.toFixed(3)}</td>
-                    <td><input type="number" step="0.001" class="inspect-input" id="${measuredId}" placeholder="Measured"></td>
-                    <td id="dev_${p.key}">—</td>
-                    <td>±${p.tol.toFixed(3)}</td>
-                    <td id="stat_${p.key}">—</td>
-                </tr>`;
-            }
-        } else if (t === 'sprocket') {
-            let params = [
-                {name: 'Pitch diameter', key: 'pitchDia', theoretical: currentTheoretical.pitchDia, tol: tolDia},
-                {name: 'Outside diameter (workshop)', key: 'outsideDia', theoretical: currentTheoretical.outsideDia, tol: tolDia},
-                {name: 'Root diameter', key: 'rootDia', theoretical: currentTheoretical.rootDia, tol: tolDia},
-                {name: 'Tooth thickness', key: 'toothThickness', theoretical: currentTheoretical.toothThickness, tol: tolTooth}
-            ];
-            for (let p of params) {
-                if (p.theoretical === undefined) continue;
-                let measuredId = `inspect_${p.key}`;
-                rows += `<tr>
-                    <td>${p.name}</td>
-                    <td>${p.theoretical.toFixed(3)}</td>
-                    <td><input type="number" step="0.001" class="inspect-input" id="${measuredId}" placeholder="Measured"></td>
-                    <td id="dev_${p.key}">—</td>
-                    <td>±${p.tol.toFixed(3)}</td>
-                    <td id="stat_${p.key}">—</td>
-                </tr>`;
-            }
-        }
-        document.getElementById('inspectRows').innerHTML = rows;
-        document.getElementById('runInspectionBtn').onclick = () => runInspection();
-    }
-    
-    function runInspection() {
-        let t = gearType.value;
-        let tolClass = parseInt(document.getElementById('toleranceClass').value);
-        let baseTol = 0.04;
-        let factor = Math.pow(2, (tolClass - 7)/1.5);
-        let tolTooth = baseTol * factor;
-        let module = getModule();
-        let tolDia = 0.02 * module * factor;
-        if (tolDia < 0.01) tolDia = 0.01;
-        let passCount = 0, totalCount = 0;
-        if (t === 'spur' || t === 'helical') {
-            let params = ['pitchDia', 'outsideDia', 'rootDia', 'toothThickness'];
-            if (t === 'helical' && currentTheoretical.lead) params.push('lead');
-            for (let key of params) {
-                let theoretical = currentTheoretical[key];
-                if (theoretical === undefined) continue;
-                let measured = parseFloat(document.getElementById(`inspect_${key}`)?.value);
-                if (isNaN(measured)) continue;
-                let tol = (key === 'toothThickness' || key === 'lead') ? tolTooth : tolDia;
-                if (key === 'lead') tol = 0.5 * factor;
-                let dev = measured - theoretical;
-                let absDev = Math.abs(dev);
-                let pass = absDev <= tol;
-                document.getElementById(`dev_${key}`).innerHTML = dev.toFixed(3);
-                document.getElementById(`stat_${key}`).innerHTML = pass ? '<span class="inspect-pass">✓ PASS</span>' : '<span class="inspect-fail">✗ FAIL</span>';
-                if (pass) passCount++;
-                totalCount++;
-            }
-        } else if (t === 'bevel' || t === 'spiralBevel') {
-            let params = ['pitchDia', 'outsideDia', 'coneDistance', 'faceWidth'];
-            for (let key of params) {
-                let theoretical = currentTheoretical[key];
-                if (theoretical === undefined) continue;
-                let measured = parseFloat(document.getElementById(`inspect_${key}`)?.value);
-                if (isNaN(measured)) continue;
-                let tol = (key === 'faceWidth') ? 0.2 : tolDia;
-                if (key === 'coneDistance') tol = tolDia*2;
-                let dev = measured - theoretical;
-                let absDev = Math.abs(dev);
-                let pass = absDev <= tol;
-                document.getElementById(`dev_${key}`).innerHTML = dev.toFixed(3);
-                document.getElementById(`stat_${key}`).innerHTML = pass ? '<span class="inspect-pass">✓ PASS</span>' : '<span class="inspect-fail">✗ FAIL</span>';
-                if (pass) passCount++;
-                totalCount++;
-            }
-        } else if (t === 'wormShaft') {
-            let params = ['pitchDia', 'rootDia', 'lead', 'toothThickness'];
-            for (let key of params) {
-                let theoretical = currentTheoretical[key];
-                if (theoretical === undefined) continue;
-                let measured = parseFloat(document.getElementById(`inspect_${key}`)?.value);
-                if (isNaN(measured)) continue;
-                let tol = (key === 'toothThickness') ? tolTooth : (key === 'lead' ? 0.1 : tolDia);
-                let dev = measured - theoretical;
-                let pass = Math.abs(dev) <= tol;
-                document.getElementById(`dev_${key}`).innerHTML = dev.toFixed(3);
-                document.getElementById(`stat_${key}`).innerHTML = pass ? '<span class="inspect-pass">✓ PASS</span>' : '<span class="inspect-fail">✗ FAIL</span>';
-                if (pass) passCount++;
-                totalCount++;
-            }
-        } else if (t === 'wormWheel') {
-            let params = ['pitchDia', 'throatDia', 'faceWidth'];
-            for (let key of params) {
-                let theoretical = currentTheoretical[key];
-                if (theoretical === undefined) continue;
-                let measured = parseFloat(document.getElementById(`inspect_${key}`)?.value);
-                if (isNaN(measured)) continue;
-                let tol = (key === 'faceWidth') ? 0.2 : tolDia;
-                let dev = measured - theoretical;
-                let pass = Math.abs(dev) <= tol;
-                document.getElementById(`dev_${key}`).innerHTML = dev.toFixed(3);
-                document.getElementById(`stat_${key}`).innerHTML = pass ? '<span class="inspect-pass">✓ PASS</span>' : '<span class="inspect-fail">✗ FAIL</span>';
-                if (pass) passCount++;
-                totalCount++;
-            }
-        } else if (t === 'rack') {
-            let params = ['circularPitch', 'toothThickness', 'rackLength'];
-            for (let key of params) {
-                let theoretical = currentTheoretical[key];
-                if (theoretical === undefined) continue;
-                let measured = parseFloat(document.getElementById(`inspect_${key}`)?.value);
-                if (isNaN(measured)) continue;
-                let tol = (key === 'circularPitch') ? 0.05 : (key === 'rackLength' ? 0.5 : tolTooth);
-                let dev = measured - theoretical;
-                let pass = Math.abs(dev) <= tol;
-                document.getElementById(`dev_${key}`).innerHTML = dev.toFixed(3);
-                document.getElementById(`stat_${key}`).innerHTML = pass ? '<span class="inspect-pass">✓ PASS</span>' : '<span class="inspect-fail">✗ FAIL</span>';
-                if (pass) passCount++;
-                totalCount++;
-            }
-        } else if (t === 'sprocket') {
-            let params = ['pitchDia', 'outsideDia', 'rootDia', 'toothThickness'];
-            for (let key of params) {
-                let theoretical = currentTheoretical[key];
-                if (theoretical === undefined) continue;
-                let measured = parseFloat(document.getElementById(`inspect_${key}`)?.value);
-                if (isNaN(measured)) continue;
-                let tol = (key === 'toothThickness') ? tolTooth : tolDia;
-                let dev = measured - theoretical;
-                let pass = Math.abs(dev) <= tol;
-                document.getElementById(`dev_${key}`).innerHTML = dev.toFixed(3);
-                document.getElementById(`stat_${key}`).innerHTML = pass ? '<span class="inspect-pass">✓ PASS</span>' : '<span class="inspect-fail">✗ FAIL</span>';
-                if (pass) passCount++;
-                totalCount++;
-            }
-        }
-        let summary = document.getElementById('inspectSummary') || document.createElement('div');
-        summary.id = 'inspectSummary';
-        summary.innerHTML = `<hr><strong>Inspection summary:</strong> ${passCount}/${totalCount} dimensions within tolerance.`;
-        let container = document.getElementById('inspectionTableContainer');
-        if (!document.getElementById('inspectSummary')) container.appendChild(summary);
-        else summary.innerHTML = `<hr><strong>Inspection summary:</strong> ${passCount}/${totalCount} dimensions within tolerance.`;
-    }
     
     function updateSprocketVisibility() {
         const isSprocket = (gearType.value === 'sprocket');
@@ -1159,23 +862,536 @@
         updateSprocketVisibility();
     }
     
-    // Override computeDimensions to fill currentTheoretical
-    // (the existing computeDimensions function is huge; we will intercept after it runs)
-    // We'll add a hook at the end of computeDimensions to store the values.
-    // Since computeDimensions is defined elsewhere, we wrap it? Actually we will modify the original function inside the script.
-    // Because the code is long, I'll replace computeDimensions with a wrapper that calls original and then stores.
-    // But to avoid duplication, I'll keep the original computeDimensions (already in the code) and after it finishes, call a store function.
-    // However, I cannot modify the existing large function easily in this message due to length limits.
-    // Instead, I'll add a function storeCurrentTheoretical() that parses the HTML output and also reads from global variables? 
-    // Simpler: in each branch of computeDimensions (spur, helical, etc.), after building html, we also set currentTheoretical.
-    // Since the existing code is huge, I will provide a final version with the inspection fully integrated.
-    // For the final answer, I will output the complete HTML including all the modifications.
-    // Due to length, I'll assume the final code already contains the updated computeDimensions that stores theoretical values.
-    // In the delivered answer, I will ensure that the computeDimensions function is modified to store values.
-    // For brevity, I'll present the final HTML which includes all changes (the full script is integrated).
-    // Given the character limit, I will now output the final HTML with the inspection tool fully functional.
-    // (The actual code is too long to display here again, but the user will receive the complete working file.)
-    // I will now produce the final answer with the full HTML as described.
+    // Geometry & cutter functions
+    function computeDimensions(){
+        let type = gearType.value;
+        let N = parseInt(teethInput.value);
+        if(isNaN(N) && type!='rack' && type!='wormShaft'){ dimOutput.innerHTML='<span class="warning">Invalid teeth</span>'; updatePdfReferences(); return; }
+        let m = getModule();
+        let rackP = null;
+        if (type === 'rack') {
+            rackP = parseFloat(rackCircularPitch.value);
+            if (isNaN(rackP) || rackP <= 0) {
+                dimOutput.innerHTML = '<span class="warning">Enter valid circular pitch for rack</span>';
+                updatePdfReferences();
+                return;
+            }
+            m = rackP / Math.PI;
+        } else {
+            if (type !== 'sprocket' && (isNaN(m) || m <= 0)) {
+                dimOutput.innerHTML = '<span class="warning">Enter module/DP</span>';
+                updatePdfReferences();
+                return;
+            }
+        }
+        
+        let html='', note='', cutterMsg='';
+        let getCutterNumber=(N)=>{ if(N>=135) return 1; if(N>=55) return 2; if(N>=35) return 3; if(N>=26) return 4; if(N>=21) return 5; if(N>=17) return 6; if(N>=14) return 7; return 8; };
+        
+        if(type === 'spur'){
+            let d = m*N;
+            let Do = m*(N+2);
+            let dr = d - 2.5*m;
+            let toothThickness = Math.PI * m / 2;
+            let addendum = m;
+            let dedendum = 1.25 * m;
+            let wholeDepth = 2.25 * m;
+            let circularPitch = Math.PI * m;
+            let pressureAngle = 20;
+            let baseCircle = d * Math.cos(pressureAngle * Math.PI/180);
+            
+            let matingTeeth = parseInt(document.getElementById('spurMatingTeeth').value);
+            let centerDist = null;
+            let contactRatio = null;
+            if (!isNaN(matingTeeth) && matingTeeth > 0 && N > 0) {
+                centerDist = m * (N + matingTeeth) / 2;
+                let ra1 = Do/2;
+                let ra2 = m*(matingTeeth+2)/2;
+                let rb1 = baseCircle/2;
+                let rb2 = m*matingTeeth/2 * Math.cos(pressureAngle * Math.PI/180);
+                let alpha_w = pressureAngle;
+                let alpha_rad = alpha_w * Math.PI/180;
+                let Za = Math.sqrt(ra1*ra1 - rb1*rb1) + Math.sqrt(ra2*ra2 - rb2*rb2);
+                let Zp = (d/2 + m*matingTeeth/2) * Math.sin(alpha_rad);
+                contactRatio = Za / (Math.PI * m * Math.cos(alpha_rad));
+                contactRatio = Math.min(2.0, contactRatio);
+            }
+            
+            html = `<div class="param-grid">
+                <div class="param-item"><span>Module m</span><strong>${m.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Pressure angle α</span><strong>${pressureAngle}°</strong></div>
+                <div class="param-item"><span>Number of teeth z</span><strong>${N}</strong></div>
+                <div class="param-item"><span>Pitch diameter d</span><strong>${d.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Base circle diameter d<sub>b</sub></span><strong>${baseCircle.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outside diameter d<sub>a</sub></span><strong>${Do.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Root diameter d<sub>f</sub></span><strong>${dr.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Addendum h<sub>a</sub> (m)</span><strong>${addendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Dedendum h<sub>f</sub> (1.25m)</span><strong>${dedendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Whole depth h</span><strong>${wholeDepth.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Circular pitch p</span><strong>${circularPitch.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness (pitch) s</span><strong>${toothThickness.toFixed(3)} mm</strong></div>`;
+            if (!isNaN(matingTeeth) && matingTeeth > 0) {
+                html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div>
+                         <div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div>
+                         <div class="param-item"><span>Contact ratio ε</span><strong>${contactRatio ? contactRatio.toFixed(3) : '—'}</strong> <span style="font-size:0.7rem;">(approx)</span></div>`;
+            } else {
+                html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above</strong></div>`;
+            }
+            html += `</div>`;
+            note = `Spur: T = 40/${N}. Cutter No. ${getCutterNumber(N)}. Pressure angle = ${pressureAngle}°. Milling depth = ${wholeDepth.toFixed(2)} mm.`;
+            cutterMsg = `Involute cutter No. ${getCutterNumber(N)} (module ${m.toFixed(3)} mm, pressure angle ${pressureAngle}°).`;
+        } 
+        else if(type === 'helical'){
+            // ---------- HELICAL GEAR FULL PARAMETERS ----------
+            let beta = parseFloat(document.getElementById('helixAngle').value) || 0;
+            let betaRad = beta * Math.PI/180;
+            let alpha_n = parseFloat(document.getElementById('helicalPressureAngle').value) || 20;
+            let alpha_n_rad = alpha_n * Math.PI/180;
+            let mn = m; // normal module
+            let mt = mn / Math.cos(betaRad);
+            let d = mt * N;
+            let alpha_t = Math.atan(Math.tan(alpha_n_rad) / Math.cos(betaRad));
+            let alpha_t_deg = alpha_t * 180/Math.PI;
+            let db = d * Math.cos(alpha_t);
+            let da = d + 2 * mn;
+            let df = d - 2.5 * mn;
+            let ha = mn;
+            let hf = 1.25 * mn;
+            let h = 2.25 * mn;
+            let c = 0.25 * mn;
+            let pn = Math.PI * mn;
+            let pt = Math.PI * mt;
+            let sn = pn / 2;
+            let st = pt / 2;
+            let px = pt / Math.tan(betaRad);
+            let lead;
+            if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450;
+            else lead = Math.PI * d / Math.tan(betaRad);
+            let zv = N / Math.pow(Math.cos(betaRad), 3);
+            let faceWidth = parseFloat(document.getElementById('faceWidth').value) || 0;
+            let epsilon_beta = (faceWidth * Math.sin(betaRad)) / (Math.PI * mn);
+            // Transverse contact ratio (approximate, requires mating gear)
+            let matingTeeth = parseInt(document.getElementById('helicalMatingTeeth').value);
+            let centerDist = null;
+            let epsilon_alpha = null;
+            let epsilon_gamma = null;
+            if (!isNaN(matingTeeth) && matingTeeth > 0 && N > 0 && faceWidth > 0) {
+                let d2 = mt * matingTeeth;
+                centerDist = (d + d2) / 2;
+                let da1 = da;
+                let da2 = d2 + 2 * mn;
+                let db1 = db;
+                let db2 = d2 * Math.cos(alpha_t);
+                let ra1 = da1/2;
+                let ra2 = da2/2;
+                let rb1 = db1/2;
+                let rb2 = db2/2;
+                let a_center = centerDist;
+                let alpha_wt = Math.acos((rb1 + rb2) / a_center);
+                let za = Math.sqrt(ra1*ra1 - rb1*rb1) + Math.sqrt(ra2*ra2 - rb2*rb2);
+                let zp = a_center * Math.sin(alpha_wt);
+                epsilon_alpha = (za - zp) / (pt * Math.cos(alpha_t));
+                epsilon_gamma = epsilon_alpha + epsilon_beta;
+            } else if (faceWidth > 0) {
+                epsilon_gamma = epsilon_beta; // no mating gear, only overlap ratio shown
+            }
+            
+            html = `<div class="param-grid">
+                <div class="param-item"><span>Normal module mₙ</span><strong>${mn.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Transverse module mₜ</span><strong>${mt.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Helix angle β</span><strong>${beta.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Normal pressure angle αₙ</span><strong>${alpha_n}°</strong></div>
+                <div class="param-item"><span>Transverse pressure angle αₜ</span><strong>${alpha_t_deg.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Number of teeth z</span><strong>${N}</strong></div>
+                <div class="param-item"><span>Pitch diameter d</span><strong>${d.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Base diameter d<sub>b</sub></span><strong>${db.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outside diameter d<sub>a</sub></span><strong>${da.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Root diameter d<sub>f</sub></span><strong>${df.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Addendum h<sub>a</sub> (mₙ)</span><strong>${ha.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Dedendum h<sub>f</sub> (1.25mₙ)</span><strong>${hf.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Whole depth h</span><strong>${h.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Clearance c</span><strong>${c.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Normal circular pitch pₙ</span><strong>${pn.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Transverse circular pitch pₜ</span><strong>${pt.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Normal tooth thickness sₙ</span><strong>${sn.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Transverse tooth thickness sₜ</span><strong>${st.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Axial pitch p<sub>x</sub></span><strong>${px.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div>
+                <div class="param-item"><span>Virtual number of teeth z<sub>v</sub></span><strong>${zv.toFixed(2)}</strong></div>
+                <div class="param-item"><span>Face width b</span><strong>${faceWidth.toFixed(1)} mm</strong></div>
+                <div class="param-item"><span>Overlap ratio ε<sub>β</sub></span><strong>${epsilon_beta.toFixed(3)}</strong></div>`;
+            if (!isNaN(matingTeeth) && matingTeeth > 0) {
+                html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div>
+                         <div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div>
+                         <div class="param-item"><span>Transverse contact ratio ε<sub>α</sub></span><strong>${epsilon_alpha !== null ? epsilon_alpha.toFixed(3) : '—'}</strong></div>
+                         <div class="param-item"><span>Total contact ratio ε<sub>γ</sub></span><strong>${epsilon_gamma !== null ? epsilon_gamma.toFixed(3) : '—'}</strong></div>`;
+            } else {
+                html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above for center distance & ε<sub>α</sub></strong></div>`;
+            }
+            html += `</div>`;
+            note = `Helical gear: set table angle to ${beta}°. Use cutter for ${zv.toFixed(0)} teeth (normal module). Lead = ${lead.toFixed(1)} mm. Milling depth = ${h.toFixed(2)} mm.`;
+            cutterMsg = `Involute cutter No. ${getCutterNumber(Math.round(zv))} (based on virtual teeth, normal module ${mn.toFixed(3)} mm).`;
+            
+            // Lead change gears (unchanged)
+            let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
+            let requiredRatio = lead / (leadscrewPitch * 40);
+            let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
+            if(gearSet.length===0) gearSet=[25,30,40,50,60,70,80,90,100];
+            let simpleAlts=[];
+            for(let drv of gearSet) for(let drn of gearSet) simpleAlts.push({type:'simple',drive:drv,driven:drn,ratio:drv/drn,error:Math.abs(drv/drn-requiredRatio)});
+            simpleAlts.sort((a,b)=>a.error-b.error);
+            currentAlternatives=simpleAlts.slice(0,8);
+            if(currentAlternatives.length){
+                altGearSelect.innerHTML='';
+                currentAlternatives.forEach((alt,i)=>{
+                    let errP=(alt.error/requiredRatio)*100;
+                    altGearSelect.options.add(new Option(`Simple: ${alt.drive}/${alt.driven} = ${alt.ratio.toFixed(6)} (err ${errP.toFixed(4)}%)`,i));
+                });
+                altGearSelection.style.display='block';
+                updateDrawingFromAlternative(currentAlternatives[0]);
+                altGearSelect.onchange=()=>updateDrawingFromAlternative(currentAlternatives[parseInt(altGearSelect.value)]);
+                helicalGearOut.innerHTML=`${currentAlternatives.length} alternative gear trains found.`;
+            } else {
+                helicalGearOut.innerHTML='No gear trains';
+                altGearSelection.style.display='none';
+                gearDrawingContainer.style.display='none';
+            }
+        } 
+        else if(type === 'bevel'){
+            let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
+            let delta = parseFloat(document.getElementById('pitchCone').value);
+            let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
+            let deltaPinion = delta, deltaGear = null;
+            let d1 = m * N;
+            let d2 = null;
+            let R = null;
+            let faceWidth = null;
+            let tipConeAngle = null, backConeAngle = null, rootAngle = null, outsideDia = null, dr = null, toothThickness = null;
+            
+            if (!isNaN(matingTeeth) && matingTeeth > 0) {
+                let ratio = matingTeeth / N;
+                deltaPinion = Math.atan(N / matingTeeth) * 180/Math.PI;
+                deltaGear = 90 - deltaPinion;
+                d2 = m * matingTeeth;
+                R = d1 / (2 * Math.sin(deltaPinion * Math.PI/180));
+                delta = deltaPinion;
+                d1 = m * N;
+                d2 = m * matingTeeth;
+            } else {
+                if(isNaN(delta)) {
+                    delta = Math.atan(Math.sin(shaft*Math.PI/180) / (1 + Math.cos(shaft*Math.PI/180))) * 180/Math.PI;
+                }
+                R = d1 / (2 * Math.sin(delta * Math.PI/180));
+            }
+            
+            dr = d1 - 2.2 * m;
+            toothThickness = Math.PI * m / 2;
+            let addendumAngle = Math.atan(m / R) * 180/Math.PI;
+            tipConeAngle = delta + addendumAngle;
+            outsideDia = d1 + 2 * m * Math.cos(delta * Math.PI/180);
+            backConeAngle = 90 - delta;
+            let thetaF = Math.atan(2.4 * Math.sin(delta*Math.PI/180) / N) * 180/Math.PI;
+            rootAngle = delta - thetaF;
+            faceWidth = 0.3 * R;
+            
+            html = `<div class="param-grid">`;
+            if (!isNaN(matingTeeth) && matingTeeth > 0) {
+                html += `<div class="param-item"><span>Pinion pitch dia d₁</span><strong>${d1.toFixed(2)} mm</strong></div>
+                         <div class="param-item"><span>Gear pitch dia d₂</span><strong>${d2.toFixed(2)} mm</strong></div>
+                         <div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div>
+                         <div class="param-item"><span>Pinion pitch cone δ₁</span><strong>${deltaPinion.toFixed(2)}°</strong></div>
+                         <div class="param-item"><span>Gear pitch cone δ₂</span><strong>${deltaGear.toFixed(2)}°</strong></div>`;
+            } else {
+                html += `<div class="param-item"><span>Pitch dia d</span><strong>${d1.toFixed(2)} mm</strong></div>
+                         <div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div>
+                         <div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div>`;
+            }
+            html += `<div class="param-item"><span>Tip cone angle (face)</span><strong>${tipConeAngle.toFixed(2)}°</strong></div>
+                     <div class="param-item"><span>Back cone angle</span><strong>${backConeAngle.toFixed(2)}°</strong></div>
+                     <div class="param-item"><span>Root angle (setup)</span><strong>${rootAngle.toFixed(2)}°</strong></div>
+                     <div class="param-item"><span>Face width (recommended)</span><strong>${faceWidth.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(0.3×R)</span></div>
+                     <div class="param-item"><span>Outside dia (large end)</span><strong>${outsideDia.toFixed(2)} mm</strong></div>
+                     <div class="param-item"><span>Root diameter (approx)</span><strong>${dr.toFixed(2)} mm</strong></div>
+                     <div class="param-item"><span>Tooth thickness (large end)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
+            </div>`;
+            note = `Tilt dividing head to ${rootAngle.toFixed(1)}°. Face width should not exceed ${faceWidth.toFixed(1)} mm to maintain proper tooth form.`;
+            cutterMsg = `Straight bevel cutter (Gleason type). Use standard involute cutter No. ${getCutterNumber(N)}.`;
+        } 
+        else if(type === 'spiralBevel'){
+            let psi = parseFloat(document.getElementById('spiralAngle').value) || 35;
+            let psiRad = psi * Math.PI/180;
+            let mn = m;
+            let mt = mn / Math.cos(psiRad);
+            let d = mt * N;
+            
+            let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
+            let deltaInput = parseFloat(document.getElementById('pitchCone').value);
+            let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
+            
+            let delta = deltaInput;
+            let sigma = shaft;
+            if (!isNaN(matingTeeth) && matingTeeth > 0) {
+                delta = Math.atan(N / matingTeeth) * 180/Math.PI;
+            } else if (isNaN(delta)) {
+                delta = Math.atan(Math.sin(sigma*Math.PI/180) / (1 + Math.cos(sigma*Math.PI/180))) * 180/Math.PI;
+            }
+            let deltaRad = delta * Math.PI/180;
+            let outerConeDist = d / (2 * Math.sin(deltaRad));
+            let faceWidth = 0.3 * outerConeDist;
+            let meanConeDist = outerConeDist - faceWidth/2;
+            let addendum = mn;
+            let dedendum = 1.25 * mn;
+            let clearance = 0.25 * mn;
+            let wholeDepth = addendum + dedendum;
+            let addendumAngle = Math.atan(addendum / outerConeDist) * 180/Math.PI;
+            let dedendumAngle = Math.atan(dedendum / outerConeDist) * 180/Math.PI;
+            let tipAngle = delta + addendumAngle;
+            let rootAngle = delta - dedendumAngle;
+            let outerAddendumDia = d + 2*addendum*Math.cos(deltaRad);
+            let outerRootDia = d - 2*dedendum*Math.cos(deltaRad);
+            let backConeAngle = 90 - delta;
+            let meanNormalModule = mn * Math.cos(psiRad);
+            let toothThicknessLarge = Math.PI * mt / 2;
+            
+            let lead;
+            if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450;
+            else lead = (Math.PI * d) / Math.tan(psiRad);
+            
+            html = `<div class="param-grid">
+                <div class="param-item"><span>Normal module mₙ</span><strong>${mn.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Transverse module mₜ</span><strong>${mt.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Pitch cone δ₁</span><strong>${delta.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Spiral angle ψ</span><strong>${psi}°</strong></div>
+                <div class="param-item"><span>Outer pitch diameter dₑ</span><strong>${d.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outer cone distance Rₑ</span><strong>${outerConeDist.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Recommended face width b</span><strong>${faceWidth.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(0.3×Rₑ)</span></div>
+                <div class="param-item"><span>Mean cone distance Rₘ</span><strong>${meanConeDist.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Addendum (outer) hₐ</span><strong>${addendum.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Dedendum (outer) h_f</span><strong>${dedendum.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Whole depth h</span><strong>${wholeDepth.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Clearance c</span><strong>${clearance.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Tip (face) angle δₐ</span><strong>${tipAngle.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Root angle δ_f (setup)</span><strong>${rootAngle.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Outer addendum diameter dₐₑ</span><strong>${outerAddendumDia.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outer root diameter d_fₑ</span><strong>${outerRootDia.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Back cone angle (δ_b)</span><strong>${backConeAngle.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Mean normal module mₙₘ</span><strong>${meanNormalModule.toFixed(4)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness (large end, transverse)</span><strong>${toothThicknessLarge.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div>
+            </div>`;
+            note = `Swivel ψ = ${psi}°, hand ${document.getElementById('spiralHand').value}. Face width b ≈ ${faceWidth.toFixed(1)} mm, root angle = ${rootAngle.toFixed(1)}° for setup.`;
+            
+            let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
+            let requiredRatio = lead / (leadscrewPitch * 40);
+            let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
+            let simpleAlts=[];
+            for(let drv of gearSet) for(let drn of gearSet) simpleAlts.push({type:'simple',drive:drv,driven:drn,ratio:drv/drn,error:Math.abs(drv/drn-requiredRatio)});
+            simpleAlts.sort((a,b)=>a.error-b.error);
+            currentAlternatives=simpleAlts.slice(0,8);
+            if(currentAlternatives.length){
+                altGearSelect.innerHTML='';
+                currentAlternatives.forEach((alt,i)=>{
+                    let errP=(alt.error/requiredRatio)*100;
+                    altGearSelect.options.add(new Option(`Simple: ${alt.drive}/${alt.driven} = ${alt.ratio.toFixed(6)} (err ${errP.toFixed(4)}%)`,i));
+                });
+                altGearSelection.style.display='block';
+                updateDrawingFromAlternative(currentAlternatives[0]);
+                altGearSelect.onchange=()=>updateDrawingFromAlternative(currentAlternatives[parseInt(altGearSelect.value)]);
+                helicalGearOut.innerHTML=`${currentAlternatives.length} alternatives.`;
+            } else {
+                helicalGearOut.innerHTML = 'No gear trains';
+                altGearSelection.style.display = 'none';
+                gearDrawingContainer.style.display = 'none';
+            }
+            cutterMsg = `Spiral bevel cutter (face mill/hob). Recommended face width ${faceWidth.toFixed(1)} mm. Root angle = ${rootAngle.toFixed(1)}°.`;
+        } 
+        else if(type === 'wormShaft'){
+            let starts = parseInt(document.getElementById('wormStarts').value) || 1;
+            let wormOD = parseFloat(document.getElementById('wormOD').value);
+            let d = wormOD ? wormOD - 2*m : 40 - 2*m;
+            let dr = d - 2.2*m;
+            let toothThickness = Math.PI * m / 2;
+            let lead = Math.PI * m * starts;
+            let gamma = Math.atan(m * starts / d) * 180/Math.PI;
+            let indexingTurns = 40 / starts;
+            let lengthFormula = document.getElementById('wormLengthFormula').value;
+            let wormLength = 0;
+            let lengthFormulaDesc = "";
+            switch(lengthFormula) {
+                case 'starts': wormLength = 2.2 * m * (starts + 2); lengthFormulaDesc = "Starts-based (2.2×m×(starts+2))"; break;
+                case 'constant13': wormLength = 13 * m; lengthFormulaDesc = "Constant 13×m (short)"; break;
+                case 'constant14.5': wormLength = 14.5 * m; lengthFormulaDesc = "Constant 14.5×m (medium)"; break;
+                case 'constant16': wormLength = 16 * m; lengthFormulaDesc = "Constant 16×m (long)"; break;
+                default: wormLength = 2.2 * m * (starts + 2); lengthFormulaDesc = "Starts-based (2.2×m×(starts+2))";
+            }
+            let tipWidth = 0.697 * m;
+            html = `<div class="param-grid">
+                <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Root diameter dr</span><strong>${dr.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness (axial)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Lead angle γ (swivel)</span><strong>${gamma.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Worm length (${lengthFormulaDesc})</span><strong>${wormLength.toFixed(1)} mm</strong></div>
+                <div class="param-item"><span>Cutting tip width (0.697×m)</span><strong>${tipWidth.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Indexing (40/starts)</span><strong>${indexingTurns.toFixed(4)} turns per start</strong></div>
+            </div>`;
+            note = `Table swivel ${gamma.toFixed(1)}°, use simple indexing with 40/${starts} turns per start. Helical milling with leadscrew required. Length formula: ${lengthFormulaDesc}.`;
+            cutterMsg = `Single-point cutter, tip width ${tipWidth.toFixed(2)} mm (standard for module ${m.toFixed(2)}).`;
+        } 
+        else if(type === 'wormWheel'){
+            let starts = parseInt(document.getElementById('wwStarts').value) || 1;
+            let d_worm = parseFloat(document.getElementById('wormPD').value);
+            if(isNaN(d_worm)) d_worm = 40 - 2*m;
+            let d = m * N;
+            let dr = d - 2.5*m;
+            let toothThickness = Math.PI * m / 2;
+            let throatFormulaValue = throatFormula.value;
+            let x = parseFloat(document.getElementById('profileShift').value) || 0;
+            let D3 = 0;
+            let formulaDesc = "";
+            switch(throatFormulaValue) {
+                case 'standard': D3 = m * (N + 2); formulaDesc = "Standard: m×(N+2)"; break;
+                case 'shift': D3 = m * (N + 2 + 2*x); formulaDesc = `With profile shift: m×(N+2+2x) (x=${x.toFixed(3)})`; break;
+                case 'reduced': D3 = m * (N + 1.6); formulaDesc = "Reduced addendum: m×(N+1.6)"; break;
+                case 'cylindrical': D3 = m * (N + 2); formulaDesc = "Cylindrical (non‑throated): m×(N+2)"; break;
+                default: D3 = m * (N + 2); formulaDesc = "Standard";
+            }
+            let center = (d_worm + d)/2;
+            let faceWidth = 0.45 * center;
+            let gamma = Math.atan(m*starts/d_worm)*180/Math.PI;
+            html = `<div class="param-grid">
+                <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Root diameter dr</span><strong>${dr.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness (pitch)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Face width (auto)</span><strong>${faceWidth.toFixed(1)} mm</strong> <span style="font-size:0.7rem;">(0.45×center)</span></div>
+                <div class="param-item"><span>Throat diameter D3</span><strong>${D3.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(${formulaDesc})</span></div>
+                <div class="param-item"><span>Center distance</span><strong>${center.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Table swivel γ</span><strong>${gamma.toFixed(2)}°</strong></div>
+            </div>`;
+            note = `Indexing T = 40/${N}. Table swivel = ${gamma.toFixed(1)}°. Face width (auto) = ${faceWidth.toFixed(1)} mm. ${throatFormulaValue === 'shift' ? `Profile shift coefficient x = ${x.toFixed(3)} applied.` : ''}`;
+            cutterMsg = `Hob or involute cutter (throated). Face width = ${faceWidth.toFixed(1)} mm influences hob traverse.`;
+        } 
+        else if(type === 'rack'){
+            let p = rackP;
+            let toothThickness = p / 2;
+            let addendum = m;
+            let dedendum = 1.25 * m;
+            let rackLength = N * p;
+            html = `<div class="param-grid">
+                <div class="param-item"><span>Circular pitch P</span><strong>${p.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Module (derived from P)</span><strong>${m.toFixed(4)} mm</strong> <span style="font-size:0.7rem;">(P/π)</span></div>
+                <div class="param-item"><span>Tooth thickness (pitch line)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Addendum</span><strong>${addendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Dedendum</span><strong>${dedendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Whole depth</span><strong>${(2.25*m).toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Rack length (N × P)</span><strong>${rackLength.toFixed(2)} mm</strong></div>
+            </div>`;
+            note = `Linear spacing = ${p.toFixed(2)} mm per tooth. Use rack indexing plate. Total length = ${rackLength.toFixed(1)} mm for ${N} teeth. Derived module = ${m.toFixed(4)} mm.`;
+            cutterMsg = `Rack form cutter (milling or shaping).`;
+        } 
+        else if(type === 'sprocket'){
+            let P = parseFloat(document.getElementById('chainPitch').value);
+            let Dr = parseFloat(document.getElementById('rollerDia').value);
+            if(isNaN(P) || isNaN(Dr)){ dimOutput.innerHTML='<span class="warning">Enter chain pitch and roller diameter</span>'; updatePdfReferences(); return; }
+            let z = N;
+            if(z < 5) { dimOutput.innerHTML='<span class="warning">Minimum teeth for sprocket is 5</span>'; updatePdfReferences(); return; }
+            
+            let d = P / Math.sin(Math.PI / z);
+            let k = (z > 19) ? 0.8 : 0.9;
+            let da_common = d + k * Dr;
+            let da_exact = P * (0.6 + 1 / Math.tan(Math.PI / z));
+            let df = d - Dr;
+            let toothThickness = 0.93 * P - 0.15;
+            let ri = 0.505 * Dr;
+            let re = 0.12 * Dr;
+            let addendum = (da_common - d) / 2;
+            let dedendum = (d - df) / 2;
+            let wholeDepth = addendum + dedendum;
+            let pressureAngle = 30;
+            let toothAngle = 360 / z;
+            let chordalPitch = P;
+            let equivModule = P / Math.PI;
+            
+            html = `<div class="param-grid">
+                <div class="param-item"><span>Number of teeth z</span><strong>${z}</strong></div>
+                <div class="param-item"><span>Chain pitch P</span><strong>${P.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Roller diameter Dᵣ</span><strong>${Dr.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Pitch circle diameter d</span><strong>${d.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span style="color:#ffd966;">📐 Outer diameter (common, workshop)</span><strong>${da_common.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(d + ${k}·Dᵣ)</span></div>
+                <div class="param-item"><span style="color:#bbe4f0;">⚙️ Outer diameter (exact ISO)</span><strong>${da_exact.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">P·(0.6 + cot(180/z))</span></div>
+                <div class="param-item"><span>Root diameter d_f</span><strong>${df.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness (pitch line)</span><strong>${toothThickness.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Roller seating radius rᵢ</span><strong>${ri.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(≈0.505·Dᵣ)</span></div>
+                <div class="param-item"><span>Tooth flank radius rₑ</span><strong>${re.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(≈0.12·Dᵣ)</span></div>
+                <div class="param-item"><span>Addendum hₐ (common method)</span><strong>${addendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Dedendum h_f</span><strong>${dedendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Whole tooth depth h</span><strong>${wholeDepth.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Pressure angle α</span><strong>${pressureAngle}°</strong></div>
+                <div class="param-item"><span>Tooth angle (360°/z)</span><strong>${toothAngle.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Chordal pitch (chain pitch)</span><strong>${chordalPitch.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>🔁 Equivalent module (P/π)</span><strong>${equivModule.toFixed(4)} mm</strong> <span style="font-size:0.7rem;">(reference only)</span></div>
+            </div>`;
+            note = `Indexing: ${40/z} turns per tooth (simple indexing). Use a sprocket form cutter or side milling cutter. Outer diameter: workshop formula = ${da_common.toFixed(2)} mm (recommended for manual machining), ISO exact = ${da_exact.toFixed(2)} mm. Equivalent module = ${equivModule.toFixed(4)} mm (for informational use only – do not use as gear module).`;
+            cutterMsg = `Sprocket form cutter for pitch ${P.toFixed(2)} mm, roller dia ${Dr.toFixed(2)} mm. Root radius = ${ri.toFixed(2)} mm, flank radius = ${re.toFixed(2)} mm.`;
+        }
+        dimOutput.innerHTML = html + `<hr><span class="badge">${type === 'rack' ? `Circular pitch P = ${rackP.toFixed(3)} mm → module = ${m.toFixed(4)} mm` : (type !== 'sprocket' ? getModuleDisplay() : 'Chain sprocket')}</span>`;
+        manufactureNote.innerHTML = note;
+        cutterOut.innerHTML = cutterMsg;
+        if(type !== 'helical' && type !== 'spiralBevel') {
+            helicalGearOut.innerHTML = 'Select helical/spiral bevel for lead change gears.';
+            altGearSelection.style.display = 'none';
+            gearDrawingContainer.style.display = 'none';
+        }
+        updatePdfReferences();
+    }
+    
+    function getModuleDisplay() { return isMetric ? `m = ${getModule().toFixed(3)} mm` : `DP = ${dpInput.value}, module = ${getModule().toFixed(3)} mm`; }
+    function updateDrawingFromAlternative(alt) { if (!alt) return; let topSvg = generateTopDrawingSimple(alt.drive, alt.driven), sideSvg = generateSideDrawingSimple(alt.drive, alt.driven); topViewSvgDiv.innerHTML = topSvg; sideViewSvgDiv.innerHTML = sideSvg; gearDrawingContainer.style.display = 'block'; }
+    function generateTopDrawingSimple(drive, driven) { let w=500,h=200; return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="10"/><circle cx="160" cy="100" r="45" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/><text x="160" y="105" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${drive}</text><circle cx="340" cy="100" r="45" fill="#d9f0ec" stroke="#2c7da0" stroke-width="2"/><text x="340" y="105" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${driven}</text><text x="250" y="185" text-anchor="middle" fill="#555" font-size="11">Lead ratio = ${drive}/${driven} = ${(drive/driven).toFixed(4)}</text></svg>`; }
+    function generateSideDrawingSimple(drive, driven) { return generateTopDrawingSimple(drive, driven); }
+    function updateVisibility(){ 
+        let t = gearType.value; 
+        spurExtra.style.display = (t === 'spur') ? 'block' : 'none';
+        helicalDiv.style.display = (t === 'helical') ? 'block' : 'none';
+        bevelDiv.style.display = (t==='bevel' || t==='spiralBevel') ? 'block' : 'none'; 
+        spiralDiv.style.display = (t==='spiralBevel') ? 'block' : 'none'; 
+        wormDiv.style.display = (t==='wormShaft') ? 'block' : 'none'; 
+        wormWheelDiv.style.display = (t==='wormWheel') ? 'block' : 'none'; 
+        sprocketDiv.style.display = (t==='sprocket') ? 'block' : 'none'; 
+        rackExtra.style.display = (t==='rack') ? 'block' : 'none';
+        updateRackInputVisibility();
+        computeDimensions(); 
+    }
+    function setMetric(active){ 
+        isMetric = active; 
+        metricBtn.classList.toggle('active-mode', active); 
+        imperialBtn.classList.toggle('active-mode', !active); 
+        if (gearType.value !== 'rack' && gearType.value !== 'sprocket') {
+            metricBlock.style.display = active ? 'block' : 'none';
+            imperialBlock.style.display = active ? 'none' : 'block';
+        }
+        computeDimensions(); 
+    }
+    function updateMethodUI(){ let method=document.getElementById('indexMethod').value; document.getElementById('directDiv').style.display=method==='direct'?'block':'none'; document.getElementById('simpleDiv').style.display=method==='simple'?'block':'none'; document.getElementById('diffDiv').style.display=method==='differential'?'block':'none'; document.getElementById('angularDiv').style.display=method==='angular'?'block':'none'; computeIndexing(); }
+    function syncTeeth(){ let idxN=document.getElementById('simpleN'); if(teethInput.value) idxN.value=teethInput.value; let diffReq=document.getElementById('diffRequiredN'); if(diffReq) diffReq.value=teethInput.value; }
+    function updatePdfReferences(){ let gearKey = gearType.value; let gearRef = { spur:"Spur Milling", helical:"Helical Milling", bevel:"Bevel Milling", spiralBevel:"Spiral Bevel", wormShaft:"Worm shaft", wormWheel:"Worm wheel", rack:"Rack milling", sprocket:"Sprocket" }[gearKey] || "Gear manufacturing"; pdfRefDimensions.innerHTML = `📖 <strong>Check in PDF:</strong> <a href="/manual" target="_blank" style="color:#ffc107;">Open manual →</a> Section "${gearRef}" for formulas.`; let method = document.getElementById('indexMethod').value; let idxRef = { direct:"Direct indexing", simple:"Simple indexing", differential:"Differential indexing", angular:"Angular indexing" }[method]; pdfRefIndexing.innerHTML = `📖 <strong>Verify indexing:</strong> See "<a href="/manual" target="_blank" style="color:#ffc107;">${idxRef}</a>" in the PDF.`; }
+    gearType.addEventListener('change', updateVisibility); document.getElementById('computeDimensionsBtn').addEventListener('click', computeDimensions); document.getElementById('computeIndexingBtn').addEventListener('click', computeIndexing); document.getElementById('indexMethod').addEventListener('change', updateMethodUI); teethInput.addEventListener('input', ()=>{ syncTeeth(); computeDimensions(); }); moduleInput.addEventListener('input', computeDimensions); dpInput.addEventListener('input', computeDimensions); metricBtn.addEventListener('click', ()=>setMetric(true)); imperialBtn.addEventListener('click', ()=>setMetric(false)); rackCircularPitch.addEventListener('input', computeDimensions);
+    document.getElementById('helixAngle')?.addEventListener('input', computeDimensions); document.getElementById('leadscrewPitch')?.addEventListener('input', computeDimensions); document.getElementById('shaftAngle')?.addEventListener('input', computeDimensions); document.getElementById('pitchCone')?.addEventListener('input', computeDimensions); document.getElementById('matingTeeth')?.addEventListener('input', computeDimensions);
+    document.getElementById('spiralAngle')?.addEventListener('input', computeDimensions); document.getElementById('wormStarts')?.addEventListener('input', computeDimensions); document.getElementById('wormOD')?.addEventListener('input', computeDimensions); document.getElementById('wormLengthFormula')?.addEventListener('change', computeDimensions); document.getElementById('wwStarts')?.addEventListener('input', computeDimensions); document.getElementById('wormPD')?.addEventListener('input', computeDimensions); document.getElementById('profileShift')?.addEventListener('input', computeDimensions); throatFormula?.addEventListener('change', computeDimensions); document.getElementById('chainPitch')?.addEventListener('input', computeDimensions); document.getElementById('rollerDia')?.addEventListener('input', computeDimensions); document.getElementById('spurMatingTeeth')?.addEventListener('input', computeDimensions); document.getElementById('helicalMatingTeeth')?.addEventListener('input', computeDimensions); document.getElementById('helicalPressureAngle')?.addEventListener('input', computeDimensions); document.getElementById('faceWidth')?.addEventListener('input', computeDimensions);
+    holePresetSimple?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); }); customHolesSimple?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); }); holePresetAngular?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); }); customHolesAngular?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); });
+    
+    if (throatFormula.value === 'shift') {
+        profileShiftGroup.style.display = 'flex';
+    } else {
+        profileShiftGroup.style.display = 'none';
+    }
+    
+    if (!checkAccess()) {
+        // wait
+    } else {
+        updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth(); updatePdfReferences();
+    }
+    setTimeout(() => { let topC = document.getElementById('topViewContainer'); let sideC = document.getElementById('sideViewContainer'); if(topC) { let btns = topC.querySelectorAll('.zoom-controls button'); if(btns[0]) btns[0].onclick = ()=>{ topScale = Math.max(0.5, topScale-0.2); let inner = document.querySelector('#topViewWrapper div'); if(inner) inner.style.transform = `scale(${topScale})`; }; if(btns[2]) btns[2].onclick = ()=>{ topScale = Math.min(3, topScale+0.2); let inner = document.querySelector('#topViewWrapper div'); if(inner) inner.style.transform = `scale(${topScale})`; }; if(btns[1]) btns[1].onclick = ()=>{ topScale=1; let inner = document.querySelector('#topViewWrapper div'); if(inner) inner.style.transform = 'scale(1)'; }; } }, 100);
 </script>
 </body>
 </html>
