@@ -26,6 +26,7 @@
             --dark-border: #334155;
             --dark-text: #e2e8f0;
             --dark-muted: #94a3b8;
+            --warning: #f59e0b;
             --radius-sm: 10px;
             --radius: 14px;
             --radius-lg: 20px;
@@ -49,9 +50,8 @@
         .header-actions { display: flex; gap: 10px; flex-wrap: wrap; position: relative; z-index: 1; }
         .print-btn { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border: none; border-radius: 999px; padding: 11px 22px; font-weight: 600; cursor: pointer; font-size: 0.88rem; text-align: center; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; box-shadow: var(--shadow-accent); transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease; }
         .print-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(14, 165, 233, 0.4); filter: brightness(1.05); }
-        .print-btn:active { transform: translateY(0); }
         .sub { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 22px; padding: 14px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); font-size: 0.82rem; color: var(--text-muted); font-weight: 500; }
-        .sub .chip { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 999px; background: var(--accent-light); color: var(--accent-dark); font-weight: 600; font-size: 0.78rem; letter-spacing: 0.01em; }
+        .sub .chip { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 999px; background: var(--accent-light); color: var(--accent-dark); font-weight: 600; font-size: 0.78rem; }
         .sub .chip.violet { background: #ede9fe; color: #6d28d9; }
         .sub .chip.emerald { background: #d1fae5; color: #047857; }
         .sub .divider { color: var(--border-strong); font-weight: 300; }
@@ -59,106 +59,85 @@
         @media (max-width: 1100px) { .flex-grid { grid-template-columns: 1fr; } }
         .card { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow); padding: 26px; border: 1px solid var(--border); position: relative; overflow: hidden; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3)); opacity: 0.9; }
-        .card h2 { font-size: 1.05rem; font-weight: 700; margin: 0 0 22px; color: var(--text); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+        .card h2 { font-size: 1.05rem; font-weight: 700; margin: 0 0 22px; color: var(--text); display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
         .card h2 .icon-badge { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--accent-light), #cffafe); color: var(--accent-dark); font-size: 1rem; flex-shrink: 0; }
         .input-group { margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-        .input-group label { width: 160px; font-weight: 600; color: var(--text); font-size: 0.84rem; letter-spacing: -0.005em; }
-        input[type="number"], input[type="text"], input[type="password"], select { background: var(--surface-2); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 10px 14px; flex: 1; min-width: 120px; font-size: 0.88rem; color: var(--text); transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease; font-weight: 500; outline: none; }
-        input:hover, select:hover { border-color: var(--border-strong); }
-        input:focus, select:focus { border-color: var(--accent); background: #ffffff; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.13); }
+        .input-group label { width: 160px; font-weight: 600; color: var(--text); font-size: 0.84rem; }
+        input[type="number"], input[type="text"], input[type="password"], select { background: var(--surface-2); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 10px 14px; flex: 1; min-width: 120px; font-size: 0.88rem; color: var(--text); font-weight: 500; outline: none; transition: all 0.15s ease; }
+        input:focus, select:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.13); }
         select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; }
-        .small-btn { background: var(--surface-3); border: 1px solid var(--border-strong); border-radius: 999px; padding: 8px 14px; color: var(--text); font-weight: 600; cursor: pointer; font-size: 0.76rem; width: auto; margin: 0; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 4px; }
+        .small-btn { background: var(--surface-3); border: 1px solid var(--border-strong); border-radius: 999px; padding: 8px 14px; color: var(--text); font-weight: 600; cursor: pointer; font-size: 0.76rem; width: auto; margin: 0; }
         .small-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); }
-        button:not(.small-btn):not(.zoom-controls button):not(.print-btn) { background: linear-gradient(135deg, #0f172a, #1e293b); border: none; border-radius: var(--radius); padding: 13px 20px; color: white; font-weight: 600; cursor: pointer; margin-top: 10px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; font-size: 0.9rem; width: 100%; letter-spacing: 0.01em; box-shadow: var(--shadow); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-        button:not(.small-btn):not(.zoom-controls button):not(.print-btn):hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18); filter: brightness(1.08); }
-        button:not(.small-btn):not(.zoom-controls button):not(.print-btn):active { transform: translateY(0); }
-        #computeDimensionsBtn, #computeIndexingBtn { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); box-shadow: var(--shadow-accent); }
-        #computeDimensionsBtn:hover, #computeIndexingBtn:hover { box-shadow: 0 12px 24px rgba(14, 165, 233, 0.35); }
+        button:not(.small-btn):not(.zoom-controls button):not(.print-btn) { background: linear-gradient(135deg, #0f172a, #1e293b); border: none; border-radius: var(--radius); padding: 13px 20px; color: white; font-weight: 600; cursor: pointer; margin-top: 10px; font-size: 0.9rem; width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow); }
+        button:not(.small-btn):not(.zoom-controls button):not(.print-btn):hover { transform: translateY(-1px); filter: brightness(1.08); }
+        #computeDimensionsBtn, #computeIndexingBtn { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); }
         .mode-switch { display: flex; gap: 4px; margin-bottom: 20px; padding: 4px; background: var(--surface-3); border-radius: 999px; border: 1px solid var(--border); }
-        .mode-chip { padding: 9px 16px; border-radius: 999px; cursor: pointer; font-weight: 600; text-align: center; flex: 1; font-size: 0.83rem; color: var(--text-muted); transition: all 0.18s ease; user-select: none; }
-        .mode-chip:hover { color: var(--text); }
-        .mode-chip.active-mode { background: #ffffff; color: var(--accent-dark); box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
-        .result-box { background: linear-gradient(160deg, #0b1120 0%, #101a2e 100%); border-radius: var(--radius-lg); padding: 18px 20px; margin-top: 16px; color: var(--dark-text); font-size: 0.85rem; overflow-x: auto; border: 1px solid var(--dark-border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.04); }
+        .mode-chip { padding: 9px 16px; border-radius: 999px; cursor: pointer; font-weight: 600; text-align: center; flex: 1; font-size: 0.83rem; color: var(--text-muted); }
+        .mode-chip.active-mode { background: #fff; color: var(--accent-dark); box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+        .result-box { background: linear-gradient(160deg, #0b1120 0%, #101a2e 100%); border-radius: var(--radius-lg); padding: 18px 20px; margin-top: 16px; color: var(--dark-text); font-size: 0.85rem; overflow-x: auto; border: 1px solid var(--dark-border); }
         .result-box h3 { margin: 0 0 12px; font-size: 0.82rem; color: #7dd3fc; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
         .result-box h3::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2); }
         .param-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
         .param-item { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(148, 163, 184, 0.22); padding: 6px 0; flex-wrap: wrap; gap: 6px; font-size: 0.82rem; }
         .param-item span:first-child { color: var(--dark-muted); }
         .param-item strong { color: #f1f5f9; font-weight: 600; font-variant-numeric: tabular-nums; }
-        .badge { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border-radius: 999px; padding: 4px 14px; font-size: 0.72rem; display: inline-block; font-weight: 600; letter-spacing: 0.02em; box-shadow: var(--shadow-accent); margin-top: 6px; }
-        .warning { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #78350f; padding: 10px 14px; border-radius: var(--radius); font-size: 0.84rem; border: 1px solid #fcd34d; font-weight: 500; display: inline-block; }
+        .badge { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border-radius: 999px; padding: 4px 14px; font-size: 0.72rem; display: inline-block; font-weight: 600; margin-top: 6px; }
+        .warning { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #78350f; padding: 10px 14px; border-radius: var(--radius); font-size: 0.84rem; border: 1px solid #fcd34d; display: inline-block; }
         table.indexing-tab { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 6px; }
         .indexing-tab th { color: #7dd3fc; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.68rem; padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--dark-border); }
         .indexing-tab td { padding: 8px 6px; text-align: left; border-bottom: 1px solid rgba(51, 65, 85, 0.6); color: var(--dark-text); font-variant-numeric: tabular-nums; }
-        .indexing-tab tr:hover td { background: rgba(14, 165, 233, 0.07); }
         hr { margin: 14px 0; border: none; border-top: 1px solid var(--dark-border); }
         .small-note { font-size: 0.74rem; color: var(--text-light); margin-top: 8px; line-height: 1.5; }
-        .result-box .small-note { color: var(--dark-muted); }
         .gear-drawing { background: var(--surface-2); border-radius: var(--radius-lg); padding: 16px; margin-top: 16px; border: 1px solid var(--border); text-align: center; overflow-x: auto; }
-        .drawing-container { margin-bottom: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: #ffffff; padding: 12px; position: relative; box-shadow: var(--shadow-sm); }
+        .drawing-container { margin-bottom: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; padding: 12px; box-shadow: var(--shadow-sm); }
         .drawing-container:last-child { margin-bottom: 0; }
-        .drawing-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; letter-spacing: -0.005em; }
+        .drawing-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         .zoom-controls { display: flex; gap: 4px; background: var(--surface-3); padding: 4px; border-radius: 999px; border: 1px solid var(--border); }
-        .zoom-controls button { background: transparent; border: none; border-radius: 999px; padding: 5px 12px; font-size: 0.78rem; margin: 0; width: auto; cursor: pointer; color: var(--text-muted); font-weight: 600; transition: all 0.15s ease; }
-        .zoom-controls button:hover { background: #ffffff; color: var(--accent-dark); box-shadow: var(--shadow-sm); }
-        .svg-wrapper { overflow: auto; text-align: center; background: #ffffff; border-radius: var(--radius-sm); transition: transform 0.1s ease; }
-        .svg-wrapper svg { max-width: 100%; height: auto; display: block; margin: 0 auto; cursor: grab; }
+        .zoom-controls button { background: transparent; border: none; border-radius: 999px; padding: 5px 12px; font-size: 0.78rem; margin: 0; width: auto; cursor: pointer; color: var(--text-muted); font-weight: 600; }
+        .zoom-controls button:hover { background: #fff; color: var(--accent-dark); }
+        .svg-wrapper { overflow: auto; text-align: center; background: #fff; border-radius: var(--radius-sm); }
+        .svg-wrapper svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
         .alt-gears { margin-top: 12px; padding: 14px; background: rgba(14, 165, 233, 0.09); border-radius: var(--radius); border: 1px solid rgba(14, 165, 233, 0.28); }
         .alt-gears label { display: block; font-size: 0.74rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-        .alt-select { margin: 0; padding: 10px 14px; border-radius: var(--radius); width: 100%; background: #ffffff; color: var(--text); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--border); }
-        .alt-select:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.13); }
-        .diff-gear-drawing { margin-top: 16px; background: #ffffff; border-radius: var(--radius); padding: 12px; border: 1px solid var(--border); font-size: 0.82rem; }
+        .alt-select { margin: 0; padding: 10px 14px; border-radius: var(--radius); width: 100%; background: #fff; color: var(--text); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--border); }
+        .diff-gear-drawing { margin-top: 16px; background: #fff; border-radius: var(--radius); padding: 12px; border: 1px solid var(--border); font-size: 0.82rem; }
         .diff-gear-drawing svg { max-width: 100%; border-radius: var(--radius-sm); background: #fefefe; }
         .footer-note { text-align: center; margin-top: 28px; font-size: 0.78rem; color: var(--text-muted); padding: 16px; background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
-        .footer-note strong { color: var(--accent-dark); }
-
-        /* ============ PRINT STYLES ============ */
         @media print {
             body { background: white; padding: 0; margin: 0; }
-            .header, .sub, .footer-note, .mode-switch,
-            .input-group, .small-btn, .print-btn,
-            #computeDimensionsBtn, #computeIndexingBtn,
-            .zoom-controls, .alt-gears, .small-note,
-            .badge, hr {
-                display: none !important;
-            }
+            .header, .sub, .footer-note, .mode-switch, .input-group, .small-btn, .print-btn,
+            #computeDimensionsBtn, #computeIndexingBtn, .zoom-controls, .alt-gears, .small-note,
+            .badge, hr { display: none !important; }
             .container { max-width: 100%; padding: 10px; }
             .flex-grid { display: block; }
             .card { box-shadow: none; border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin: 0 0 20px 0; background: white; page-break-inside: avoid; }
             .card::before { display: none; }
-            .card h2 { color: #0f172a !important; border-bottom: 2px solid #0f172a; font-size: 1.1rem; }
+            .card h2 { color: #0f172a !important; border-bottom: 2px solid #0f172a; }
             .card h2 .icon-badge { background: #f1f5f9 !important; color: #0f172a !important; }
             .result-box { background: white !important; color: black !important; border: 1px solid #999; box-shadow: none !important; page-break-inside: avoid; padding: 12px; margin-top: 10px; }
             .result-box h3 { color: #0f172a !important; }
             .result-box h3::before { background: #0f172a !important; box-shadow: none !important; }
-            .param-item { border-bottom: 1px solid #ddd; color: #0f172a; }
+            .param-item { border-bottom: 1px solid #ddd; }
             .param-item span:first-child { color: #475569 !important; }
             .param-item strong { color: #0f172a !important; }
-            .warning { background: #fef3c7 !important; color: #78350f !important; border: 1px solid #fcd34d; }
-            .gear-drawing { background: white !important; border: 1px solid #999; page-break-inside: avoid; display: block !important; margin-top: 12px; }
-            .drawing-container { border: 1px solid #999; page-break-inside: avoid; background: white !important; }
-            .drawing-title { color: #0f172a !important; }
+            .gear-drawing { background: white !important; border: 1px solid #999; page-break-inside: avoid; display: block !important; }
+            .drawing-container { border: 1px solid #999; background: white !important; }
             .svg-wrapper { background: white !important; }
             #leadGearResult { display: block !important; }
             #gearDrawingContainer { display: block !important; }
             #gearTypeDrawingContainer { display: block !important; }
             #indexingOutput { color: black; }
         }
-
         #accessDenied { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%); color: white; z-index: 1000; justify-content: center; align-items: center; flex-direction: column; text-align: center; gap: 16px; padding: 24px; }
-        #accessDenied .lock-icon { font-size: 3rem; margin-bottom: 8px; filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.5)); }
-        #accessDenied .lock-title { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
+        #accessDenied .lock-icon { font-size: 3rem; margin-bottom: 8px; }
+        #accessDenied .lock-title { font-size: 1.6rem; font-weight: 700; }
         #accessDenied .lock-sub { font-size: 0.9rem; color: #94a3b8; }
         #accessDenied input { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(148, 163, 184, 0.3); color: #ffffff; width: 240px; text-align: center; padding: 12px 16px; font-size: 1rem; letter-spacing: 0.15em; }
-        #accessDenied input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2); background: rgba(255,255,255,0.1); }
-        #accessDenied input::placeholder { color: #64748b; letter-spacing: normal; }
-        #accessDenied button { width: auto; margin-top: 4px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: var(--shadow-accent); }
+        #accessDenied input:focus { border-color: var(--accent); background: rgba(255,255,255,0.1); }
+        #accessDenied button { width: auto; margin-top: 4px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
         .workshop-content { display: none; }
         ::-webkit-scrollbar { width: 10px; height: 10px; }
-        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--text-light); background-clip: content-box; }
-        .result-box::-webkit-scrollbar-thumb { background: var(--dark-border); background-clip: content-box; }
     </style>
 </head>
 <body>
@@ -184,30 +163,19 @@
         </div>
     </div>
     <div class="sub">
-        <span class="chip">⚙️ Spur</span>
-        <span class="chip violet">🌀 Helical</span>
-        <span class="chip emerald">📐 Bevel</span>
-        <span class="chip">🌀📐 Spiral Bevel</span>
-        <span class="chip violet">🐛 Worm</span>
-        <span class="chip emerald">📏 Rack</span>
-        <span class="chip">🔗 Sprocket</span>
-        <span class="divider">|</span>
-        <span>Indexing: Direct · Simple · Differential · Angular</span>
+        <span class="chip">⚙️ Spur</span><span class="chip violet">🌀 Helical</span><span class="chip emerald">📐 Bevel</span>
+        <span class="chip">🌀📐 Spiral Bevel</span><span class="chip violet">🐛 Worm</span><span class="chip emerald">📏 Rack</span><span class="chip">🔗 Sprocket</span>
+        <span class="divider">|</span><span>Indexing: Direct · Simple · Differential · Angular</span>
     </div>
     <div class="flex-grid">
         <div class="card">
             <h2><span class="icon-badge">📐</span> Component & Data</h2>
-            <div class="input-group">
-                <label>Gear / Workpiece type :</label>
+            <div class="input-group"><label>Gear / Workpiece type :</label>
                 <select id="gearType">
-                    <option value="spur">⚙️ Spur gear</option>
-                    <option value="helical">🌀 Helical gear</option>
-                    <option value="bevel">📐 Straight bevel gear</option>
-                    <option value="spiralBevel">🌀📐 Spiral bevel gear</option>
-                    <option value="wormShaft">🐛 Worm shaft</option>
-                    <option value="wormWheel">🐛 Worm wheel</option>
-                    <option value="rack">📏 Rack</option>
-                    <option value="sprocket">🔗 Sprocket</option>
+                    <option value="spur">⚙️ Spur gear</option><option value="helical">🌀 Helical gear</option>
+                    <option value="bevel">📐 Straight bevel gear</option><option value="spiralBevel">🌀📐 Spiral bevel gear</option>
+                    <option value="wormShaft">🐛 Worm shaft</option><option value="wormWheel">🐛 Worm wheel</option>
+                    <option value="rack">📏 Rack</option><option value="sprocket">🔗 Sprocket</option>
                 </select>
             </div>
             <div id="modDpSwitch" class="mode-switch">
@@ -224,51 +192,38 @@
                 </div>
             </div>
             <div id="spurExtra" style="display:none;">
-                <div class="input-group"><label>Mating gear teeth (N₂) :</label><input type="number" id="spurMatingTeeth" placeholder="optional for center distance & contact ratio"></div>
+                <div class="input-group"><label>Mating gear teeth (N₂) :</label><input type="number" id="spurMatingTeeth" placeholder="optional"></div>
                 <div class="small-note">Enter mating gear teeth to calculate center distance and contact ratio.</div>
             </div>
             <div id="helicalExtra" style="display:none;">
                 <div class="input-group"><label>Helix angle β (deg) :</label><input type="number" id="helixAngle" value="20"></div>
                 <div class="input-group"><label>Face width (mm) :</label><input type="number" id="faceWidth" value="30"></div>
                 <div class="input-group"><label>Normal pressure angle αₙ (deg) :</label><input type="number" id="helicalPressureAngle" value="20" step="0.5" min="14.5"></div>
-                <div class="input-group"><label>Mating gear teeth (N₂) :</label><input type="number" id="helicalMatingTeeth" placeholder="optional for center distance & transverse contact ratio"></div>
+                <div class="input-group"><label>Mating gear teeth (N₂) :</label><input type="number" id="helicalMatingTeeth" placeholder="optional"></div>
                 <div class="input-group"><label>Leadscrew pitch (mm) :</label><input type="number" id="leadscrewPitch" value="5" step="0.5" min="1"></div>
-                <div class="input-group">
-                    <label>Lead mode :</label>
-                    <select id="leadMode">
-                        <option value="auto">📐 Compute from helix angle</option>
-                        <option value="manual">✏️ Enter lead manually</option>
-                    </select>
+                <div class="input-group"><label>Lead mode :</label>
+                    <select id="leadMode"><option value="auto">📐 Compute from helix angle</option><option value="manual">✏️ Enter lead manually</option></select>
                 </div>
-                <div class="input-group" id="manualLeadGroup" style="display:none;">
-                    <label>Manual lead (mm) :</label>
-                    <input type="number" id="manualLead" value="450" step="0.1">
-                </div>
-                <div class="input-group">
-                    <label>Lead change gear preset :</label>
+                <div class="input-group" id="manualLeadGroup" style="display:none;"><label>Manual lead (mm) :</label><input type="number" id="manualLead" value="450" step="0.1"></div>
+                <div class="input-group"><label>Lead change gear preset :</label>
                     <select id="leadGearPreset">
                         <option value="25,25,30,35,40,50,55,60,70,80,90,100">🔧 Standard set (25‑100)</option>
                         <option value="24,24,28,32,40,44,48,56,64,72,86,100">📐 Alternative set (24‑100)</option>
                         <option value="20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120">🔄 Extended set (20‑120)</option>
-                        <option value="10,20,30,40,50,60,70,80,90,100,110,120">📈 10‑120 step 10 (new)</option>
-                        <option value="custom">✏️ Any gear (use custom list below)</option>
+                        <option value="10,20,30,40,50,60,70,80,90,100,110,120">📈 10‑120 step 10</option>
+                        <option value="custom">✏️ Any gear</option>
                     </select>
                 </div>
-                <div class="input-group">
-                    <label>Custom lead change gears :</label>
-                    <input type="text" id="leadGearSet" placeholder="e.g., 25,30,40,50,60" value="25,25,30,35,40,50,55,60,70,80,90,100">
+                <div class="input-group"><label>Custom lead change gears :</label>
+                    <input type="text" id="leadGearSet" value="25,25,30,35,40,50,55,60,70,80,90,100">
                     <button class="small-btn" id="saveLeadPreset">💾 Save</button>
                     <button class="small-btn" id="removeLeadPreset">🗑️ Remove</button>
                 </div>
-                <div class="input-group">
-                    <label>Number of gears in train :</label>
+                <div class="input-group"><label>Number of gears in train :</label>
                     <select id="leadGearCount">
-                        <option value="2">2 gears (1 pair, simple)</option>
-                        <option value="4" selected>4 gears (2 pairs)</option>
-                        <option value="6">6 gears (3 pairs)</option>
-                        <option value="8">8 gears (4 pairs)</option>
-                        <option value="10">10 gears (5 pairs)</option>
-                        <option value="12">12 gears (6 pairs)</option>
+                        <option value="2">2 gears</option><option value="4" selected>4 gears</option>
+                        <option value="6">6 gears</option><option value="8">8 gears</option>
+                        <option value="10">10 gears</option><option value="12">12 gears</option>
                     </select>
                 </div>
                 <div class="small-note">These gears will be used for helical/spiral lead calculation. More gears = lower error.</div>
@@ -276,52 +231,38 @@
             <div id="bevelExtra" style="display:none;">
                 <div class="input-group"><label>Shaft angle Σ (deg) :</label><input type="number" id="shaftAngle" value="90"></div>
                 <div class="input-group"><label>Pitch cone δ (auto if blank) :</label><input type="number" id="pitchCone" placeholder="auto"></div>
-                <div class="input-group"><label>Mating gear teeth (N₂) :</label><input type="number" id="matingTeeth" placeholder="optional, for pinion/gear relation"></div>
+                <div class="input-group"><label>Mating gear teeth (N₂) :</label><input type="number" id="matingTeeth" placeholder="optional"></div>
                 <div class="small-note">Face width (recommended) = 0.3 × cone distance.</div>
             </div>
             <div id="spiralExtra" style="display:none;"><div class="input-group"><label>Spiral angle ψ (deg) :</label><input type="number" id="spiralAngle" value="35"></div><div class="input-group"><label>Hand :</label><select id="spiralHand"><option>Right</option><option>Left</option></select></div></div>
             <div id="wormExtra" style="display:none;">
                 <div class="input-group"><label>Number of starts :</label><input type="number" id="wormStarts" value="1" min="1"></div>
-                <div class="input-group"><label>Worm shaft OD (mm) :</label><input type="number" id="wormOD" placeholder="Optional, for pitch dia"></div>
-                <div class="input-group">
-                    <label>Length formula :</label>
+                <div class="input-group"><label>Worm shaft OD (mm) :</label><input type="number" id="wormOD" placeholder="Optional"></div>
+                <div class="input-group"><label>Length formula :</label>
                     <select id="wormLengthFormula">
-                        <option value="starts">📐 Starts-based (2.2×m×(starts+2))</option>
-                        <option value="constant13">⚙️ Constant factor: Short (13×m)</option>
-                        <option value="constant14.5">⚙️ Constant factor: Medium (14.5×m)</option>
-                        <option value="constant16">⚙️ Constant factor: Long (16×m)</option>
+                        <option value="starts">📐 Starts-based</option><option value="constant13">⚙️ Short (13×m)</option>
+                        <option value="constant14.5">⚙️ Medium (14.5×m)</option><option value="constant16">⚙️ Long (16×m)</option>
                     </select>
                 </div>
-                <div class="small-note">Worm length and cutting tip width are automatically calculated. Tip width = 0.697×module.</div>
+                <div class="small-note">Worm length and cutting tip width auto-calculated. Tip width = 0.697×module.</div>
             </div>
             <div id="wormWheelExtra" style="display:none;">
                 <div class="input-group"><label>Worm starts (nw) :</label><input type="number" id="wwStarts" value="1" min="1"></div>
-                <div class="input-group"><label>Worm pitch dia d_w (mm) :</label><input type="number" id="wormPD" placeholder="Optional, auto = 40-2m"></div>
-                <div class="input-group">
-                    <label>Throat diameter formula :</label>
+                <div class="input-group"><label>Worm pitch dia d_w (mm) :</label><input type="number" id="wormPD" placeholder="Optional"></div>
+                <div class="input-group"><label>Throat diameter formula :</label>
                     <select id="throatFormula">
-                        <option value="standard">📐 Standard: m×(N+2)</option>
-                        <option value="shift">⚙️ With profile shift: m×(N+2+2x)</option>
-                        <option value="reduced">🔽 Reduced addendum: m×(N+1.6)</option>
-                        <option value="cylindrical">🔄 Cylindrical (non‑throated): same as standard</option>
+                        <option value="standard">📐 Standard: m×(N+2)</option><option value="shift">⚙️ With profile shift</option>
+                        <option value="reduced">🔽 Reduced: m×(N+1.6)</option><option value="cylindrical">🔄 Cylindrical</option>
                     </select>
                 </div>
-                <div class="input-group" id="profileShiftGroup" style="display:none;">
-                    <label>Profile shift coefficient (x) :</label>
-                    <input type="number" id="profileShift" value="0" step="0.05" min="-0.5" max="0.5">
-                </div>
-                <div class="small-note">Select formula for throat diameter D3. Profile shift only applies when "With profile shift" is selected. Face width is automatically calculated.</div>
+                <div class="input-group" id="profileShiftGroup" style="display:none;"><label>Profile shift x :</label><input type="number" id="profileShift" value="0" step="0.05" min="-0.5" max="0.5"></div>
             </div>
             <div id="sprocketExtra" style="display:none;"><div class="input-group"><label>Chain pitch P (mm) :</label><input type="number" id="chainPitch" value="12.7"></div><div class="input-group"><label>Roller dia Dr (mm) :</label><input type="number" id="rollerDia" value="7.92"></div></div>
-            <div id="rackExtra" style="display:none;">
-                <div class="small-note">Rack length = N × P. Module = P / π. All other dimensions derived from module.</div>
-            </div>
+            <div id="rackExtra" style="display:none;"><div class="small-note">Rack length = N × P. Module = P / π. All other dimensions derived from module.</div></div>
             <button id="computeDimensionsBtn">⟳ Compute dimensions</button>
             <div class="result-box"><h3>Geometric parameters</h3><div id="dimensionsOutput">—</div></div>
             <div class="gear-drawing" id="gearTypeDrawingContainer" style="display:none;">
-                <div class="drawing-title">
-                    <span>📐 Manufacturing Drawing</span>
-                </div>
+                <div class="drawing-title"><span>📐 Manufacturing Drawing — Workshop Detail</span></div>
                 <div id="gearTypeDrawingSvg" class="svg-wrapper"></div>
             </div>
         </div>
@@ -332,8 +273,8 @@
                 <select id="indexMethod">
                     <option value="direct">🎯 Direct indexing (24/N)</option>
                     <option value="simple">🔁 Simple indexing (40/N)</option>
-                    <option value="differential">⚙️ Differential indexing (A-N)*40/A</option>
-                    <option value="angular">📐 Angular indexing (degrees)</option>
+                    <option value="differential">⚙️ Differential indexing</option>
+                    <option value="angular">📐 Angular indexing</option>
                 </select>
             </div>
             <div class="input-group"><label>Head ratio (usually 40) :</label><input type="number" id="headRatio" value="40" step="1"></div>
@@ -351,17 +292,15 @@
             <div id="diffDiv" style="display:none;">
                 <div class="input-group"><label>Required divisions (N) :</label><input type="number" id="diffRequiredN" value="67"></div>
                 <div class="input-group"><label>Approx divisions (A) :</label><input type="number" id="diffApproxA" value="70" step="1"></div>
-                <div class="input-group">
-                    <label>Change gear preset :</label>
+                <div class="input-group"><label>Change gear preset :</label>
                     <select id="diffGearPreset">
                         <option value="25,25,30,35,40,50,55,60,70,80,90,100">🔧 Standard set (25‑100)</option>
                         <option value="24,24,28,32,40,44,48,56,64,72,86,100">📐 Alternative set (24‑100)</option>
                         <option value="20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120">🔄 Extended set (20‑120)</option>
                     </select>
                 </div>
-                <div class="input-group">
-                    <label>Custom change gears :</label>
-                    <input type="text" id="diffGearSet" placeholder="e.g., 25,30,40,50,60,70,80,90,100" value="25,25,30,35,40,50,55,60,70,80,90,100">
+                <div class="input-group"><label>Custom change gears :</label>
+                    <input type="text" id="diffGearSet" value="25,25,30,35,40,50,55,60,70,80,90,100">
                     <button class="small-btn" id="saveDiffPreset">💾 Save</button>
                     <button class="small-btn" id="removeDiffPreset">🗑️ Remove</button>
                 </div>
@@ -377,36 +316,21 @@
                     </select>
                 </div>
                 <div class="input-group"><label>Custom holes :</label><input type="text" id="customHolesAngular" placeholder="21,39,49"></div>
-                <div class="small-note">Angular indexing: crank movement expressed in full turns + holes on selected hole circle.</div>
             </div>
             <button id="computeIndexingBtn">⚙️ Compute Indexing Settings</button>
             <div class="result-box"><h3>Indexing result</h3><div id="indexingOutput">—</div></div>
             <div class="gear-drawing" id="gearDrawingContainer" style="display:none;">
                 <div id="topViewContainer" class="drawing-container">
-                    <div class="drawing-title">
-                        <span>📐 Top View (Meshing)</span>
-                        <div class="zoom-controls">
-                            <button id="zoomTopOut">−</button>
-                            <button id="zoomTopReset">Reset</button>
-                            <button id="zoomTopIn">+</button>
-                        </div>
+                    <div class="drawing-title"><span>📐 Top View (Meshing)</span>
+                        <div class="zoom-controls"><button id="zoomTopOut">−</button><button id="zoomTopReset">Reset</button><button id="zoomTopIn">+</button></div>
                     </div>
-                    <div id="topViewWrapper" class="svg-wrapper">
-                        <div id="topViewSvg"></div>
-                    </div>
+                    <div id="topViewWrapper" class="svg-wrapper"><div id="topViewSvg"></div></div>
                 </div>
                 <div id="sideViewContainer" class="drawing-container">
-                    <div class="drawing-title">
-                        <span>📐 Side View (Stacked on shafts)</span>
-                        <div class="zoom-controls">
-                            <button id="zoomSideOut">−</button>
-                            <button id="zoomSideReset">Reset</button>
-                            <button id="zoomSideIn">+</button>
-                        </div>
+                    <div class="drawing-title"><span>📐 Side View (Stacked on shafts)</span>
+                        <div class="zoom-controls"><button id="zoomSideOut">−</button><button id="zoomSideReset">Reset</button><button id="zoomSideIn">+</button></div>
                     </div>
-                    <div id="sideViewWrapper" class="svg-wrapper">
-                        <div id="sideViewSvg"></div>
-                    </div>
+                    <div id="sideViewWrapper" class="svg-wrapper"><div id="sideViewSvg"></div></div>
                 </div>
             </div>
             <div class="result-box" id="leadGearResult">
@@ -421,9 +345,7 @@
             <div class="result-box"><h3>Cutter recommendation</h3><div id="cutterOut">—</div></div>
         </div>
     </div>
-    <div class="footer-note">
-        ✅ Lead change gears: multiple alternatives (simple &amp; compound, 2–12 gears) with true relative error (%). Select any to see the 2D drawing.
-    </div>
+    <div class="footer-note">✅ Lead change gears: multiple alternatives (simple &amp; compound, 2–12 gears) with true relative error (%). Select any to see the 2D drawing.</div>
 </div>
 </div>
 
@@ -432,28 +354,16 @@
     const SECRET_NUMBER = "1712";
     function checkAccess() {
         const stored = sessionStorage.getItem('workshop_access');
-        if (stored === SECRET_NUMBER) {
-            document.getElementById('accessDenied').style.display = 'none';
-            document.getElementById('workshopContent').style.display = 'block';
-            return true;
-        }
-        document.getElementById('accessDenied').style.display = 'flex';
-        document.getElementById('workshopContent').style.display = 'none';
-        return false;
+        if (stored === SECRET_NUMBER) { document.getElementById('accessDenied').style.display = 'none'; document.getElementById('workshopContent').style.display = 'block'; return true; }
+        document.getElementById('accessDenied').style.display = 'flex'; document.getElementById('workshopContent').style.display = 'none'; return false;
     }
     document.getElementById('submitSecret').addEventListener('click', () => {
-        const input = document.getElementById('secretInput').value;
-        if (input === SECRET_NUMBER) {
-            sessionStorage.setItem('workshop_access', SECRET_NUMBER);
-            checkAccess();
+        if (document.getElementById('secretInput').value === SECRET_NUMBER) {
+            sessionStorage.setItem('workshop_access', SECRET_NUMBER); checkAccess();
             updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth();
-        } else {
-            alert('Wrong secret number. Access denied.');
-        }
+        } else { alert('Wrong secret number. Access denied.'); }
     });
-    document.getElementById('secretInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') document.getElementById('submitSecret').click();
-    });
+    document.getElementById('secretInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('submitSecret').click(); });
     document.getElementById('printResultsBtn').addEventListener('click', () => { window.print(); });
 
     function gcd(a,b){ a=Math.abs(a); while(b){ let t=b; b=a%b; a=t; } return a; }
@@ -462,10 +372,8 @@
     function removeLastPreset(storageKey, selectElement, defaultPresets) { let presets = loadPresets(storageKey, selectElement, defaultPresets); if (presets.length > defaultPresets.length) { presets.pop(); localStorage.setItem(storageKey, JSON.stringify(presets)); loadPresets(storageKey, selectElement, defaultPresets); selectElement.selectedIndex = 0; return true; } return false; }
 
     const gearType = document.getElementById('gearType'), teethInput = document.getElementById('teeth'), moduleInput = document.getElementById('module'), dpInput = document.getElementById('dp'), metricBtn = document.getElementById('metricModeBtn'), imperialBtn = document.getElementById('imperialModeBtn'), metricBlock = document.getElementById('metricBlock'), imperialBlock = document.getElementById('imperialBlock');
-    const rackPitchBlock = document.getElementById('rackPitchBlock');
-    const rackCircularPitch = document.getElementById('rackCircularPitch');
-    const modDpSwitch = document.getElementById('modDpSwitch');
-    const spurExtra = document.getElementById('spurExtra');
+    const rackPitchBlock = document.getElementById('rackPitchBlock'); const rackCircularPitch = document.getElementById('rackCircularPitch');
+    const modDpSwitch = document.getElementById('modDpSwitch'); const spurExtra = document.getElementById('spurExtra');
     const helicalDiv = document.getElementById('helicalExtra'), bevelDiv = document.getElementById('bevelExtra'), spiralDiv = document.getElementById('spiralExtra'), wormDiv = document.getElementById('wormExtra'), wormWheelDiv = document.getElementById('wormWheelExtra'), sprocketDiv = document.getElementById('sprocketExtra'), rackExtra = document.getElementById('rackExtra');
     const dimOutput = document.getElementById('dimensionsOutput'), indexingOutput = document.getElementById('indexingOutput'), helicalGearOut = document.getElementById('helicalGearOutput'), altGearSelection = document.getElementById('altGearSelection'), altGearSelect = document.getElementById('altGearSelect'), manufactureNote = document.getElementById('manufactureNote'), cutterOut = document.getElementById('cutterOut');
     const gearDrawingContainer = document.getElementById('gearDrawingContainer'), topViewSvgDiv = document.getElementById('topViewSvg'), sideViewSvgDiv = document.getElementById('sideViewSvg');
@@ -473,7 +381,7 @@
     const diffGearPreset = document.getElementById('diffGearPreset'), diffGearSet = document.getElementById('diffGearSet'), leadGearPreset = document.getElementById('leadGearPreset'), leadGearSet = document.getElementById('leadGearSet'), leadMode = document.getElementById('leadMode'), manualLeadGroup = document.getElementById('manualLeadGroup'), manualLead = document.getElementById('manualLead');
     const holePresetSimple = document.getElementById('holePresetSimple'), customHolesSimple = document.getElementById('customHolesSimple');
     const holePresetAngular = document.getElementById('holePresetAngular'), customHolesAngular = document.getElementById('customHolesAngular');
-    let isMetric = true, topScale = 1, sideScale = 1, currentAlternatives = [];
+    let isMetric = true, topScale = 1, currentAlternatives = [];
 
     const defaultLeadPresets = [
         { value: "25,25,30,35,40,50,55,60,70,80,90,100", label: "🔧 Standard set (25‑100)" },
@@ -491,9 +399,9 @@
 
     diffGearPreset.addEventListener('change', () => { diffGearSet.value = diffGearPreset.value; computeIndexing(); computeDimensions(); });
     leadGearPreset.addEventListener('change', () => { if (leadGearPreset.value !== 'custom') leadGearSet.value = leadGearPreset.value; computeDimensions(); });
-    document.getElementById('saveDiffPreset').addEventListener('click', () => { let customVal = diffGearSet.value.trim(); if(customVal) savePreset('diffPresets', diffGearPreset, customVal, `📌 Custom (${customVal.substring(0,20)})`, defaultDiffPresets); computeIndexing(); });
+    document.getElementById('saveDiffPreset').addEventListener('click', () => { let cv = diffGearSet.value.trim(); if(cv) savePreset('diffPresets', diffGearPreset, cv, `📌 Custom`, defaultDiffPresets); computeIndexing(); });
     document.getElementById('removeDiffPreset').addEventListener('click', () => { removeLastPreset('diffPresets', diffGearPreset, defaultDiffPresets); diffGearSet.value = diffGearPreset.value; computeIndexing(); });
-    document.getElementById('saveLeadPreset').addEventListener('click', () => { let cv = leadGearSet.value.trim(); if(cv) savePreset('leadPresets', leadGearPreset, cv, `📌 Custom (${cv.substring(0,20)})`, defaultLeadPresets); computeDimensions(); });
+    document.getElementById('saveLeadPreset').addEventListener('click', () => { let cv = leadGearSet.value.trim(); if(cv) savePreset('leadPresets', leadGearPreset, cv, `📌 Custom`, defaultLeadPresets); computeDimensions(); });
     document.getElementById('removeLeadPreset').addEventListener('click', () => { removeLastPreset('leadPresets', leadGearPreset, defaultLeadPresets); leadGearSet.value = leadGearPreset.value; computeDimensions(); });
 
     function getModule() { return isMetric ? parseFloat(moduleInput.value) : 25.4 / parseFloat(dpInput.value); }
@@ -501,23 +409,15 @@
         let preset = isAngular ? holePresetAngular.value : holePresetSimple.value;
         let custom = isAngular ? customHolesAngular.value : customHolesSimple.value;
         let circles = preset.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
-        if(custom && custom.trim()){
-            custom.split(',').forEach(v=>{let x=parseInt(v.trim()); if(!isNaN(x)&&x>0 && !circles.includes(x)) circles.push(x);});
-        }
+        if(custom && custom.trim()){ custom.split(',').forEach(v=>{let x=parseInt(v.trim()); if(!isNaN(x)&&x>0 && !circles.includes(x)) circles.push(x);}); }
         return circles.sort((a,b)=>a-b);
     }
-
     function findHoleOptions(num, den, circles, fullTurnsBase = 0) {
-        let options = [];
-        let g = gcd(num, den); num/=g; den/=g;
-        for(let hc of circles) {
-            if(hc % den === 0) {
-                let mult = hc/den;
-                let holes = num * mult;
-                let extraFull = 0;
-                if(holes >= hc) { extraFull = Math.floor(holes/hc); holes %= hc; }
-                options.push({circle:hc, full:fullTurnsBase + extraFull, holes:holes, fraction:`${num}/${den}`});
-            }
+        let options = []; let g = gcd(num, den); num/=g; den/=g;
+        for(let hc of circles) if(hc % den === 0) {
+            let mult = hc/den; let holes = num * mult; let extraFull = 0;
+            if(holes >= hc) { extraFull = Math.floor(holes/hc); holes %= hc; }
+            options.push({circle:hc, full:fullTurnsBase + extraFull, holes:holes, fraction:`${num}/${den}`});
         }
         return options;
     }
@@ -525,32 +425,23 @@
     function computeIndexing() {
         let method = document.getElementById('indexMethod').value;
         let ratio = parseFloat(document.getElementById('headRatio').value) || 40;
-
         let currentGear = gearType.value;
-        if (currentGear === 'wormShaft' && (method === 'simple' || method === 'direct')) {
+        if (currentGear === 'wormShaft' && method === 'simple') {
             let starts = parseInt(document.getElementById('wormStarts').value) || 1;
-            if (method === 'simple') {
-                let Ndiv = starts;
-                let circles = getHoleCircles(false);
-                let turns = ratio / Ndiv;
-                let full = Math.floor(turns);
-                let rem = ratio % Ndiv;
-                if (rem === 0) {
-                    indexingOutput.innerHTML = `<strong>Worm shaft indexing (simple)</strong><br>Number of starts = ${starts}<br>Crank = ${full} full turn(s) of crank per start.`;
-                } else {
-                    let num = rem, den = Ndiv;
-                    let options = findHoleOptions(num, den, circles, full);
-                    if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`;
-                    else {
-                        let html = `<strong>Worm shaft indexing (simple)</strong><br>Starts = ${starts}<br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
-                        options.forEach(opt => { html += `<tr><td>${opt.circle}</td><td>${opt.full}</td><td>${opt.holes}</td>`; });
-                        indexingOutput.innerHTML = html + `</tbody></table>`;
-                    }
+            let Ndiv = starts; let circles = getHoleCircles(false); let turns = ratio / Ndiv;
+            let full = Math.floor(turns); let rem = ratio % Ndiv;
+            if (rem === 0) indexingOutput.innerHTML = `<strong>Worm shaft indexing (simple)</strong><br>Starts = ${starts}<br>Crank = ${full} full turn(s) per start.`;
+            else {
+                let num = rem, den = Ndiv; let options = findHoleOptions(num, den, circles, full);
+                if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}.</span>`;
+                else {
+                    let html = `<strong>Worm shaft indexing (simple)</strong><br>Starts = ${starts}<br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
+                    options.forEach(opt => { html += `<tr><td>${opt.circle}</td><td>${opt.full}</td><td>${opt.holes}</td>`; });
+                    indexingOutput.innerHTML = html + `</tbody></table>`;
                 }
-                return;
             }
+            return;
         }
-
         if (method === 'direct') {
             let Ndiv = parseInt(document.getElementById('simpleN').value);
             if (24 % Ndiv !== 0) indexingOutput.innerHTML = `<span class="warning">Direct: N must divide 24. 24/${Ndiv} = ${24/Ndiv} holes (not integer).</span>`;
@@ -558,17 +449,12 @@
             return;
         }
         else if (method === 'simple') {
-            let Ndiv = parseInt(document.getElementById('simpleN').value);
-            let circles = getHoleCircles(false);
-            let turns = ratio / Ndiv;
-            let full = Math.floor(turns);
-            let rem = ratio % Ndiv;
-            if (rem === 0) {
-                indexingOutput.innerHTML = `<strong>Simple indexing</strong><br>${full} full turn(s) of crank.`;
-            } else {
-                let num = rem, den = Ndiv;
-                let options = findHoleOptions(num, den, circles, full);
-                if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`;
+            let Ndiv = parseInt(document.getElementById('simpleN').value); let circles = getHoleCircles(false);
+            let turns = ratio / Ndiv; let full = Math.floor(turns); let rem = ratio % Ndiv;
+            if (rem === 0) indexingOutput.innerHTML = `<strong>Simple indexing</strong><br>${full} full turn(s) of crank.`;
+            else {
+                let num = rem, den = Ndiv; let options = findHoleOptions(num, den, circles, full);
+                if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}.</span>`;
                 else {
                     let html = `<strong>Simple indexing</strong><br>Crank = ${ratio}/${Ndiv} = ${full + (num/den)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
                     options.forEach(opt => { html += `<tr><td>${opt.circle}</td><td>${opt.full}</td><td>${opt.holes}</td>`; });
@@ -580,17 +466,11 @@
         else if (method === 'angular') {
             let deg = parseFloat(document.getElementById('angleDeg').value) || 0;
             let minutes = parseFloat(document.getElementById('angleMin').value) || 0;
-            let totalDeg = deg + minutes/60;
-            let degPerTurn = 360 / ratio;
-            let totalTurns = totalDeg / degPerTurn;
-            let fullTurns = Math.floor(totalTurns);
+            let totalDeg = deg + minutes/60; let degPerTurn = 360 / ratio;
+            let totalTurns = totalDeg / degPerTurn; let fullTurns = Math.floor(totalTurns);
             let fractional = totalTurns - fullTurns;
-            if (Math.abs(fractional) < 1e-8) {
-                indexingOutput.innerHTML = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}'<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank: ${fullTurns} full turn(s) exactly.`;
-                return;
-            }
-            let circles = getHoleCircles(true);
-            let best = null;
+            if (Math.abs(fractional) < 1e-8) { indexingOutput.innerHTML = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}'<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank: ${fullTurns} full turn(s) exactly.`; return; }
+            let circles = getHoleCircles(true); let best = null;
             for(let den = 1; den <= 200; den++) {
                 let num = Math.round(fractional * den);
                 if(Math.abs(num/den - fractional) < 1e-6) {
@@ -599,13 +479,10 @@
                 }
             }
             if(best && best.options.length > 0) {
-                let html = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}' (${totalDeg.toFixed(4)}°)<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank movement = ${totalTurns.toFixed(6)} turns = ${fullTurns} full turn(s) + ${best.fraction} turn<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
+                let html = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}' (${totalDeg.toFixed(4)}°)<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank = ${fullTurns} full + ${best.fraction} turn<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
                 best.options.forEach(opt => { html += `<tr><td>${opt.circle}</td><td>${opt.full}</td><td>${opt.holes}</td>`; });
-                html += `</tbody></table>`;
-                indexingOutput.innerHTML = html;
-            } else {
-                indexingOutput.innerHTML = `<span class="warning">No suitable hole circle found for fractional turn ${fractional.toFixed(6)}. Try adding more hole circles or adjust angle.</span>`;
-            }
+                html += `</tbody></table>`; indexingOutput.innerHTML = html;
+            } else indexingOutput.innerHTML = `<span class="warning">No suitable hole circle for fractional turn ${fractional.toFixed(6)}.</span>`;
             return;
         }
         else if (method === 'differential') {
@@ -616,82 +493,36 @@
             let diffRes = computeDifferentialExact(ratio, Nreq, Aapprox, gearSet);
             let html = `<strong>⚙️ Differential indexing</strong><br>Step1: Approx divisions A = ${Aapprox}<br>Turn = 40/A = ${(ratio/Aapprox).toFixed(5)} → ${simpleTableHtml}<br>Step2: i = (A-N)*40/A = ${diffRes.formula || ((Aapprox-Nreq)*ratio/Aapprox).toFixed(5)}<br>`;
             if (diffRes.exactMatch) {
-                if (diffRes.compound && diffRes.compoundGears) { html += `<strong>🔧 Compound change gears (exact):</strong><br> ${diffRes.compoundGears.first}  ×  ${diffRes.compoundGears.second}<br>Installation: first pair spindle → intermediate, second pair intermediate → worm.<br>Direction: ${diffRes.sign === "positive" ? "index plate SAME as crank (zero idlers in compound arrangement)" : "plate OPPOSITE direction (use one idler)"}.`; let drawing = generateDiffCompoundDrawing(diffRes.compoundGears.first, diffRes.compoundGears.second, diffRes.sign); html += `<div class="diff-gear-drawing">${drawing}</div>`; }
-                else if (diffRes.drive && diffRes.driven) { html += `<strong>Change gears (simple train): ${diffRes.drive} (spindle) / ${diffRes.driven} (worm)</strong><br>Idler rule: ${diffRes.sign === "positive" ? "1 idler" : "2 idlers"}<br>Mount drive gear on spindle, driven on worm shaft.`; let drawing = generateDiffSimpleDrawing(diffRes.drive, diffRes.driven, diffRes.sign); html += `<div class="diff-gear-drawing">${drawing}</div>`; }
+                if (diffRes.compound && diffRes.compoundGears) { html += `<strong>🔧 Compound change gears (exact):</strong><br> ${diffRes.compoundGears.first}  ×  ${diffRes.compoundGears.second}<br>Installation: first pair spindle → intermediate, second pair intermediate → worm.<br>Direction: ${diffRes.sign === "positive" ? "index plate SAME as crank" : "plate OPPOSITE direction"}.`; let drawing = generateDiffCompoundDrawing(diffRes.compoundGears.first, diffRes.compoundGears.second, diffRes.sign); html += `<div class="diff-gear-drawing">${drawing}</div>`; }
+                else if (diffRes.drive && diffRes.driven) { html += `<strong>Change gears (simple train): ${diffRes.drive} (spindle) / ${diffRes.driven} (worm)</strong><br>Idler rule: ${diffRes.sign === "positive" ? "1 idler" : "2 idlers"}`; let drawing = generateDiffSimpleDrawing(diffRes.drive, diffRes.driven, diffRes.sign); html += `<div class="diff-gear-drawing">${drawing}</div>`; }
             } else { html += `Exact match not found. ${diffRes.errorMsg || "Try different A value."}`; if (diffRes.suggested) { let drawing = generateDiffSimpleDrawing(diffRes.suggested.drive, diffRes.suggested.driven, diffRes.sign); html += `<div class="diff-gear-drawing"><strong>Closest approximate train:</strong><br>${drawing}</div>`; } }
             indexingOutput.innerHTML = html;
             return;
         }
     }
 
-    function computeDifferentialExact(ratio, N, A, gearSetArray) { if (A === N) return {error: "Approx A must be different from N"}; let diffRaw = (A - N) * ratio / A; let sign = (A - N) >= 0 ? "positive" : "negative"; let num = Math.abs(A - N) * ratio, den = A; let g = gcd(num, den); num /= g; den /= g; for (let k = 1; k <= 20; k++) { let drive = num * k, driven = den * k; if (gearSetArray.includes(drive) && gearSetArray.includes(driven)) return { exactMatch: true, compound: false, sign, drive, driven, rawFraction: `${num}/${den}`, formula: `(${A} - ${N})*40/${A} = ${diffRaw.toFixed(5)} = ${num}/${den} → ×${k} → ${drive}/${driven}` };}
+    function computeDifferentialExact(ratio, N, A, gearSetArray) { if (A === N) return {error: "Approx A must be different from N"}; let diffRaw = (A - N) * ratio / A; let sign = (A - N) >= 0 ? "positive" : "negative"; let num = Math.abs(A - N) * ratio, den = A; let g = gcd(num, den); num /= g; den /= g; for (let k = 1; k <= 20; k++) { let drive = num * k, driven = den * k; if (gearSetArray.includes(drive) && gearSetArray.includes(driven)) return { exactMatch: true, compound: false, sign, drive, driven, rawFraction: `${num}/${den}`, formula: `(${A}-${N})*40/${A} = ${diffRaw.toFixed(5)} = ${num}/${den} → ×${k} → ${drive}/${driven}` };}
         let bestCompound = null, bestError = Infinity; for (let a of gearSetArray) for(let b of gearSetArray) { let remNum = num * b, remDen = den * a; let rg = gcd(remNum, remDen); remNum /= rg; remDen /= rg; for(let k2=1;k2<=20;k2++) { let c = remNum * k2, d2 = remDen * k2; if(gearSetArray.includes(c) && gearSetArray.includes(d2)) { let total = (a/b)*(c/d2); let err = Math.abs(total - num/den); if(err < bestError && err < 0.00001) { bestError = err; bestCompound = { first: `${a}/${b}`, second: `${c}/${d2}` }; } } } }
-        if(bestCompound) return { exactMatch: true, compound: true, sign, compoundGears: bestCompound, rawFraction: `${num}/${den}`, formula: `(${A} - ${N})*40/${A} = ${diffRaw.toFixed(5)} = ${num}/${den}<br>Compound: (${bestCompound.first}) × (${bestCompound.second})` };
+        if(bestCompound) return { exactMatch: true, compound: true, sign, compoundGears: bestCompound, rawFraction: `${num}/${den}`, formula: `(${A}-${N})*40/${A} = ${diffRaw.toFixed(5)} = ${num}/${den}<br>Compound: (${bestCompound.first}) × (${bestCompound.second})` };
         let best = { drive: 1, driven: 1, err: Infinity }; for(let drv of gearSetArray) for(let drn of gearSetArray) { let val = drv/drn; let err = Math.abs(val - num/den); if(err < best.err) best = { drive: drv, driven: drn, err: err }; } return { exactMatch: false, sign, rawFraction: `${num}/${den}`, suggested: best, errorMsg: `No exact multiplier. Closest simple: ${best.drive}/${best.driven} = ${(best.drive/best.driven).toFixed(5)}` }; }
 
-    function generateDiffSimpleDrawing(drive, driven, sign) { let w=500, h=200, cy=100, x1=160, x2=340, r1=Math.min(48,20+drive/2), r2=Math.min(48,20+driven/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="20" x2="${x1}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="20" x2="${x2}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cy}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${drive}</text><text x="${x1}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cy}" r="${r2}" fill="#d9f0ec" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${driven}</text><text x="${x2}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm shaft</text><line x1="${x1+r1-4}" y1="${cy}" x2="${x2-r2+4}" y2="${cy}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="250" y="190" text-anchor="middle" fill="#2c7da0" font-size="12">${sign === "positive" ? "🔄 Same direction (use 1 idler)" : "🔁 Opposite direction (use 2 idlers)"}</text></svg>`; }
+    function generateDiffSimpleDrawing(drive, driven, sign) { let w=500, h=200, cy=100, x1=160, x2=340, r1=Math.min(48,20+drive/2), r2=Math.min(48,20+driven/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="20" x2="${x1}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="20" x2="${x2}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cy}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${drive}</text><text x="${x1}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cy}" r="${r2}" fill="#d9f0ec" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${driven}</text><text x="${x2}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm shaft</text><line x1="${x1+r1-4}" y1="${cy}" x2="${x2-r2+4}" y2="${cy}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="250" y="190" text-anchor="middle" fill="#2c7da0" font-size="12">${sign === "positive" ? "🔄 Same direction (1 idler)" : "🔁 Opposite direction (2 idlers)"}</text></svg>`; }
     function generateDiffCompoundDrawing(first, second, sign) { let [a,b] = first.split('/').map(Number), [c,d] = second.split('/').map(Number); let w=540, h=280, cyMain=120, cyUpper=40, x1=100, x2=270, x3=440; let r1=Math.min(42,18+a/2), r2=Math.min(42,18+b/2), r3=Math.min(42,18+c/2), r4=Math.min(42,18+d/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="15" x2="${x1}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="5" x2="${x2}" y2="220" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x3}" y1="15" x2="${x3}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cyMain}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${a}</text><text x="${x1}" y="${cyMain+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cyMain}" r="${r2}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${b}</text><circle cx="${x2}" cy="${cyUpper}" r="${r3}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${c}</text><circle cx="${x3}" cy="${cyUpper}" r="${r4}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x3}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${d}</text><text x="${x3}" y="${cyUpper+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm</text><line x1="${x1+r1-4}" y1="${cyMain}" x2="${x2-r2+4}" y2="${cyMain}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><line x1="${x2+r3-4}" y1="${cyUpper}" x2="${x3-r4+4}" y2="${cyUpper}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="270" y="265" text-anchor="middle" fill="#2c7da0" font-size="11">${sign === "positive" ? "🔄 Same direction (zero idlers compound)" : "🔁 Opposite direction (one idler)"}</text></svg>`; }
 
     function generateMultiStageTrains(gearSet, numGears, requiredRatio, maxResults = 30) {
         if (numGears % 2 !== 0 || numGears < 2) return [];
         let bestTrains = [];
-        function addTrain(pairs, ratio, error) {
-            const train = { pairs, ratio, error };
-            let inserted = false;
-            for (let i = 0; i < bestTrains.length; i++) { if (error < bestTrains[i].error) { bestTrains.splice(i, 0, train); inserted = true; break; } }
-            if (!inserted) bestTrains.push(train);
-            if (bestTrains.length > maxResults) bestTrains = bestTrains.slice(0, maxResults);
-        }
-        function combinations(arr, k, start, current) {
-            if (current.length === k) { processCombination(current); return; }
-            for (let i = start; i < arr.length; i++) { current.push(arr[i]); combinations(arr, k, i + 1, current); current.pop(); }
-        }
-        function processCombination(gears) {
-            function match(remaining, pairs) {
-                if (remaining.length === 0) {
-                    const numPairs = pairs.length;
-                    const totalAssignments = 1 << numPairs;
-                    for (let mask = 0; mask < totalAssignments; mask++) {
-                        let ratio = 1;
-                        const assignedPairs = [];
-                        for (let i = 0; i < numPairs; i++) {
-                            const [a, b] = pairs[i];
-                            let driver, driven;
-                            if ((mask & (1 << i)) === 0) { driver = a; driven = b; } else { driver = b; driven = a; }
-                            ratio *= driver / driven;
-                            assignedPairs.push({ driver, driven });
-                        }
-                        const error = Math.abs(ratio - requiredRatio);
-                        addTrain(assignedPairs, ratio, error);
-                    }
-                    return;
-                }
-                const first = remaining[0];
-                for (let i = 1; i < remaining.length; i++) {
-                    const second = remaining[i];
-                    const newRemaining = remaining.filter((_, idx) => idx !== 0 && idx !== i);
-                    pairs.push([first, second]);
-                    match(newRemaining, pairs);
-                    pairs.pop();
-                }
-            }
-            match(gears, []);
-        }
+        function addTrain(pairs, ratio, error) { const train = { pairs, ratio, error }; let inserted = false; for (let i = 0; i < bestTrains.length; i++) { if (error < bestTrains[i].error) { bestTrains.splice(i, 0, train); inserted = true; break; } } if (!inserted) bestTrains.push(train); if (bestTrains.length > maxResults) bestTrains = bestTrains.slice(0, maxResults); }
+        function combinations(arr, k, start, current) { if (current.length === k) { processCombination(current); return; } for (let i = start; i < arr.length; i++) { current.push(arr[i]); combinations(arr, k, i + 1, current); current.pop(); } }
+        function processCombination(gears) { function match(remaining, pairs) { if (remaining.length === 0) { const numPairs = pairs.length; const totalAssignments = 1 << numPairs; for (let mask = 0; mask < totalAssignments; mask++) { let ratio = 1; const assignedPairs = []; for (let i = 0; i < numPairs; i++) { const [a, b] = pairs[i]; let driver, driven; if ((mask & (1 << i)) === 0) { driver = a; driven = b; } else { driver = b; driven = a; } ratio *= driver / driven; assignedPairs.push({ driver, driven }); } const error = Math.abs(ratio - requiredRatio); addTrain(assignedPairs, ratio, error); } return; } const first = remaining[0]; for (let i = 1; i < remaining.length; i++) { const second = remaining[i]; const newRemaining = remaining.filter((_, idx) => idx !== 0 && idx !== i); pairs.push([first, second]); match(newRemaining, pairs); pairs.pop(); } } match(gears, []); }
         combinations(gearSet, numGears, 0, []);
         return bestTrains;
     }
 
-    // ============================================================
-    // CLEAN SCHEMATIC DRAWING (lead change gears)
-    // ============================================================
     function generateMultiStageDrawing(pairs) {
-        const numStages = pairs.length;
-        const numShafts = numStages + 1;
-        const shaftSpacing = 180;
-        const centerY = 165;
-        const levelOffset = 60;
-        const width = numShafts * shaftSpacing + 100;
-        const height = 330;
+        const numStages = pairs.length, numShafts = numStages + 1;
+        const shaftSpacing = 180, centerY = 165, levelOffset = 60;
+        const width = numShafts * shaftSpacing + 100, height = 330;
         const shafts = [];
         for (let i = 0; i < numShafts; i++) {
             const gears = [];
@@ -701,39 +532,14 @@
         }
         let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; border-radius:8px; display:block; margin:0 auto; font-family:'Inter', sans-serif;">`;
         shafts.forEach((gears, i) => { const x = 50 + i * shaftSpacing; svg += `<line x1="${x}" y1="45" x2="${x}" y2="${height - 45}" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="7,6" stroke-linecap="round"/>`; });
-        shafts.forEach((gears, i) => {
-            const x = 50 + i * shaftSpacing;
-            gears.forEach((g) => {
-                const y = centerY + (g.level === 0 ? levelOffset : -levelOffset);
-                const radius = Math.min(48, 22 + Math.sqrt(g.gear) * 3.2);
-                const isBlue = (i === 0 || i === numShafts - 1);
-                const fill = isBlue ? '#dbeafe' : '#fde8d5';
-                const stroke = '#1e5f8a';
-                svg += `<circle cx="${x}" cy="${y}" r="${radius}" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>`;
-                svg += `<text x="${x}" y="${y + 5}" text-anchor="middle" fill="#0f172a" font-weight="700" font-size="16">${g.gear}</text>`;
-                g.x = x; g.y = y; g.radius = radius;
-            });
-        });
+        shafts.forEach((gears, i) => { const x = 50 + i * shaftSpacing; gears.forEach((g) => { const y = centerY + (g.level === 0 ? levelOffset : -levelOffset); const radius = Math.min(48, 22 + Math.sqrt(g.gear) * 3.2); const isBlue = (i === 0 || i === numShafts - 1); const fill = isBlue ? '#dbeafe' : '#fde8d5'; const stroke = '#1e5f8a'; svg += `<circle cx="${x}" cy="${y}" r="${radius}" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>`; svg += `<text x="${x}" y="${y + 5}" text-anchor="middle" fill="#0f172a" font-weight="700" font-size="16">${g.gear}</text>`; g.x = x; g.y = y; g.radius = radius; }); });
         for (let i = 0; i < numStages; i++) {
-            const driverGear = pairs[i].driver;
-            const drivenGear = pairs[i].driven;
-            const driverPos = shafts[i].find(g => g.gear === driverGear && g.role === 'driver');
-            const drivenPos = shafts[i + 1].find(g => g.gear === drivenGear && g.role === 'driven');
-            if (driverPos && drivenPos) {
-                const x1 = driverPos.x + driverPos.radius + 4;
-                const x2 = drivenPos.x - drivenPos.radius - 4;
-                svg += `<line x1="${x1}" y1="${driverPos.y}" x2="${x2}" y2="${drivenPos.y}" stroke="#e67e22" stroke-width="2.5" stroke-dasharray="6,4" stroke-linecap="round" marker-end="url(#arrowHead)"/>`;
-            }
+            const driverPos = shafts[i].find(g => g.gear === pairs[i].driver && g.role === 'driver');
+            const drivenPos = shafts[i + 1].find(g => g.gear === pairs[i].driven && g.role === 'driven');
+            if (driverPos && drivenPos) { const x1 = driverPos.x + driverPos.radius + 4; const x2 = drivenPos.x - drivenPos.radius - 4; svg += `<line x1="${x1}" y1="${driverPos.y}" x2="${x2}" y2="${drivenPos.y}" stroke="#e67e22" stroke-width="2.5" stroke-dasharray="6,4" stroke-linecap="round" marker-end="url(#arrowHead)"/>`; }
         }
         svg += `<defs><marker id="arrowHead" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0 0, 10 5, 0 10" fill="#e67e22"/></marker></defs>`;
-        shafts.forEach((gears, i) => {
-            const x = 50 + i * shaftSpacing;
-            let label = '';
-            if (i === 0) label = 'Spindle';
-            else if (i === numShafts - 1) label = 'Worm';
-            else label = `Intermediate ${i}`;
-            svg += `<text x="${x}" y="${height - 12}" text-anchor="middle" fill="#2c7da0" font-size="12.5" font-weight="700">${label}</text>`;
-        });
+        shafts.forEach((gears, i) => { const x = 50 + i * shaftSpacing; let label = ''; if (i === 0) label = 'Spindle'; else if (i === numShafts - 1) label = 'Worm'; else label = `Intermediate ${i}`; svg += `<text x="${x}" y="${height - 12}" text-anchor="middle" fill="#2c7da0" font-size="12.5" font-weight="700">${label}</text>`; });
         const overallRatio = pairs.reduce((acc, p) => acc * (p.driver / p.driven), 1);
         const ratioStr = pairs.map(p => `${p.driver}/${p.driven}`).join(' × ');
         svg += `<text x="${width / 2}" y="28" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">${ratioStr} = ${overallRatio.toFixed(6)}</text>`;
@@ -742,305 +548,419 @@
     }
 
     // ============================================================
-    // MANUFACTURING DRAWINGS FOR EACH GEAR TYPE
+    // DETAILED ENGINEERING-STYLE DRAWING HELPERS
     // ============================================================
-    function gearOutlinePath(cx, cy, rOut, rRoot, N, maxDraw) {
-        const n = Math.min(N, maxDraw || 30);
+    const DRW = {
+        ink: '#1a1a1a',
+        dim: '#0b5cad',
+        hatch: '#3a3a3a',
+        center: '#d94f3a',
+        hidden: '#555',
+        note: '#333'
+    };
+
+    // Draw dimension line with arrows and text
+    function dimH(x1, x2, y, text, offset) {
+        offset = offset || 0;
+        let s = `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${DRW.dim}" stroke-width="0.9" marker-start="url(#dArrowL)" marker-end="url(#dArrowR)"/>`;
+        s += `<line x1="${x1}" y1="${y-6}" x2="${x1}" y2="${y+6}" stroke="${DRW.dim}" stroke-width="0.7"/>`;
+        s += `<line x1="${x2}" y1="${y-6}" x2="${x2}" y2="${y+6}" stroke="${DRW.dim}" stroke-width="0.7"/>`;
+        if (text) s += `<text x="${(x1+x2)/2}" y="${y - 4 + offset}" text-anchor="middle" fill="${DRW.dim}" font-size="10" font-weight="600">${text}</text>`;
+        return s;
+    }
+    function dimV(x, y1, y2, text, offset) {
+        offset = offset || 0;
+        let s = `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${DRW.dim}" stroke-width="0.9" marker-start="url(#dArrowU)" marker-end="url(#dArrowD)"/>`;
+        s += `<line x1="${x-6}" y1="${y1}" x2="${x+6}" y2="${y1}" stroke="${DRW.dim}" stroke-width="0.7"/>`;
+        s += `<line x1="${x-6}" y1="${y2}" x2="${x+6}" y2="${y2}" stroke="${DRW.dim}" stroke-width="0.7"/>`;
+        if (text) s += `<text x="${x + 4 + offset}" y="${(y1+y2)/2}" fill="${DRW.dim}" font-size="10" font-weight="600">${text}</text>`;
+        return s;
+    }
+    function callout(num, x, y, tx, ty) {
+        return `<circle cx="${x}" cy="${y}" r="9" fill="#fff" stroke="${DRW.ink}" stroke-width="1.2"/>`
+             + `<text x="${x}" y="${y+3.5}" text-anchor="middle" fill="${DRW.ink}" font-size="10" font-weight="700">${num}</text>`
+             + `<line x1="${x + (tx>x?9:-9)}" y1="${y}" x2="${tx}" y2="${ty}" stroke="${DRW.ink}" stroke-width="0.8"/>`
+             + `<circle cx="${tx}" cy="${ty}" r="1.8" fill="${DRW.ink}"/>`;
+    }
+
+    // Generate an involute-looking gear outline path
+    function gearProfilePath(cx, cy, rOut, rRoot, N, teethDraw) {
+        const n = teethDraw || Math.min(N, 32);
         const step = (Math.PI * 2) / n;
+        const toothTopFrac = 0.38;
+        const toothBotFrac = 0.62;
         let d = '';
         for (let i = 0; i < n; i++) {
             const a = i * step - Math.PI / 2;
-            const aR0 = a - step * 0.32;
-            const aT0 = a - step * 0.17;
-            const aT1 = a + step * 0.17;
-            const aR1 = a + step * 0.32;
+            const aR0 = a - step * (toothTopFrac/2 + 0.12);
+            const aT0 = a - step * toothTopFrac/2;
+            const aT1 = a + step * toothTopFrac/2;
+            const aR1 = a + step * (toothTopFrac/2 + 0.12);
             const x1 = cx + rRoot * Math.cos(aR0), y1 = cy + rRoot * Math.sin(aR0);
             const x2 = cx + rOut * Math.cos(aT0), y2 = cy + rOut * Math.sin(aT0);
             const x3 = cx + rOut * Math.cos(aT1), y3 = cy + rOut * Math.sin(aT1);
             const x4 = cx + rRoot * Math.cos(aR1), y4 = cy + rRoot * Math.sin(aR1);
-            d += (i === 0 ? `M${x1.toFixed(1)},${y1.toFixed(1)}` : `L${x1.toFixed(1)},${y1.toFixed(1)}`);
-            d += `L${x2.toFixed(1)},${y2.toFixed(1)}L${x3.toFixed(1)},${y3.toFixed(1)}L${x4.toFixed(1)},${y4.toFixed(1)}`;
+            if (i === 0) d += `M${x1.toFixed(2)},${y1.toFixed(2)}`;
+            else d += `L${x1.toFixed(2)},${y1.toFixed(2)}`;
+            d += `L${x2.toFixed(2)},${y2.toFixed(2)}L${x3.toFixed(2)},${y3.toFixed(2)}L${x4.toFixed(2)},${y4.toFixed(2)}`;
         }
         return d + 'Z';
     }
 
-    function generateGearTypeDrawing(type, p) {
-        const W = 700, H = 360;
-        const stroke = '#1e3a5f';
-        const accent = '#e67e22';
-        const dimColor = '#2c7da0';
-        const fillColor = '#dbeafe';
-        const fillAccent = '#fde8d5';
-        let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="background:#fafafa; border-radius:8px; display:block; margin:0 auto; font-family:'Inter',system-ui,sans-serif;" preserveAspectRatio="xMidYMid meet">`;
-        svg += `<defs>
-            <marker id="dArrL" markerWidth="8" markerHeight="8" refX="0" refY="4" orient="auto"><polygon points="8 0, 0 4, 8 8" fill="${dimColor}"/></marker>
-            <marker id="dArrR" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="${dimColor}"/></marker>
-            <marker id="oArr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="${accent}"/></marker>
+    // Common SVG opening block with markers, border, title block
+    function drawFrame(W, H, partName, dwgNo) {
+        let s = `<defs>
+            <marker id="dArrowL" markerWidth="8" markerHeight="8" refX="0" refY="4" orient="auto"><polygon points="8 0, 0 4, 8 8" fill="${DRW.dim}"/></marker>
+            <marker id="dArrowR" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="${DRW.dim}"/></marker>
+            <marker id="dArrowU" markerWidth="8" markerHeight="8" refX="4" refY="0" orient="auto"><polygon points="0 8, 4 0, 8 8" fill="${DRW.dim}"/></marker>
+            <marker id="dArrowD" markerWidth="8" markerHeight="8" refX="4" refY="8" orient="auto"><polygon points="0 0, 4 8, 8 0" fill="${DRW.dim}"/></marker>
+            <marker id="dArr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="${DRW.ink}"/></marker>
+            <pattern id="hatch45" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${DRW.hatch}" stroke-width="0.5"/></pattern>
+            <pattern id="hatch45b" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(135)"><line x1="0" y1="0" x2="0" y2="5" stroke="${DRW.hatch}" stroke-width="0.5"/></pattern>
         </defs>`;
-        svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="#fafafa"/>`;
+        // Border
+        s += `<rect x="5" y="5" width="${W-10}" height="${H-10}" fill="none" stroke="${DRW.ink}" stroke-width="1.6"/>`;
+        s += `<rect x="10" y="10" width="${W-20}" height="${H-20}" fill="none" stroke="${DRW.ink}" stroke-width="0.6"/>`;
+        // Title block bottom-right
+        const tbW = 320, tbH = 80, tbX = W - 15 - tbW, tbY = H - 15 - tbH;
+        s += `<rect x="${tbX}" y="${tbY}" width="${tbW}" height="${tbH}" fill="#fff" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+        s += `<line x1="${tbX}" y1="${tbY + 26}" x2="${tbX + tbW}" y2="${tbY + 26}" stroke="${DRW.ink}" stroke-width="0.6"/>`;
+        s += `<line x1="${tbX}" y1="${tbY + 52}" x2="${tbX + tbW}" y2="${tbY + 52}" stroke="${DRW.ink}" stroke-width="0.6"/>`;
+        s += `<line x1="${tbX + tbW*0.62}" y1="${tbY + 26}" x2="${tbX + tbW*0.62}" y2="${tbY + tbH}" stroke="${DRW.ink}" stroke-width="0.6"/>`;
+        s += `<text x="${tbX + 8}" y="${tbY + 17}" font-size="11" font-weight="700" fill="${DRW.ink}">${partName}</text>`;
+        s += `<text x="${tbX + 8}" y="${tbY + 42}" font-size="9" fill="${DRW.ink}">MATERIAL: Steel 1045 / EN8</text>`;
+        s += `<text x="${tbX + 8}" y="${tbY + 68}" font-size="9" fill="${DRW.ink}">SCALE: 1:1    UNITS: mm    THIRD ANGLE</text>`;
+        s += `<text x="${tbX + tbW*0.62 + 8}" y="${tbY + 42}" font-size="9" fill="${DRW.ink}">DWG No: ${dwgNo}</text>`;
+        s += `<text x="${tbX + tbW*0.62 + 8}" y="${tbY + 68}" font-size="9" fill="${DRW.ink}">SHEET 1 OF 1</text>`;
+        // Top heading
+        s += `<line x1="15" y1="35" x2="${W-15}" y2="35" stroke="${DRW.ink}" stroke-width="1"/>`;
+        s += `<text x="22" y="28" font-size="13" font-weight="700" fill="${DRW.ink}">${partName.toUpperCase()}</text>`;
+        s += `<text x="${W-22}" y="28" text-anchor="end" font-size="10" fill="${DRW.ink}">Gear Manufacturing Workshop</text>`;
+        return s;
+    }
+
+    // ============================================================
+    // MAIN DRAWING GENERATOR — engineering detail style
+    // ============================================================
+    function generateGearTypeDrawing(type, p) {
+        const W = 900, H = 560;
+        let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; display:block; margin:0 auto; font-family:'Inter',system-ui,sans-serif;" preserveAspectRatio="xMidYMid meet">`;
+        svg += drawFrame(W, H, type === 'spur' ? 'Spur Gear' : type === 'helical' ? 'Helical Gear' : type === 'bevel' ? 'Straight Bevel Gear' : type === 'spiralBevel' ? 'Spiral Bevel Gear' : type === 'wormShaft' ? 'Worm Shaft' : type === 'wormWheel' ? 'Worm Wheel' : type === 'rack' ? 'Rack' : 'Chain Sprocket', 'GM-' + type.toUpperCase().substring(0,3) + '-001');
 
         if (type === 'spur' || type === 'helical') {
             const isHelical = (type === 'helical');
-            const cx = 175, cy = H/2 + 10;
-            const rOut = 110, rPitch = 92, rRoot = 78, rBore = 22;
-            svg += `<path d="${gearOutlinePath(cx, cy, rOut, rRoot, p.N || 28, 30)}" fill="${fillColor}" stroke="${stroke}" stroke-width="2"/>`;
-            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${dimColor}" stroke-width="1.4" stroke-dasharray="10,4,2,4"/>`;
-            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${stroke}" stroke-width="1.5"/>`;
-            const kw = 8;
-            svg += `<rect x="${cx - kw/2}" y="${cy - rBore - 5}" width="${kw}" height="10" fill="#fff" stroke="${stroke}" stroke-width="1"/>`;
-            svg += `<line x1="${cx - rOut - 15}" y1="${cy}" x2="${cx + rOut + 15}" y2="${cy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
-            svg += `<line x1="${cx}" y1="${cy - rOut - 15}" x2="${cx}" y2="${cy + rOut + 15}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            const cx = 250, cy = 280;
+            const rOut = 130, rPitch = 110, rRoot = 94, rBore = 26, rHub = 55;
+            // Center lines
+            svg += `<line x1="${cx - rOut - 40}" y1="${cy}" x2="${cx + rOut + 40}" y2="${cy}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<line x1="${cx}" y1="${cy - rOut - 40}" x2="${cx}" y2="${cy + rOut + 40}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            // Gear body
+            svg += `<path d="${gearProfilePath(cx, cy, rOut, rRoot, p.N, 30)}" fill="#f6f9fc" stroke="${DRW.ink}" stroke-width="1.4"/>`;
+            // Hub circle
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rHub}" fill="none" stroke="${DRW.ink}" stroke-width="1"/>`;
+            // Bore
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+            // Keyway
+            svg += `<rect x="${cx - 5}" y="${cy - rBore - 6}" width="10" height="8" fill="#fff" stroke="${DRW.ink}" stroke-width="1"/>`;
+            // Pitch circle — center line style
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${DRW.center}" stroke-width="1" stroke-dasharray="14,3,3,3"/>`;
+            // Root circle — thin solid
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rRoot}" fill="none" stroke="${DRW.ink}" stroke-width="0.5" stroke-dasharray="2,2"/>`;
+            // Helix lines
             if (isHelical) {
-                // Diagonal lines to indicate helix on teeth
-                for (let a = 0; a < 12; a++) {
-                    const ang = (a / 12) * Math.PI * 2;
-                    const x1 = cx + (rRoot + 2) * Math.cos(ang);
-                    const y1 = cy + (rRoot + 2) * Math.sin(ang);
-                    const x2 = cx + (rOut - 2) * Math.cos(ang + 0.35);
-                    const y2 = cy + (rOut - 2) * Math.sin(ang + 0.35);
-                    svg += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${dimColor}" stroke-width="0.9" opacity="0.7"/>`;
+                for (let a = 0; a < 16; a++) {
+                    const ang = (a / 16) * Math.PI * 2;
+                    const x1 = cx + (rRoot + 4) * Math.cos(ang);
+                    const y1 = cy + (rRoot + 4) * Math.sin(ang);
+                    const x2 = cx + (rOut - 2) * Math.cos(ang + 0.4);
+                    const y2 = cy + (rOut - 2) * Math.sin(ang + 0.4);
+                    svg += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${DRW.center}" stroke-width="0.7" opacity="0.85"/>`;
                 }
             }
-            svg += `<text x="${cx}" y="${cy - rOut - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">FRONT VIEW</text>`;
-            svg += `<text x="${cx}" y="${cy + rOut + 35}" text-anchor="middle" font-size="10" fill="${dimColor}">d=${p.d.toFixed(1)}  dₐ=${p.Do.toFixed(1)}  d_f=${p.dr.toFixed(1)}  z=${p.N}</text>`;
-
-            // Side/section view
-            const sx = 500, scy = H/2 + 10;
-            const faceW = Math.max(50, Math.min(100, p.faceWidth || rOut * 0.6));
-            svg += `<rect x="${sx - faceW/2}" y="${scy - rOut}" width="${faceW}" height="${rOut * 2}" fill="${fillColor}" stroke="${stroke}" stroke-width="1.8"/>`;
-            const hubW = faceW + 30, hubR = rOut * 0.55;
-            svg += `<rect x="${sx - hubW/2}" y="${scy - hubR}" width="${hubW}" height="${hubR * 2}" fill="#e0f2fe" stroke="${stroke}" stroke-width="1.5"/>`;
-            svg += `<rect x="${sx - 11}" y="${scy - rBore}" width="22" height="${rBore * 2}" fill="#fff" stroke="${stroke}" stroke-width="1.2"/>`;
-            svg += `<rect x="${sx - kw/2}" y="${scy - rBore - 5}" width="${kw}" height="10" fill="#fff" stroke="${stroke}" stroke-width="1"/>`;
-            // Hatching
-            for (let i = 0; i < 12; i++) {
-                const y1 = scy - rOut + 6 + i * 14;
-                svg += `<line x1="${sx - faceW/2 + 3}" y1="${y1}" x2="${sx + faceW/2 - 3}" y2="${y1 - 12}" stroke="${stroke}" stroke-width="0.5" opacity="0.5"/>`;
-            }
+            // Dimension: pitch dia
+            svg += dimH(cx - rPitch, cx + rPitch, cy - rOut - 22, `⌀d = ${p.d.toFixed(2)}`);
+            // Dimension: outside dia
+            svg += dimH(cx - rOut, cx + rOut, cy + rOut + 34, `⌀da = ${p.Do.toFixed(2)}`);
+            // Dimension: root dia (below)
+            svg += dimV(cx + rRoot + 12, cy - rRoot, cy + rRoot, `⌀df`);
+            // Dimension: bore
+            svg += dimH(cx - rBore, cx + rBore, cy + rBore + 30, `⌀bore`);
+            // Title
+            svg += `<text x="${cx}" y="${cy - rOut - 50}" text-anchor="middle" font-size="12" font-weight="700" fill="${DRW.ink}">FRONT VIEW</text>`;
+            // Section view
+            const sx = 660, scy = 280;
+            const faceW = Math.max(60, Math.min(110, (p.faceWidth || rOut * 0.55)));
+            // Centerline
+            svg += `<line x1="${sx}" y1="${scy - rOut - 40}" x2="${sx}" y2="${scy + rOut + 40}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            // Outer body top/bottom
+            svg += `<rect x="${sx - faceW/2}" y="${scy - rOut}" width="${faceW}" height="${rOut*2}" fill="url(#hatch45)" stroke="${DRW.ink}" stroke-width="1.4"/>`;
+            // Hub
+            const hubW = faceW + 40;
+            svg += `<rect x="${sx - hubW/2}" y="${scy - rHub}" width="${hubW}" height="${rHub*2}" fill="#eef5fb" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+            // Hub hatching
+            svg += `<rect x="${sx - hubW/2}" y="${scy - rHub}" width="${hubW}" height="${rHub*2}" fill="url(#hatch45b)" opacity="0.65"/>`;
+            // Bore
+            svg += `<rect x="${sx - rBore}" y="${scy - rBore}" width="${rBore*2}" height="${rBore*2}" fill="#fff" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+            // Keyway
+            svg += `<rect x="${sx - 5}" y="${scy - rBore - 6}" width="10" height="8" fill="#fff" stroke="${DRW.ink}" stroke-width="1"/>`;
+            // Center line through section
+            svg += `<line x1="${sx - hubW/2 - 30}" y1="${scy}" x2="${sx + hubW/2 + 30}" y2="${scy}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            // Face width dim
+            svg += dimH(sx - faceW/2, sx + faceW/2, scy + rOut + 30, `b = ${(p.faceWidth || faceW).toFixed(1)}`);
+            // Helix angle marker
             if (isHelical) {
-                // Show helix angle at the top
-                const baseY = scy - rOut - 15;
-                svg += `<line x1="${sx - faceW/2}" y1="${baseY}" x2="${sx + faceW/2}" y2="${baseY - 25}" stroke="${accent}" stroke-width="1.8"/>`;
-                svg += `<text x="${sx + faceW/2 + 5}" y="${baseY - 22}" fill="${accent}" font-size="11" font-weight="700">β=${p.beta}°</text>`;
+                const baseY = scy - rOut - 30;
+                svg += `<line x1="${sx - faceW/2}" y1="${baseY + 20}" x2="${sx + faceW/2}" y2="${baseY}" stroke="${DRW.center}" stroke-width="1.4"/>`;
+                svg += `<text x="${sx + faceW/2 + 6}" y="${baseY + 4}" font-size="10" fill="${DRW.center}" font-weight="700">β=${p.beta || '20'}°</text>`;
             }
-            svg += `<line x1="${sx - faceW/2}" y1="${scy + rOut + 22}" x2="${sx + faceW/2}" y2="${scy + rOut + 22}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
-            svg += `<text x="${sx}" y="${scy + rOut + 38}" text-anchor="middle" font-size="10" fill="${dimColor}">b = ${(p.faceWidth || faceW).toFixed(1)}</text>`;
-            svg += `<text x="${sx}" y="${scy - rOut - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">SECTION A-A</text>`;
+            svg += `<text x="${sx}" y="${scy - rOut - 50}" text-anchor="middle" font-size="12" font-weight="700" fill="${DRW.ink}">SECTION A-A</text>`;
+            // Callouts
+            svg += callout(1, cx - 180, cy - 130, cx - rRoot, cy - rRoot + 5);
+            svg += callout(2, cx - 200, cy + 120, cx - rPitch + 5, cy + 30);
+            svg += callout(3, cx + 180, cy + 130, cx + 3, cy + 3);
+            svg += callout(4, sx + 130, scy - rOut + 10, sx + hubW/2, scy - rHub + 10);
+            svg += callout(5, sx + 130, scy + rOut - 10, sx + faceW/2, scy + rRoot - 20);
         }
         else if (type === 'bevel' || type === 'spiralBevel') {
             const isSpiral = (type === 'spiralBevel');
-            const delta = p.delta || 30;
-            const d = p.d || 100;
-            // Front view
-            const cx = 175, cy = H/2 + 10;
-            const rPitch = 100, rOut = 108, rRoot = 82, rBore = 20;
-            svg += `<path d="${gearOutlinePath(cx, cy, rOut, rRoot, p.N || 28, 28)}" fill="${fillAccent}" stroke="${stroke}" stroke-width="2"/>`;
-            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${dimColor}" stroke-width="1.4" stroke-dasharray="10,4,2,4"/>`;
-            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${stroke}" stroke-width="1.5"/>`;
+            const cx = 240, cy = 280;
+            const rOut = 130, rPitch = 110, rRoot = 90, rBore = 22;
+            svg += `<line x1="${cx - rOut - 40}" y1="${cy}" x2="${cx + rOut + 40}" y2="${cy}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<line x1="${cx}" y1="${cy - rOut - 40}" x2="${cx}" y2="${cy + rOut + 40}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<path d="${gearProfilePath(cx, cy, rOut, rRoot, p.N, 28)}" fill="#fdf1e2" stroke="${DRW.ink}" stroke-width="1.4"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${DRW.center}" stroke-width="1" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${DRW.ink}" stroke-width="1.2"/>`;
             if (isSpiral) {
-                // Spiral curved lines on face
-                for (let r = 30; r < 95; r += 12) {
-                    let pathD = '';
-                    for (let t = 0; t < 60; t++) {
-                        const ang = (t / 60) * Math.PI * 1.5;
-                        const rr = r + t * 0.3;
-                        const x = cx + rr * Math.cos(ang);
-                        const y = cy + rr * Math.sin(ang);
-                        pathD += (t === 0 ? `M${x.toFixed(1)},${y.toFixed(1)}` : `L${x.toFixed(1)},${y.toFixed(1)}`);
+                for (let r = 26; r < 125; r += 12) {
+                    let dpath = '';
+                    for (let t = 0; t < 80; t++) {
+                        const ang = (t / 80) * Math.PI * 1.6;
+                        const rr = r + t * 0.15;
+                        const x = cx + rr * Math.cos(ang), y = cy + rr * Math.sin(ang);
+                        dpath += (t === 0 ? `M${x.toFixed(1)},${y.toFixed(1)}` : `L${x.toFixed(1)},${y.toFixed(1)}`);
                     }
-                    svg += `<path d="${pathD}" fill="none" stroke="${dimColor}" stroke-width="0.8" opacity="0.6"/>`;
+                    svg += `<path d="${dpath}" fill="none" stroke="${DRW.center}" stroke-width="0.6" opacity="0.65"/>`;
                 }
             }
-            svg += `<line x1="${cx - rOut - 15}" y1="${cy}" x2="${cx + rOut + 15}" y2="${cy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
-            svg += `<line x1="${cx}" y1="${cy - rOut - 15}" x2="${cx}" y2="${cy + rOut + 15}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
-            svg += `<text x="${cx}" y="${cy - rOut - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">FRONT VIEW</text>`;
-            svg += `<text x="${cx}" y="${cy + rOut + 35}" text-anchor="middle" font-size="10" fill="${dimColor}">dₑ=${p.d.toFixed(1)}  δ=${delta.toFixed(1)}°</text>`;
-
-            // Side view (triangle showing cone)
-            const sx = 500, scy = H/2 + 10;
-            const baseHalf = 110;
-            const height = baseHalf / Math.tan(delta * Math.PI/180);
-            const apexX = sx + height; // apex to the right
-            // Cone triangle profile
-            svg += `<line x1="${sx - baseHalf}" y1="${scy}" x2="${apexX}" y2="${scy - 20}" stroke="${stroke}" stroke-width="1.8"/>`;
-            svg += `<line x1="${sx - baseHalf}" y1="${scy}" x2="${apexX}" y2="${scy + 20}" stroke="${stroke}" stroke-width="1.8"/>`;
-            svg += `<line x1="${sx - baseHalf}" y1="${scy}" x2="${sx - baseHalf}" y2="${scy}" stroke="${stroke}"/>`;
-            // Vertical base line
-            svg += `<line x1="${sx - baseHalf}" y1="${scy - baseHalf * 0.55}" x2="${sx - baseHalf}" y2="${scy + baseHalf * 0.55}" stroke="${stroke}" stroke-width="2"/>`;
-            // Face width shaded region
-            const fb = baseHalf * 0.35;
-            const apex = { x: apexX, y: scy };
-            const ratio = (baseHalf - fb) / baseHalf;
-            const fx1 = apex.x + (sx - baseHalf - apex.x) * ratio;
-            svg += `<polygon points="${sx - baseHalf},${scy - fb} ${fx1},${scy - 20 - (20-20*ratio) - 3} ${fx1},${scy + 20 - (20-20*ratio) + 3} ${sx - baseHalf},${scy + fb}" fill="${fillAccent}" stroke="${stroke}" stroke-width="1.5" opacity="0.75"/>`;
+            svg += `<text x="${cx}" y="${cy - rOut - 50}" text-anchor="middle" font-size="12" font-weight="700" fill="${DRW.ink}">FRONT VIEW</text>`;
+            svg += `<text x="${cx}" y="${cy + rOut + 60}" text-anchor="middle" font-size="10" fill="${DRW.ink}">δ = ${(p.delta||30).toFixed(2)}°</text>`;
+            // Side view — cone triangle
+            const vx = 780, vy = 280, apexX = 600;
+            const baseHalf = 130;
+            const topY = vy - baseHalf, botY = vy + baseHalf;
+            // Apex point (cone vertex)
+            svg += `<circle cx="${apexX}" cy="${vy}" r="2.5" fill="${DRW.ink}"/>`;
+            svg += `<text x="${apexX - 15}" y="${vy - 5}" text-anchor="end" font-size="10" fill="${DRW.ink}">vertex</text>`;
+            // Cone sides
+            svg += `<line x1="${vx}" y1="${topY}" x2="${apexX}" y2="${vy}" stroke="${DRW.ink}" stroke-width="1.5"/>`;
+            svg += `<line x1="${vx}" y1="${botY}" x2="${apexX}" y2="${vy}" stroke="${DRW.ink}" stroke-width="1.5"/>`;
+            // Base face
+            svg += `<line x1="${vx}" y1="${topY}" x2="${vx}" y2="${botY}" stroke="${DRW.ink}" stroke-width="1.6"/>`;
+            // Face width band (near base)
+            const fb = baseHalf * 0.42;
+            const fbaseX = vx - (vx - apexX) * (1 - fb/baseHalf);
+            const ftop = vy - fb, fbot = vy + fb;
+            const rx1 = apexX + (vx - apexX) * (1 - fb / baseHalf);
+            svg += `<polygon points="${vx},${topY} ${rx1},${vy - (vy - topY)*(1 - fb/baseHalf)} ${rx1},${vy + (botY - vy)*(1 - fb/baseHalf)} ${vx},${botY}" fill="url(#hatch45)" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+            // Face width dim
+            svg += dimV(vx - 30, topY, topY + fb, 'b', 0);
             // Cone angle arc
-            svg += `<path d="M ${sx - baseHalf + 30} ${scy - 25} Q ${sx - baseHalf + 5} ${scy} ${sx - baseHalf + 30} ${scy + 25}" fill="none" stroke="${accent}" stroke-width="1.5"/>`;
-            svg += `<text x="${sx - baseHalf + 38}" y="${scy + 5}" fill="${accent}" font-size="11" font-weight="700">δ=${delta.toFixed(1)}°</text>`;
-            // Face width arrow
-            svg += `<line x1="${sx - baseHalf - 12}" y1="${scy - fb}" x2="${sx - baseHalf - 12}" y2="${scy + fb}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
-            svg += `<text x="${sx - baseHalf - 20}" y="${scy}" text-anchor="end" font-size="10" fill="${dimColor}">b</text>`;
-            // Cone distance arrow
-            svg += `<line x1="${sx - baseHalf}" y1="${scy + baseHalf * 0.55 + 15}" x2="${apexX}" y2="${scy + 20 + 15}" stroke="${dimColor}" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#dArrR)"/>`;
-            svg += `<text x="${(sx + apexX)/2 - 20}" y="${scy + baseHalf * 0.55 + 32}" font-size="10" fill="${dimColor}">Re</text>`;
-            svg += `<text x="${sx}" y="${scy - baseHalf * 0.55 - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">SIDE VIEW</text>`;
-            svg += `<text x="${sx}" y="${H - 15}" text-anchor="middle" font-size="10" fill="${dimColor}">${isSpiral ? `ψ=${p.psi}°  ` : ''}Face width b≈${(p.faceWidth||fb*2).toFixed(1)}</text>`;
+            const arcR = 60;
+            svg += `<path d="M ${apexX + arcR*Math.cos(Math.atan2(-baseHalf, vx-apexX) + 0)} ${vy + arcR*Math.sin(Math.atan2(-baseHalf, vx-apexX))} A ${arcR} ${arcR} 0 0 0 ${apexX + arcR*Math.cos(Math.atan2(baseHalf, vx-apexX))} ${vy + arcR*Math.sin(Math.atan2(baseHalf, vx-apexX))}" fill="none" stroke="${DRW.center}" stroke-width="1.3"/>`;
+            svg += `<text x="${apexX + arcR + 8}" y="${vy + 4}" font-size="10" fill="${DRW.center}" font-weight="700">δ=${(p.delta||30).toFixed(1)}°</text>`;
+            // Cone distance dim
+            svg += dimH(apexX, vx, vy + baseHalf + 40, `R = ${p.R ? p.R.toFixed(1) : '—'}`);
+            svg += `<text x="${(apexX+vx)/2}" y="${vy - baseHalf - 40}" text-anchor="middle" font-size="12" font-weight="700" fill="${DRW.ink}">SIDE VIEW — CONE GEOMETRY</text>`;
+            // Pitch diameter dimension on front
+            svg += dimH(cx - rPitch, cx + rPitch, cy - rOut - 22, `de = ${p.d.toFixed(2)}`);
+            // Callouts
+            svg += callout(1, cx - 200, cy - 130, cx - rRoot + 5, cy - rRoot + 5);
+            svg += callout(2, cx + 200, cy + 130, cx + rBore + 4, cy + rBore);
+            svg += callout(3, apexX - 60, vy - 60, apexX, vy);
         }
         else if (type === 'wormShaft') {
-            // Side profile of worm with helical thread
-            const cy = H/2;
-            const d = p.d || 40;
-            const len = 260;
-            const x1 = 100, x2 = x1 + len;
-            const R = 55;
+            const cx = 450, cy = 260;
+            const bodyLen = 500, bodyR = 55;
+            const x1 = cx - bodyLen/2, x2 = cx + bodyLen/2;
+            // Centerline
+            svg += `<line x1="${x1 - 40}" y1="${cy}" x2="${x2 + 40}" y2="${cy}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
             // Body outline
-            svg += `<rect x="${x1}" y="${cy - R}" width="${len}" height="${R*2}" fill="${fillColor}" stroke="${stroke}" stroke-width="2"/>`;
-            // Helical thread lines
+            svg += `<rect x="${x1}" y="${cy - bodyR}" width="${bodyLen}" height="${bodyR*2}" fill="#f2f8ff" stroke="${DRW.ink}" stroke-width="1.4"/>`;
+            // Thread lines (multiple starts supported)
             const starts = p.starts || 1;
-            const lead = p.lead || 30;
-            const pitch = (lead / starts) / (p.d || 40) * R * 0.6;
-            for (let xo = 0; xo < len; xo += pitch) {
-                const xa = x1 + xo;
-                const xb = x1 + xo + pitch;
-                svg += `<path d="M${xa} ${cy - R} L${xb} ${cy + R}" stroke="${stroke}" stroke-width="1.4" fill="none"/>`;
-                if (starts > 1) {
-                    for (let s = 1; s < starts; s++) {
-                        const off = (pitch / starts) * s;
-                        svg += `<path d="M${xa + off} ${cy - R} L${xb + off} ${cy + R}" stroke="${stroke}" stroke-width="1.4" fill="none"/>`;
-                    }
+            const lead = p.lead || 40;
+            const pitchPx = Math.max(14, (lead / (p.d || 40)) * 40);
+            for (let i = 0; i < starts; i++) {
+                const startOffset = (pitchPx / starts) * i;
+                for (let xo = -pitchPx; xo < bodyLen + pitchPx; xo += pitchPx) {
+                    const xa = x1 + xo + startOffset;
+                    const xb = x1 + xo + startOffset + pitchPx;
+                    if (xb < x1 || xa > x2) continue;
+                    // Clamp to body
+                    const sxA = Math.max(x1, xa), sYA = cy - bodyR + (xa < x1 ? (cy - bodyR)*0 : 0);
+                    const clipL = Math.max(0, x1 - xa);
+                    const clipR = Math.max(0, xb - x2);
+                    const topY1 = cy - bodyR + clipL / pitchPx * (bodyR*2);
+                    const botY2 = cy + bodyR - clipR / pitchPx * (bodyR*2);
+                    svg += `<line x1="${Math.max(x1, xa).toFixed(1)}" y1="${(cy - bodyR + Math.max(0, x1 - xa)/pitchPx * bodyR*2).toFixed(1)}" x2="${Math.min(x2, xb).toFixed(1)}" y2="${(cy + bodyR - Math.max(0, xb - x2)/pitchPx * bodyR*2).toFixed(1)}" stroke="${DRW.ink}" stroke-width="1.2"/>`;
                 }
             }
             // End faces
-            svg += `<line x1="${x1}" y1="${cy - R}" x2="${x1}" y2="${cy + R}" stroke="${stroke}" stroke-width="2"/>`;
-            svg += `<line x1="${x2}" y1="${cy - R}" x2="${x2}" y2="${cy + R}" stroke="${stroke}" stroke-width="2"/>`;
-            // Centerline
-            svg += `<line x1="${x1 - 20}" y1="${cy}" x2="${x2 + 20}" y2="${cy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            svg += `<line x1="${x1}" y1="${cy - bodyR}" x2="${x1}" y2="${cy + bodyR}" stroke="${DRW.ink}" stroke-width="1.6"/>`;
+            svg += `<line x1="${x2}" y1="${cy - bodyR}" x2="${x2}" y2="${cy + bodyR}" stroke="${DRW.ink}" stroke-width="1.6"/>`;
             // Length dim
-            svg += `<line x1="${x1}" y1="${cy + R + 25}" x2="${x2}" y2="${cy + R + 25}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
-            svg += `<text x="${(x1+x2)/2}" y="${cy + R + 42}" text-anchor="middle" font-size="10" fill="${dimColor}">L = ${p.wormLength || len}</text>`;
-            svg += `<text x="${(x1+x2)/2}" y="${cy - R - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">WORM SHAFT (SIDE VIEW)</text>`;
-
-            // Cross section front view (circle)
-            const cx = 540, ccy = cy;
-            const rPitch = 40, rRoot = 30;
-            svg += `<circle cx="${cx}" cy="${ccy}" r="${rRoot}" fill="${fillColor}" stroke="${stroke}" stroke-width="2"/>`;
-            svg += `<circle cx="${cx}" cy="${ccy}" r="${rPitch}" fill="none" stroke="${dimColor}" stroke-width="1.2" stroke-dasharray="8,3,2,3"/>`;
-            svg += `<line x1="${cx - rRoot - 15}" y1="${ccy}" x2="${cx + rRoot + 15}" y2="${ccy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
-            svg += `<line x1="${cx}" y1="${ccy - rRoot - 15}" x2="${cx}" y2="${ccy + rRoot + 15}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
-            svg += `<text x="${cx}" y="${ccy - rRoot - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">FRONT VIEW</text>`;
-            svg += `<text x="${cx}" y="${ccy + rRoot + 30}" text-anchor="middle" font-size="10" fill="${dimColor}">d=${p.d ? p.d.toFixed(1) : '—'}  γ=${p.gamma ? p.gamma.toFixed(1) : '—'}°  starts=${p.starts}</text>`;
+            svg += dimH(x1, x2, cy + bodyR + 40, `L = ${p.wormLength || bodyLen}`);
+            // Pitch dia
+            svg += dimV(x1 - 25, cy - bodyR, cy + bodyR, `d = ${p.d ? p.d.toFixed(1) : '—'}`, -85);
+            // Lead angle label
+            if (p.gamma) {
+                const lx = x1 + 80;
+                svg += `<line x1="${lx}" y1="${cy - bodyR + 8}" x2="${lx + 40}" y2="${cy - bodyR + 20}" stroke="${DRW.center}" stroke-width="1.4"/>`;
+                svg += `<text x="${lx + 45}" y="${cy - bodyR + 22}" font-size="10" fill="${DRW.center}" font-weight="700">γ = ${p.gamma.toFixed(2)}°</text>`;
+            }
+            svg += `<text x="${cx}" y="${cy - bodyR - 40}" text-anchor="middle" font-size="12" font-weight="700" fill="${DRW.ink}">WORM SHAFT (SIDE VIEW)</text>`;
+            // Front (end) view circle
+            const ex = 830, ey = 260, er = 70;
+            svg += `<line x1="${ex - er - 30}" y1="${ey}" x2="${ex + er + 30}" y2="${ey}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<line x1="${ex}" y1="${ey - er - 30}" x2="${ex}" y2="${ey + er + 30}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<circle cx="${ex}" cy="${ey}" r="${er}" fill="#f2f8ff" stroke="${DRW.ink}" stroke-width="1.4"/>`;
+            svg += `<circle cx="${ex}" cy="${ey}" r="${er*0.75}" fill="none" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<text x="${ex}" y="${ey - er - 40}" text-anchor="middle" font-size="12" font-weight="700" fill="${DRW.ink}">FRONT VIEW</text>`;
+            // Callouts
+            svg += callout(1, x1 + 40, cy - bodyR - 60, x1 + 40, cy - bodyR);
+            svg += callout(2, x2 - 20, cy + bodyR + 60, x2 - 20, cy + bodyR);
+            svg += callout(3, ex - 110, ey - 60, ex - er*0.7, ey - er*0.7);
         }
         else if (type === 'wormWheel') {
-            const cx = 175, cy = H/2 + 10;
-            const rOut = 110, rPitch = 92, rRoot = 78, rBore = 22;
-            svg += `<path d="${gearOutlinePath(cx, cy, rOut, rRoot, p.N || 30, 30)}" fill="${fillAccent}" stroke="${stroke}" stroke-width="2"/>`;
-            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${dimColor}" stroke-width="1.4" stroke-dasharray="10,4,2,4"/>`;
-            // Throat circle (larger, dashed)
+            const cx = 240, cy = 280, rOut = 130, rPitch = 110, rRoot = 92, rBore = 24, rHub = 50;
+            svg += `<line x1="${cx - rOut - 40}" y1="${cy}" x2="${cx + rOut + 40}" y2="${cy}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<line x1="${cx}" y1="${cy - rOut - 40}" x2="${cx}" y2="${cy + rOut + 40}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<path d="${gearProfilePath(cx, cy, rOut, rRoot, p.N, 30)}" fill="#fdf1e2" stroke="${DRW.ink}" stroke-width="1.4"/>`;
+            // Throat circle (addendum)
             const rThroat = rOut * 1.02;
-            svg += `<circle cx="${cx}" cy="${cy}" r="${rThroat}" fill="none" stroke="${accent}" stroke-width="1.6" stroke-dasharray="6,3"/>`;
-            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${stroke}" stroke-width="1.5"/>`;
-            svg += `<line x1="${cx - rOut - 15}" y1="${cy}" x2="${cx + rOut + 15}" y2="${cy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
-            svg += `<line x1="${cx}" y1="${cy - rOut - 15}" x2="${cx}" y2="${cy + rOut + 15}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
-            svg += `<text x="${cx}" y="${cy - rOut - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">FRONT VIEW (THROATED)</text>`;
-            svg += `<text x="${cx}" y="${cy + rOut + 35}" text-anchor="middle" font-size="10" fill="${dimColor}">d=${p.d.toFixed(1)}  D₃=${p.D3 ? p.D3.toFixed(1) : '—'}  z=${p.N}</text>`;
-
-            // Side section showing throat
-            const sx = 500, scy = H/2 + 10;
-            const faceW = 100;
-            // Rect body
-            svg += `<rect x="${sx - faceW/2}" y="${scy - rOut*0.6}" width="${faceW}" height="${rOut * 1.2}" fill="${fillAccent}" stroke="${stroke}" stroke-width="1.8"/>`;
-            // Throat curve (concave on top)
-            const throatD = `M${sx - faceW/2} ${scy - rOut*0.6} Q${sx} ${scy - rOut*1.0} ${sx + faceW/2} ${scy - rOut*0.6}`;
-            svg += `<path d="${throatD}" fill="${fillAccent}" stroke="${stroke}" stroke-width="1.8"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rThroat}" fill="none" stroke="${DRW.center}" stroke-width="1.4" stroke-dasharray="8,3"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${DRW.center}" stroke-width="1" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rHub}" fill="none" stroke="${DRW.ink}" stroke-width="1"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+            svg += `<rect x="${cx - 5}" y="${cy - rBore - 6}" width="10" height="8" fill="#fff" stroke="${DRW.ink}" stroke-width="1"/>`;
+            svg += `<text x="${cx}" y="${cy - rOut - 50}" text-anchor="middle" font-size="12" font-weight="700" fill="${DRW.ink}">FRONT VIEW (THROATED)</text>`;
+            svg += dimH(cx - rPitch, cx + rPitch, cy - rOut - 22, `d = ${p.d.toFixed(2)}`);
+            svg += dimH(cx - rThroat, cx + rThroat, cy + rOut + 34, `D3 = ${p.D3 ? p.D3.toFixed(2) : '—'}`);
+            // Section
+            const sx = 700, scy = 280, faceW = 130;
+            svg += `<line x1="${sx}" y1="${scy - rOut - 40}" x2="${sx}" y2="${scy + rOut + 40}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            // Body with concave throat top
+            const bodyH = 130;
+            svg += `<path d="M${sx - faceW/2} ${scy - bodyH/2} Q${sx} ${scy - bodyH/2 - 35} ${sx + faceW/2} ${scy - bodyH/2} L${sx + faceW/2} ${scy + bodyH/2} L${sx - faceW/2} ${scy + bodyH/2} Z" fill="url(#hatch45)" stroke="${DRW.ink}" stroke-width="1.4"/>`;
             // Bore
-            svg += `<rect x="${sx - 11}" y="${scy - rBore}" width="22" height="${rBore * 2}" fill="#fff" stroke="${stroke}" stroke-width="1.2"/>`;
-            // Hatching
-            for (let i = 0; i < 8; i++) {
-                const y1 = scy - rOut*0.6 + 6 + i * 10;
-                svg += `<line x1="${sx - faceW/2 + 3}" y1="${y1}" x2="${sx + faceW/2 - 3}" y2="${y1 - 10}" stroke="${stroke}" stroke-width="0.5" opacity="0.5"/>`;
-            }
-            svg += `<text x="${sx}" y="${scy - rOut*0.6 - 30}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">SECTION B-B</text>`;
-            svg += `<text x="${sx}" y="${H - 15}" text-anchor="middle" font-size="10" fill="${dimColor}">Face width b≈${(p.faceWidth || faceW).toFixed(1)}</text>`;
+            svg += `<rect x="${sx - rBore}" y="${scy - rBore}" width="${rBore*2}" height="${rBore*2}" fill="#fff" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+            svg += `<rect x="${sx - 5}" y="${scy - rBore - 6}" width="10" height="8" fill="#fff" stroke="${DRW.ink}" stroke-width="1"/>`;
+            svg += dimH(sx - faceW/2, sx + faceW/2, scy + bodyH/2 + 30, `b = ${(p.faceWidth || faceW).toFixed(1)}`);
+            svg += `<text x="${sx}" y="${scy - bodyH/2 - 60}" text-anchor="middle" font-size="12" font-weight="700" fill="${DRW.ink}">SECTION B-B</text>`;
+            svg += callout(1, cx - 200, cy - 130, cx - rRoot + 5, cy - rRoot + 5);
+            svg += callout(2, sx + 130, scy - bodyH/2, sx + faceW/2, scy - bodyH/2 + 10);
         }
         else if (type === 'rack') {
-            const cx = W/2, cy = H/2;
-            const pitch = p.P || 8;
-            const moduleScale = 8;
-            const rackLen = 520;
-            const toothH = Math.max(20, pitch * moduleScale * 0.55);
+            const cy = 280;
+            const P = p.P || 8;
+            const moduleScale = 10;
+            const Ndraw = Math.min(Math.max(8, p.N || 10), 14);
+            const toothStep = P * moduleScale;
+            const rackLen = Ndraw * toothStep;
+            const x0 = (W - rackLen) / 2;
+            const toothH = toothStep * 0.55;
             const topY = cy - toothH/2;
             const botY = cy + toothH/2;
-            const x0 = (W - rackLen) / 2;
-            const x1 = x0 + rackLen;
-            const Ndraw = Math.max(8, Math.min(Math.floor(rackLen / (pitch * moduleScale)), 20));
-            const toothStep = rackLen / Ndraw;
-            const half = toothStep / 2;
-            // Build path
-            let path = `M${x0},${botY}`;
+            const bodyH = 55;
+            const bodyTop = botY;
+            // Body path
+            let path = `M${x0 - 20},${bodyTop + bodyH}`;
+            path += ` L${x0 - 20},${botY}`;
             for (let i = 0; i < Ndraw; i++) {
                 const xs = x0 + i * toothStep;
                 const xe = xs + toothStep;
-                // root → up → top → down → root
-                path += ` L${xs + half*0.35},${botY}`;
-                path += ` L${xs + half*0.5},${topY}`;
-                path += ` L${xe - half*0.5},${topY}`;
-                path += ` L${xe - half*0.35},${botY}`;
-                if (i < Ndraw - 1) path += ` L${xe},${botY}`;
+                const half = toothStep / 2;
+                const tipStart = xs + half * 0.35;
+                const tipEnd = xe - half * 0.35;
+                path += ` L${tipStart},${botY}`;
+                path += ` L${tipStart + half*0.15},${topY}`;
+                path += ` L${tipEnd - half*0.15},${topY}`;
+                path += ` L${tipEnd},${botY}`;
             }
-            path += ` L${x1},${botY} L${x1},${botY + 25} L${x0},${botY + 25} Z`;
-            // Body
-            svg += `<path d="${path}" fill="${fillColor}" stroke="${stroke}" stroke-width="2"/>`;
-            // Pitch line
-            svg += `<line x1="${x0 - 15}" y1="${cy}" x2="${x1 + 15}" y2="${cy}" stroke="${accent}" stroke-width="1" stroke-dasharray="10,4,2,4"/>`;
-            svg += `<text x="${x0 - 20}" y="${cy + 4}" text-anchor="end" font-size="10" fill="${accent}">pitch</text>`;
-            // Tooth height arrow
-            svg += `<line x1="${x1 + 25}" y1="${topY}" x2="${x1 + 25}" y2="${botY}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
-            svg += `<text x="${x1 + 30}" y="${cy + 4}" font-size="10" fill="${dimColor}">h</text>`;
+            path += ` L${x0 + rackLen + 20},${botY}`;
+            path += ` L${x0 + rackLen + 20},${bodyTop + bodyH}`;
+            path += ` L${x0 - 20},${bodyTop + bodyH} Z`;
+            svg += `<path d="${path}" fill="#f6f9fc" stroke="${DRW.ink}" stroke-width="1.4"/>`;
+            // Body hatch (thin strip)
+            svg += `<rect x="${x0 - 20}" y="${bodyTop}" width="${rackLen + 40}" height="${bodyH}" fill="url(#hatch45)" opacity="0.55" stroke="none"/>`;
+            // Center line (pitch line)
+            svg += `<line x1="${x0 - 40}" y1="${cy}" x2="${x0 + rackLen + 40}" y2="${cy}" stroke="${DRW.center}" stroke-width="1" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<text x="${x0 - 45}" y="${cy - 4}" text-anchor="end" font-size="10" fill="${DRW.center}" font-weight="700">pitch</text>`;
+            // Overall dim
+            svg += dimH(x0, x0 + rackLen, botY + bodyH + 40, `Total = ${(Ndraw * P).toFixed(1)} mm`);
             // Pitch dim
-            svg += `<line x1="${x0 + half*0.5}" y1="${botY + 40}" x2="${x0 + half*1.5}" y2="${botY + 40}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
-            svg += `<text x="${x0 + half}" y="${botY + 55}" text-anchor="middle" font-size="10" fill="${dimColor}">P = ${pitch.toFixed(2)}</text>`;
-            // Total length dim
-            svg += `<line x1="${x0}" y1="${botY + 80}" x2="${x1}" y2="${botY + 80}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
-            svg += `<text x="${(x0+x1)/2}" y="${botY + 95}" text-anchor="middle" font-size="10" fill="${dimColor}">Total length = ${(Ndraw * pitch).toFixed(1)} mm</text>`;
-            svg += `<text x="${W/2}" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="${stroke}">RACK (SIDE VIEW)</text>`;
+            svg += dimH(x0, x0 + toothStep, botY + bodyH + 20, `P = ${P.toFixed(2)}`);
+            // Tooth height
+            svg += dimV(x0 - 30, topY, botY, `h`, -85);
+            // Title
+            svg += `<text x="${W/2}" y="${cy - 130}" text-anchor="middle" font-size="13" font-weight="700" fill="${DRW.ink}">RACK — SIDE VIEW</text>`;
+            // Detail callout: zoom into first 2 teeth (below)
+            const dx = W/2, dy = H - 180, dScale = 4;
+            const dw = toothStep * 2 * dScale;
+            const dh = toothH * dScale;
+            const dx0 = dx - dw/2, dy0 = dy - dh/2;
+            svg += `<rect x="${dx0 - 20}" y="${dy0 - 20}" width="${dw + 40}" height="${dh + 40}" fill="none" stroke="${DRW.ink}" stroke-width="0.8" stroke-dasharray="4,2"/>`;
+            svg += `<text x="${dx0 - 25}" y="${dy0 - 25}" font-size="10" fill="${DRW.ink}" font-weight="700">DETAIL A (4:1)</text>`;
+            let dpath = `M${dx0},${dy + dh/2}`;
+            for (let i = 0; i < 2; i++) {
+                const xs = dx0 + i * toothStep * dScale;
+                const xe = xs + toothStep * dScale;
+                const half = toothStep * dScale / 2;
+                dpath += ` L${xs + half*0.35},${dy + dh/2}`;
+                dpath += ` L${xs + half*0.5},${dy - dh/2}`;
+                dpath += ` L${xe - half*0.5},${dy - dh/2}`;
+                dpath += ` L${xe - half*0.35},${dy + dh/2}`;
+            }
+            svg += `<path d="${dpath}" fill="#f6f9fc" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+            svg += callout(1, x0 + toothStep*0.5, topY - 40, x0 + toothStep*0.5, topY);
+            svg += callout(2, x0 + toothStep*1.5, topY - 40, x0 + toothStep*1.5, topY);
         }
         else if (type === 'sprocket') {
-            const cx = 175, cy = H/2 + 10;
-            const rPitch = 100;
-            const rOut = 115;
-            const rRoot = 82;
+            const cx = 240, cy = 280, rOut = 135, rPitch = 110, rRoot = 92, rBore = 26, rHub = 55;
             const z = p.N || 20;
-            const nDraw = Math.min(z, 20);
-            const dr = (p.Dr || 8) * 1.2;
-            // Chain roller seat radius
-            const rSeat = 10;
-            svg += `<path d="${gearOutlinePath(cx, cy, rOut, rRoot, z, nDraw)}" fill="${fillColor}" stroke="${stroke}" stroke-width="2"/>`;
-            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${dimColor}" stroke-width="1.4" stroke-dasharray="10,4,2,4"/>`;
-            svg += `<circle cx="${cx}" cy="${cy}" r="${rRoot}" fill="none" stroke="${dimColor}" stroke-width="0.8" stroke-dasharray="4,3"/>`;
+            svg += `<line x1="${cx - rOut - 40}" y1="${cy}" x2="${cx + rOut + 40}" y2="${cy}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<line x1="${cx}" y1="${cy - rOut - 40}" x2="${cx}" y2="${cy + rOut + 40}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<path d="${gearProfilePath(cx, cy, rOut, rRoot, z, 22)}" fill="#eef5fb" stroke="${DRW.ink}" stroke-width="1.4"/>`;
+            // Pitch circle
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${DRW.center}" stroke-width="1" stroke-dasharray="14,3,3,3"/>`;
             // Roller seats
-            for (let i = 0; i < nDraw; i++) {
-                const ang = (i / nDraw) * Math.PI * 2 - Math.PI / 2;
-                const xr = cx + rPitch * Math.cos(ang);
-                const yr = cy + rPitch * Math.sin(ang);
-                svg += `<circle cx="${xr.toFixed(1)}" cy="${yr.toFixed(1)}" r="${rSeat}" fill="#fff" stroke="${accent}" stroke-width="1.2"/>`;
+            const seatR = 9;
+            for (let i = 0; i < 22; i++) {
+                const ang = (i / 22) * Math.PI * 2 - Math.PI / 2;
+                const xr = cx + rPitch * Math.cos(ang), yr = cy + rPitch * Math.sin(ang);
+                svg += `<circle cx="${xr.toFixed(1)}" cy="${yr.toFixed(1)}" r="${seatR}" fill="#fff" stroke="${DRW.center}" stroke-width="0.9"/>`;
             }
-            const rBore = 22;
-            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${stroke}" stroke-width="1.5"/>`;
-            svg += `<line x1="${cx - rOut - 15}" y1="${cy}" x2="${cx + rOut + 15}" y2="${cy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
-            svg += `<line x1="${cx}" y1="${cy - rOut - 15}" x2="${cx}" y2="${cy + rOut + 15}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
-            svg += `<text x="${cx}" y="${cy - rOut - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">FRONT VIEW</text>`;
-            svg += `<text x="${cx}" y="${cy + rOut + 35}" text-anchor="middle" font-size="10" fill="${dimColor}">d=${p.d ? p.d.toFixed(1) : '—'}  z=${z}  P=${(p.P||0).toFixed(2)}</text>`;
-            // Side section
-            const sx = 500, scy = H/2 + 10;
-            svg += `<rect x="${sx - 55}" y="${scy - rOut * 0.5}" width="110" height="${rOut}" fill="${fillColor}" stroke="${stroke}" stroke-width="1.8"/>`;
-            svg += `<rect x="${sx - 30}" y="${scy - rOut * 0.35}" width="60" height="${rOut * 0.7}" fill="#e0f2fe" stroke="${stroke}" stroke-width="1.2"/>`;
-            svg += `<rect x="${sx - 11}" y="${scy - rBore}" width="22" height="${rBore * 2}" fill="#fff" stroke="${stroke}" stroke-width="1.2"/>`;
-            for (let i = 0; i < 8; i++) {
-                const y1 = scy - rOut * 0.5 + 4 + i * 12;
-                svg += `<line x1="${sx - 52}" y1="${y1}" x2="${sx + 52}" y2="${y1 - 10}" stroke="${stroke}" stroke-width="0.5" opacity="0.5"/>`;
-            }
-            svg += `<text x="${sx}" y="${scy - rOut * 0.5 - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">SECTION A-A</text>`;
-            svg += `<text x="${sx}" y="${H - 15}" text-anchor="middle" font-size="10" fill="${dimColor}">Chain roller seats shown as circles</text>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rHub}" fill="none" stroke="${DRW.ink}" stroke-width="1"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+            svg += `<rect x="${cx - 5}" y="${cy - rBore - 6}" width="10" height="8" fill="#fff" stroke="${DRW.ink}" stroke-width="1"/>`;
+            svg += `<text x="${cx}" y="${cy - rOut - 50}" text-anchor="middle" font-size="12" font-weight="700" fill="${DRW.ink}">FRONT VIEW</text>`;
+            svg += dimH(cx - rPitch, cx + rPitch, cy - rOut - 22, `d = ${p.d ? p.d.toFixed(2) : '—'}`);
+            svg += dimH(cx - rOut, cx + rOut, cy + rOut + 34, `da = ${p.Do ? p.Do.toFixed(2) : '—'}`);
+            // Section
+            const sx = 720, scy = 280, faceW = 90;
+            svg += `<line x1="${sx}" y1="${scy - rOut - 40}" x2="${sx}" y2="${scy + rOut + 40}" stroke="${DRW.center}" stroke-width="0.9" stroke-dasharray="14,3,3,3"/>`;
+            svg += `<rect x="${sx - faceW/2}" y="${scy - rOut*0.55}" width="${faceW}" height="${rOut*1.1}" fill="url(#hatch45)" stroke="${DRW.ink}" stroke-width="1.4"/>`;
+            svg += `<rect x="${sx - (faceW+30)/2}" y="${scy - rHub}" width="${faceW+30}" height="${rHub*2}" fill="#eef5fb" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+            svg += `<rect x="${sx - (faceW+30)/2}" y="${scy - rHub}" width="${faceW+30}" height="${rHub*2}" fill="url(#hatch45b)" opacity="0.6"/>`;
+            svg += `<rect x="${sx - rBore}" y="${scy - rBore}" width="${rBore*2}" height="${rBore*2}" fill="#fff" stroke="${DRW.ink}" stroke-width="1.2"/>`;
+            svg += `<rect x="${sx - 5}" y="${scy - rBore - 6}" width="10" height="8" fill="#fff" stroke="${DRW.ink}" stroke-width="1"/>`;
+            svg += dimH(sx - faceW/2, sx + faceW/2, scy + rOut*0.55 + 30, `b = ${(p.faceWidth || 30).toFixed(1)}`);
+            svg += `<text x="${sx}" y="${scy - rOut*0.55 - 50}" text-anchor="middle" font-size="12" font-weight="700" fill="${DRW.ink}">SECTION A-A</text>`;
+            svg += callout(1, cx - 200, cy - 130, cx - rRoot + 5, cy - rRoot + 5);
+            svg += callout(2, cx + 210, cy - 80, cx + rPitch * Math.cos(-Math.PI/4), cy + rPitch * Math.sin(-Math.PI/4));
+            svg += callout(3, sx + 130, scy + rHub, sx + (faceW+30)/2, scy + rHub);
         }
+
         svg += `</svg>`;
         return svg;
     }
@@ -1081,34 +1001,16 @@
 
     function updateSprocketVisibility() {
         const isSprocket = (gearType.value === 'sprocket');
-        if (isSprocket) {
-            modDpSwitch.style.display = 'none';
-            metricBlock.style.display = 'none';
-            imperialBlock.style.display = 'none';
-        } else {
+        if (isSprocket) { modDpSwitch.style.display = 'none'; metricBlock.style.display = 'none'; imperialBlock.style.display = 'none'; }
+        else {
             modDpSwitch.style.display = 'flex';
-            if (gearType.value !== 'rack' && gearType.value !== 'sprocket') {
-                if (isMetric) metricBlock.style.display = 'block';
-                else imperialBlock.style.display = 'block';
-            }
+            if (gearType.value !== 'rack') { if (isMetric) metricBlock.style.display = 'block'; else imperialBlock.style.display = 'block'; }
         }
     }
-
     function updateRackInputVisibility() {
         const isRack = (gearType.value === 'rack');
-        if (isRack) {
-            metricBlock.style.display = 'none';
-            imperialBlock.style.display = 'none';
-            modDpSwitch.style.display = 'none';
-            rackPitchBlock.style.display = 'block';
-        } else {
-            if (gearType.value !== 'sprocket') {
-                modDpSwitch.style.display = 'flex';
-                if (isMetric) metricBlock.style.display = 'block';
-                else imperialBlock.style.display = 'block';
-            }
-            rackPitchBlock.style.display = 'none';
-        }
+        if (isRack) { metricBlock.style.display = 'none'; imperialBlock.style.display = 'none'; modDpSwitch.style.display = 'none'; rackPitchBlock.style.display = 'block'; }
+        else { if (gearType.value !== 'sprocket') { modDpSwitch.style.display = 'flex'; if (isMetric) metricBlock.style.display = 'block'; else imperialBlock.style.display = 'block'; } rackPitchBlock.style.display = 'none'; }
         updateSprocketVisibility();
     }
 
@@ -1125,31 +1027,20 @@
         } else {
             if (type !== 'sprocket' && (isNaN(m) || m <= 0)) { dimOutput.innerHTML = '<span class="warning">Enter module/DP</span>'; return; }
         }
-
         let html='', note='', cutterMsg='';
         let drawingParams = {};
         let getCutterNumber=(N)=>{ if(N>=135) return 1; if(N>=55) return 2; if(N>=35) return 3; if(N>=26) return 4; if(N>=21) return 5; if(N>=17) return 6; if(N>=14) return 7; return 8; };
 
         if(type === 'spur'){
-            let d = m*N;
-            let Do = m*(N+2);
-            let dr = d - 2.5*m;
-            let toothThickness = Math.PI * m / 2;
-            let addendum = m;
-            let dedendum = 1.25 * m;
-            let wholeDepth = 2.25 * m;
-            let circularPitch = Math.PI * m;
-            let pressureAngle = 20;
+            let d = m*N, Do = m*(N+2), dr = d - 2.5*m;
+            let toothThickness = Math.PI * m / 2, addendum = m, dedendum = 1.25 * m, wholeDepth = 2.25 * m;
+            let circularPitch = Math.PI * m, pressureAngle = 20;
             let baseCircle = d * Math.cos(pressureAngle * Math.PI/180);
             let matingTeeth = parseInt(document.getElementById('spurMatingTeeth').value);
-            let centerDist = null;
-            let contactRatio = null;
+            let centerDist = null, contactRatio = null;
             if (!isNaN(matingTeeth) && matingTeeth > 0 && N > 0) {
                 centerDist = m * (N + matingTeeth) / 2;
-                let ra1 = Do/2;
-                let ra2 = m*(matingTeeth+2)/2;
-                let rb1 = baseCircle/2;
-                let rb2 = m*matingTeeth/2 * Math.cos(pressureAngle * Math.PI/180);
+                let ra1 = Do/2, ra2 = m*(matingTeeth+2)/2, rb1 = baseCircle/2, rb2 = m*matingTeeth/2 * Math.cos(pressureAngle * Math.PI/180);
                 let alpha_rad = pressureAngle * Math.PI/180;
                 let Za = Math.sqrt(ra1*ra1 - rb1*rb1) + Math.sqrt(ra2*ra2 - rb2*rb2);
                 let Zp = (d/2 + m*matingTeeth/2) * Math.sin(alpha_rad);
@@ -1168,11 +1059,7 @@
                 <div class="param-item"><span>Whole depth h</span><strong>${wholeDepth.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Circular pitch p</span><strong>${circularPitch.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Tooth thickness (pitch) s</span><strong>${toothThickness.toFixed(3)} mm</strong></div>`;
-            if (!isNaN(matingTeeth) && matingTeeth > 0) {
-                html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div>
-                         <div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Contact ratio ε</span><strong>${contactRatio ? contactRatio.toFixed(3) : '—'}</strong></div>`;
-            } else { html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above</strong></div>`; }
+            if (!isNaN(matingTeeth) && matingTeeth > 0) html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div><div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div><div class="param-item"><span>Contact ratio ε</span><strong>${contactRatio ? contactRatio.toFixed(3) : '—'}</strong></div>`;
             html += `</div>`;
             note = `Spur: T = 40/${N}. Cutter No. ${getCutterNumber(N)}. Pressure angle = ${pressureAngle}°. Milling depth = ${wholeDepth.toFixed(2)} mm.`;
             cutterMsg = `Involute cutter No. ${getCutterNumber(N)} (module ${m.toFixed(3)} mm, pressure angle ${pressureAngle}°).`;
@@ -1182,132 +1069,70 @@
             let beta = parseFloat(document.getElementById('helixAngle').value) || 0;
             let betaRad = beta * Math.PI/180;
             let alpha_n = parseFloat(document.getElementById('helicalPressureAngle').value) || 20;
-            let alpha_n_rad = alpha_n * Math.PI/180;
-            let mn = m;
-            let mt = mn / Math.cos(betaRad);
-            let d = mt * N;
-            let alpha_t = Math.atan(Math.tan(alpha_n_rad) / Math.cos(betaRad));
-            let alpha_t_deg = alpha_t * 180/Math.PI;
-            let db = d * Math.cos(alpha_t);
-            let da = d + 2 * mn;
-            let df = d - 2.5 * mn;
-            let ha = mn, hf = 1.25 * mn, h = 2.25 * mn, c = 0.25 * mn;
-            let pn = Math.PI * mn, pt = Math.PI * mt;
-            let sn = pn / 2, st = pt / 2;
+            let mn = m, mt = mn / Math.cos(betaRad), d = mt * N;
+            let alpha_t = Math.atan(Math.tan(alpha_n * Math.PI/180) / Math.cos(betaRad));
+            let db = d * Math.cos(alpha_t), da = d + 2 * mn, df = d - 2.5 * mn;
+            let h = 2.25 * mn, pn = Math.PI * mn, pt = Math.PI * mt;
             let px = pt / Math.tan(betaRad);
             let lead = (leadMode.value === 'manual') ? (parseFloat(manualLead.value) || 450) : (Math.PI * d / Math.tan(betaRad));
             let zv = N / Math.pow(Math.cos(betaRad), 3);
             let faceWidth = parseFloat(document.getElementById('faceWidth').value) || 0;
             let epsilon_beta = (faceWidth * Math.sin(betaRad)) / (Math.PI * mn);
-            let matingTeeth = parseInt(document.getElementById('helicalMatingTeeth').value);
-            let centerDist = null, epsilon_alpha = null, epsilon_gamma = null;
-            if (!isNaN(matingTeeth) && matingTeeth > 0 && N > 0 && faceWidth > 0) {
-                let d2 = mt * matingTeeth;
-                centerDist = (d + d2) / 2;
-                let da1 = da, da2 = d2 + 2 * mn;
-                let db1 = db, db2 = d2 * Math.cos(alpha_t);
-                let ra1 = da1/2, ra2 = da2/2, rb1 = db1/2, rb2 = db2/2;
-                let a_center = centerDist;
-                let alpha_wt = Math.acos((rb1 + rb2) / a_center);
-                let za = Math.sqrt(ra1*ra1 - rb1*rb1) + Math.sqrt(ra2*ra2 - rb2*rb2);
-                let zp = a_center * Math.sin(alpha_wt);
-                epsilon_alpha = (za - zp) / (pt * Math.cos(alpha_t));
-                epsilon_gamma = epsilon_alpha + epsilon_beta;
-            } else if (faceWidth > 0) { epsilon_gamma = epsilon_beta; }
             html = `<div class="param-grid">
                 <div class="param-item"><span>Normal module mₙ</span><strong>${mn.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Transverse module mₜ</span><strong>${mt.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Helix angle β</span><strong>${beta.toFixed(2)}°</strong></div>
                 <div class="param-item"><span>Normal pressure angle αₙ</span><strong>${alpha_n}°</strong></div>
-                <div class="param-item"><span>Transverse pressure angle αₜ</span><strong>${alpha_t_deg.toFixed(2)}°</strong></div>
                 <div class="param-item"><span>Number of teeth z</span><strong>${N}</strong></div>
                 <div class="param-item"><span>Pitch diameter d</span><strong>${d.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Base diameter d<sub>b</sub></span><strong>${db.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Outside diameter d<sub>a</sub></span><strong>${da.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Root diameter d<sub>f</sub></span><strong>${df.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Addendum h<sub>a</sub> (mₙ)</span><strong>${ha.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Dedendum h<sub>f</sub> (1.25mₙ)</span><strong>${hf.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Whole depth h</span><strong>${h.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Clearance c</span><strong>${c.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Normal circular pitch pₙ</span><strong>${pn.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Transverse circular pitch pₜ</span><strong>${pt.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Normal tooth thickness sₙ</span><strong>${sn.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Transverse tooth thickness sₜ</span><strong>${st.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Normal pitch pₙ</span><strong>${pn.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Axial pitch p<sub>x</sub></span><strong>${px.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div>
-                <div class="param-item"><span>Virtual number of teeth z<sub>v</sub></span><strong>${zv.toFixed(2)}</strong></div>
+                <div class="param-item"><span>Virtual teeth z<sub>v</sub></span><strong>${zv.toFixed(2)}</strong></div>
                 <div class="param-item"><span>Face width b</span><strong>${faceWidth.toFixed(1)} mm</strong></div>
-                <div class="param-item"><span>Overlap ratio ε<sub>β</sub></span><strong>${epsilon_beta.toFixed(3)}</strong></div>`;
-            if (!isNaN(matingTeeth) && matingTeeth > 0) {
-                html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div>
-                         <div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Transverse contact ratio ε<sub>α</sub></span><strong>${epsilon_alpha !== null ? epsilon_alpha.toFixed(3) : '—'}</strong></div>
-                         <div class="param-item"><span>Total contact ratio ε<sub>γ</sub></span><strong>${epsilon_gamma !== null ? epsilon_gamma.toFixed(3) : '—'}</strong></div>`;
-            } else { html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above for center distance & ε<sub>α</sub></strong></div>`; }
-            html += `</div>`;
-            note = `Helical gear: set table angle to ${beta}°. Use cutter for ${zv.toFixed(0)} teeth (normal module). Lead = ${lead.toFixed(1)} mm. Milling depth = ${h.toFixed(2)} mm.`;
+                <div class="param-item"><span>Overlap ratio ε<sub>β</sub></span><strong>${epsilon_beta.toFixed(3)}</strong></div>
+            </div>`;
+            note = `Helical: set table angle to ${beta}°. Use cutter for ${zv.toFixed(0)} teeth. Lead = ${lead.toFixed(1)} mm. Milling depth = ${h.toFixed(2)} mm.`;
             cutterMsg = `Involute cutter No. ${getCutterNumber(Math.round(zv))} (based on virtual teeth, normal module ${mn.toFixed(3)} mm).`;
             let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
             updateLeadGearTrains(lead, leadscrewPitch);
-            drawingParams = { N: N, m: mn, d: d, Do: da, dr: df, faceWidth: faceWidth, beta: beta.toFixed(1), isHelical: true };
+            drawingParams = { N: N, m: mn, d: d, Do: da, dr: df, faceWidth: faceWidth, beta: beta.toFixed(1) };
         }
         else if(type === 'bevel'){
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
             let delta = parseFloat(document.getElementById('pitchCone').value);
             let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
-            let deltaPinion = delta, deltaGear = null;
-            let d1 = m * N, d2 = null, R = null, faceWidth = null;
-            let tipConeAngle = null, backConeAngle = null, rootAngle = null, outsideDia = null, dr = null, toothThickness = null;
-            if (!isNaN(matingTeeth) && matingTeeth > 0) {
-                deltaPinion = Math.atan(N / matingTeeth) * 180/Math.PI;
-                deltaGear = 90 - deltaPinion;
-                d2 = m * matingTeeth;
-                R = d1 / (2 * Math.sin(deltaPinion * Math.PI/180));
-                delta = deltaPinion;
-                d1 = m * N; d2 = m * matingTeeth;
-            } else {
-                if(isNaN(delta)) { delta = Math.atan(Math.sin(shaft*Math.PI/180) / (1 + Math.cos(shaft*Math.PI/180))) * 180/Math.PI; }
-                R = d1 / (2 * Math.sin(delta * Math.PI/180));
-            }
-            dr = d1 - 2.2 * m;
-            toothThickness = Math.PI * m / 2;
+            let deltaPinion = delta, d1 = m * N, R = null;
+            if (!isNaN(matingTeeth) && matingTeeth > 0) { deltaPinion = Math.atan(N / matingTeeth) * 180/Math.PI; delta = deltaPinion; R = d1 / (2 * Math.sin(deltaPinion * Math.PI/180)); }
+            else { if(isNaN(delta)) delta = Math.atan(Math.sin(shaft*Math.PI/180) / (1 + Math.cos(shaft*Math.PI/180))) * 180/Math.PI; R = d1 / (2 * Math.sin(delta * Math.PI/180)); }
+            let dr = d1 - 2.2 * m;
             let addendumAngle = Math.atan(m / R) * 180/Math.PI;
-            tipConeAngle = delta + addendumAngle;
-            outsideDia = d1 + 2 * m * Math.cos(delta * Math.PI/180);
-            backConeAngle = 90 - delta;
+            let tipConeAngle = delta + addendumAngle;
+            let outsideDia = d1 + 2 * m * Math.cos(delta * Math.PI/180);
             let thetaF = Math.atan(2.4 * Math.sin(delta*Math.PI/180) / N) * 180/Math.PI;
-            rootAngle = delta - thetaF;
-            faceWidth = 0.3 * R;
-            html = `<div class="param-grid">`;
-            if (!isNaN(matingTeeth) && matingTeeth > 0) {
-                html += `<div class="param-item"><span>Pinion pitch dia d₁</span><strong>${d1.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Gear pitch dia d₂</span><strong>${d2.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Pinion pitch cone δ₁</span><strong>${deltaPinion.toFixed(2)}°</strong></div>
-                         <div class="param-item"><span>Gear pitch cone δ₂</span><strong>${deltaGear.toFixed(2)}°</strong></div>`;
-            } else {
-                html += `<div class="param-item"><span>Pitch dia d</span><strong>${d1.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div>`;
-            }
-            html += `<div class="param-item"><span>Tip cone angle (face)</span><strong>${tipConeAngle.toFixed(2)}°</strong></div>
-                     <div class="param-item"><span>Back cone angle</span><strong>${backConeAngle.toFixed(2)}°</strong></div>
-                     <div class="param-item"><span>Root angle (setup)</span><strong>${rootAngle.toFixed(2)}°</strong></div>
-                     <div class="param-item"><span>Face width (recommended)</span><strong>${faceWidth.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(0.3×R)</span></div>
-                     <div class="param-item"><span>Outside dia (large end)</span><strong>${outsideDia.toFixed(2)} mm</strong></div>
-                     <div class="param-item"><span>Root diameter (approx)</span><strong>${dr.toFixed(2)} mm</strong></div>
-                     <div class="param-item"><span>Tooth thickness (large end)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
+            let rootAngle = delta - thetaF;
+            let faceWidth = 0.3 * R;
+            html = `<div class="param-grid">
+                <div class="param-item"><span>Pitch dia d</span><strong>${d1.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Tip cone angle</span><strong>${tipConeAngle.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Root angle (setup)</span><strong>${rootAngle.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Face width</span><strong>${faceWidth.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outside dia (large end)</span><strong>${outsideDia.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Root diameter (approx)</span><strong>${dr.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness</span><strong>${(Math.PI * m / 2).toFixed(3)} mm</strong></div>
             </div>`;
             note = `Tilt dividing head to ${rootAngle.toFixed(1)}°. Face width should not exceed ${faceWidth.toFixed(1)} mm to maintain proper tooth form.`;
             cutterMsg = `Straight bevel cutter (Gleason type). Use standard involute cutter No. ${getCutterNumber(N)}.`;
-            drawingParams = { N: N, m: m, d: d1, Do: outsideDia, dr: dr, delta: delta, faceWidth: faceWidth };
+            drawingParams = { N: N, m: m, d: d1, Do: outsideDia, dr: dr, delta: delta, faceWidth: faceWidth, R: R };
         }
         else if(type === 'spiralBevel'){
             let psi = parseFloat(document.getElementById('spiralAngle').value) || 35;
-            let psiRad = psi * Math.PI/180;
-            let mn = m;
-            let mt = mn / Math.cos(psiRad);
-            let d = mt * N;
+            let psiRad = psi * Math.PI/180, mn = m, mt = mn / Math.cos(psiRad), d = mt * N;
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
             let deltaInput = parseFloat(document.getElementById('pitchCone').value);
             let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
@@ -1317,18 +1142,12 @@
             let deltaRad = delta * Math.PI/180;
             let outerConeDist = d / (2 * Math.sin(deltaRad));
             let faceWidth = 0.3 * outerConeDist;
-            let meanConeDist = outerConeDist - faceWidth/2;
-            let addendum = mn, dedendum = 1.25 * mn, clearance = 0.25 * mn;
-            let wholeDepth = addendum + dedendum;
+            let addendum = mn, dedendum = 1.25 * mn, wholeDepth = addendum + dedendum;
             let addendumAngle = Math.atan(addendum / outerConeDist) * 180/Math.PI;
             let dedendumAngle = Math.atan(dedendum / outerConeDist) * 180/Math.PI;
-            let tipAngle = delta + addendumAngle;
-            let rootAngle = delta - dedendumAngle;
+            let tipAngle = delta + addendumAngle, rootAngle = delta - dedendumAngle;
             let outerAddendumDia = d + 2*addendum*Math.cos(deltaRad);
             let outerRootDia = d - 2*dedendum*Math.cos(deltaRad);
-            let backConeAngle = 90 - delta;
-            let meanNormalModule = mn * Math.cos(psiRad);
-            let toothThicknessLarge = Math.PI * mt / 2;
             let lead = (leadMode.value === 'manual') ? (parseFloat(manualLead.value) || 450) : ((Math.PI * d) / Math.tan(psiRad));
             html = `<div class="param-grid">
                 <div class="param-item"><span>Normal module mₙ</span><strong>${mn.toFixed(3)} mm</strong></div>
@@ -1337,19 +1156,11 @@
                 <div class="param-item"><span>Spiral angle ψ</span><strong>${psi}°</strong></div>
                 <div class="param-item"><span>Outer pitch diameter dₑ</span><strong>${d.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Outer cone distance Rₑ</span><strong>${outerConeDist.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Recommended face width b</span><strong>${faceWidth.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(0.3×Rₑ)</span></div>
-                <div class="param-item"><span>Mean cone distance Rₘ</span><strong>${meanConeDist.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Addendum (outer) hₐ</span><strong>${addendum.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Dedendum (outer) h_f</span><strong>${dedendum.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Face width b</span><strong>${faceWidth.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Whole depth h</span><strong>${wholeDepth.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Clearance c</span><strong>${clearance.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Tip (face) angle δₐ</span><strong>${tipAngle.toFixed(2)}°</strong></div>
-                <div class="param-item"><span>Root angle δ_f (setup)</span><strong>${rootAngle.toFixed(2)}°</strong></div>
-                <div class="param-item"><span>Outer addendum diameter dₐₑ</span><strong>${outerAddendumDia.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Outer root diameter d_fₑ</span><strong>${outerRootDia.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Back cone angle (δ_b)</span><strong>${backConeAngle.toFixed(2)}°</strong></div>
-                <div class="param-item"><span>Mean normal module mₙₘ</span><strong>${meanNormalModule.toFixed(4)} mm</strong></div>
-                <div class="param-item"><span>Tooth thickness (large end)</span><strong>${toothThicknessLarge.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Root angle δ_f</span><strong>${rootAngle.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Outer addendum dia dₐₑ</span><strong>${outerAddendumDia.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outer root dia d_fₑ</span><strong>${outerRootDia.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div>
             </div>`;
             note = `Swivel ψ = ${psi}°, hand ${document.getElementById('spiralHand').value}. Face width b ≈ ${faceWidth.toFixed(1)} mm, root angle = ${rootAngle.toFixed(1)}° for setup.`;
@@ -1363,32 +1174,30 @@
             let wormOD = parseFloat(document.getElementById('wormOD').value);
             let d = wormOD ? wormOD - 2*m : 40 - 2*m;
             let dr = d - 2.2*m;
-            let toothThickness = Math.PI * m / 2;
             let lead = Math.PI * m * starts;
             let gamma = Math.atan(m * starts / d) * 180/Math.PI;
-            let indexingTurns = 40 / starts;
             let lengthFormula = document.getElementById('wormLengthFormula').value;
-            let wormLength = 0, lengthFormulaDesc = "";
+            let wormLength = 0;
             switch(lengthFormula) {
-                case 'starts': wormLength = 2.2 * m * (starts + 2); lengthFormulaDesc = "Starts-based"; break;
-                case 'constant13': wormLength = 13 * m; lengthFormulaDesc = "Short (13×m)"; break;
-                case 'constant14.5': wormLength = 14.5 * m; lengthFormulaDesc = "Medium (14.5×m)"; break;
-                case 'constant16': wormLength = 16 * m; lengthFormulaDesc = "Long (16×m)"; break;
-                default: wormLength = 2.2 * m * (starts + 2); lengthFormulaDesc = "Starts-based";
+                case 'starts': wormLength = 2.2 * m * (starts + 2); break;
+                case 'constant13': wormLength = 13 * m; break;
+                case 'constant14.5': wormLength = 14.5 * m; break;
+                case 'constant16': wormLength = 16 * m; break;
+                default: wormLength = 2.2 * m * (starts + 2);
             }
             let tipWidth = 0.697 * m;
             html = `<div class="param-grid">
                 <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Root diameter dr</span><strong>${dr.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Tooth thickness (axial)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Lead angle γ (swivel)</span><strong>${gamma.toFixed(2)}°</strong></div>
+                <div class="param-item"><span>Tooth thickness (axial)</span><strong>${(Math.PI * m / 2).toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Lead angle γ</span><strong>${gamma.toFixed(2)}°</strong></div>
                 <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Worm length (${lengthFormulaDesc})</span><strong>${wormLength.toFixed(1)} mm</strong></div>
-                <div class="param-item"><span>Cutting tip width (0.697×m)</span><strong>${tipWidth.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Indexing (40/starts)</span><strong>${indexingTurns.toFixed(4)} turns per start</strong></div>
+                <div class="param-item"><span>Worm length</span><strong>${wormLength.toFixed(1)} mm</strong></div>
+                <div class="param-item"><span>Cutting tip width</span><strong>${tipWidth.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Indexing (40/starts)</span><strong>${(40/starts).toFixed(4)} turns per start</strong></div>
             </div>`;
-            note = `Table swivel ${gamma.toFixed(1)}°, use simple indexing with 40/${starts} turns per start. Helical milling with leadscrew required. Length formula: ${lengthFormulaDesc}.`;
-            cutterMsg = `Single-point cutter, tip width ${tipWidth.toFixed(2)} mm (standard for module ${m.toFixed(2)}).`;
+            note = `Table swivel ${gamma.toFixed(1)}°, use simple indexing with 40/${starts} turns per start.`;
+            cutterMsg = `Single-point cutter, tip width ${tipWidth.toFixed(2)} mm.`;
             drawingParams = { d: d, starts: starts, lead: lead, wormLength: wormLength.toFixed(0), gamma: gamma };
         }
         else if(type === 'wormWheel'){
@@ -1397,16 +1206,15 @@
             if(isNaN(d_worm)) d_worm = 40 - 2*m;
             let d = m * N;
             let dr = d - 2.5*m;
-            let toothThickness = Math.PI * m / 2;
             let throatFormulaValue = throatFormula.value;
             let x = parseFloat(document.getElementById('profileShift').value) || 0;
-            let D3 = 0, formulaDesc = "";
+            let D3 = 0;
             switch(throatFormulaValue) {
-                case 'standard': D3 = m * (N + 2); formulaDesc = "Standard"; break;
-                case 'shift': D3 = m * (N + 2 + 2*x); formulaDesc = `With profile shift (x=${x.toFixed(3)})`; break;
-                case 'reduced': D3 = m * (N + 1.6); formulaDesc = "Reduced addendum"; break;
-                case 'cylindrical': D3 = m * (N + 2); formulaDesc = "Cylindrical"; break;
-                default: D3 = m * (N + 2); formulaDesc = "Standard";
+                case 'standard': D3 = m * (N + 2); break;
+                case 'shift': D3 = m * (N + 2 + 2*x); break;
+                case 'reduced': D3 = m * (N + 1.6); break;
+                case 'cylindrical': D3 = m * (N + 2); break;
+                default: D3 = m * (N + 2);
             }
             let center = (d_worm + d)/2;
             let faceWidth = 0.45 * center;
@@ -1414,33 +1222,29 @@
             html = `<div class="param-grid">
                 <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Root diameter dr</span><strong>${dr.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Tooth thickness (pitch)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Face width (auto)</span><strong>${faceWidth.toFixed(1)} mm</strong></div>
-                <div class="param-item"><span>Throat diameter D3</span><strong>${D3.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(${formulaDesc})</span></div>
+                <div class="param-item"><span>Throat diameter D3</span><strong>${D3.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Center distance</span><strong>${center.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Table swivel γ</span><strong>${gamma.toFixed(2)}°</strong></div>
             </div>`;
-            note = `Indexing T = 40/${N}. Table swivel = ${gamma.toFixed(1)}°. Face width (auto) = ${faceWidth.toFixed(1)} mm.`;
-            cutterMsg = `Hob or involute cutter (throated). Face width = ${faceWidth.toFixed(1)} mm influences hob traverse.`;
+            note = `Indexing T = 40/${N}. Table swivel = ${gamma.toFixed(1)}°. Face width = ${faceWidth.toFixed(1)} mm.`;
+            cutterMsg = `Hob or involute cutter (throated).`;
             drawingParams = { N: N, m: m, d: d, Do: D3, dr: dr, D3: D3, faceWidth: faceWidth };
         }
         else if(type === 'rack'){
             let p = rackP;
-            let toothThickness = p / 2;
-            let addendum = m;
-            let dedendum = 1.25 * m;
             let rackLength = N * p;
             html = `<div class="param-grid">
                 <div class="param-item"><span>Circular pitch P</span><strong>${p.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Module (derived from P)</span><strong>${m.toFixed(4)} mm</strong></div>
-                <div class="param-item"><span>Tooth thickness (pitch line)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Addendum</span><strong>${addendum.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Dedendum</span><strong>${dedendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Module (derived)</span><strong>${m.toFixed(4)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness</span><strong>${(p/2).toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Addendum</span><strong>${m.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Dedendum</span><strong>${(1.25*m).toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Whole depth</span><strong>${(2.25*m).toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Rack length (N × P)</span><strong>${rackLength.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Rack length</span><strong>${rackLength.toFixed(2)} mm</strong></div>
             </div>`;
-            note = `Linear spacing = ${p.toFixed(2)} mm per tooth. Use rack indexing plate. Total length = ${rackLength.toFixed(1)} mm for ${N} teeth.`;
-            cutterMsg = `Rack form cutter (milling or shaping).`;
+            note = `Linear spacing = ${p.toFixed(2)} mm/tooth. Total length = ${rackLength.toFixed(1)} mm for ${N} teeth.`;
+            cutterMsg = `Rack form cutter.`;
             drawingParams = { N: N, m: m, P: p, rackLength: rackLength };
         }
         else if(type === 'sprocket'){
@@ -1455,47 +1259,38 @@
             let da_exact = P * (0.6 + 1 / Math.tan(Math.PI / z));
             let df = d - Dr;
             let toothThickness = 0.93 * P - 0.15;
-            let ri = 0.505 * Dr;
-            let re = 0.12 * Dr;
-            let addendum = (da_common - d) / 2;
-            let dedendum = (d - df) / 2;
+            let ri = 0.505 * Dr, re = 0.12 * Dr;
+            let addendum = (da_common - d) / 2, dedendum = (d - df) / 2;
             let wholeDepth = addendum + dedendum;
-            let pressureAngle = 30;
-            let toothAngle = 360 / z;
-            let chordalPitch = P;
             let equivModule = P / Math.PI;
             html = `<div class="param-grid">
                 <div class="param-item"><span>Number of teeth z</span><strong>${z}</strong></div>
                 <div class="param-item"><span>Chain pitch P</span><strong>${P.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Roller diameter Dᵣ</span><strong>${Dr.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Pitch circle diameter d</span><strong>${d.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Outer diameter (workshop)</span><strong>${da_common.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Outer diameter (ISO)</span><strong>${da_exact.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outer dia (workshop)</span><strong>${da_common.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outer dia (ISO)</span><strong>${da_exact.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Root diameter d_f</span><strong>${df.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Tooth thickness (pitch)</span><strong>${toothThickness.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Roller seating radius rᵢ</span><strong>${ri.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Tooth flank radius rₑ</span><strong>${re.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Addendum hₐ (common)</span><strong>${addendum.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Dedendum h_f</span><strong>${dedendum.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Whole tooth depth h</span><strong>${wholeDepth.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Pressure angle α</span><strong>${pressureAngle}°</strong></div>
-                <div class="param-item"><span>Tooth angle (360°/z)</span><strong>${toothAngle.toFixed(2)}°</strong></div>
-                <div class="param-item"><span>Equivalent module (P/π)</span><strong>${equivModule.toFixed(4)} mm</strong></div>
+                <div class="param-item"><span>Roller seating rᵢ</span><strong>${ri.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Tooth flank rₑ</span><strong>${re.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Whole tooth depth</span><strong>${wholeDepth.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Equivalent module</span><strong>${equivModule.toFixed(4)} mm</strong></div>
             </div>`;
-            note = `Indexing: ${40/z} turns per tooth (simple indexing). Use a sprocket form cutter or side milling cutter.`;
-            cutterMsg = `Sprocket form cutter for pitch ${P.toFixed(2)} mm, roller dia ${Dr.toFixed(2)} mm. Root radius = ${ri.toFixed(2)} mm, flank radius = ${re.toFixed(2)} mm.`;
-            drawingParams = { N: z, m: equivModule, d: d, Do: da_common, dr: df, P: P, Dr: Dr };
+            note = `Indexing: ${40/z} turns per tooth. Outer diameter: workshop = ${da_common.toFixed(2)} mm, ISO = ${da_exact.toFixed(2)} mm.`;
+            cutterMsg = `Sprocket form cutter for pitch ${P.toFixed(2)} mm, roller dia ${Dr.toFixed(2)} mm.`;
+            drawingParams = { N: z, m: equivModule, d: d, Do: da_common, dr: df, P: P, Dr: Dr, faceWidth: P*2 };
         }
-        dimOutput.innerHTML = html + `<hr><span class="badge">${type === 'rack' ? `Circular pitch P = ${rackP.toFixed(3)} mm → module = ${m.toFixed(4)} mm` : (type !== 'sprocket' ? getModuleDisplay() : 'Chain sprocket')}</span>`;
+        dimOutput.innerHTML = html + `<hr><span class="badge">${type === 'rack' ? `P = ${rackP.toFixed(3)} mm → module = ${m.toFixed(4)} mm` : (type !== 'sprocket' ? getModuleDisplay() : 'Chain sprocket')}</span>`;
         manufactureNote.innerHTML = note;
         cutterOut.innerHTML = cutterMsg;
 
-        // Update the gear type drawing
+        // Update gear type drawing
         try {
             const drawingSvg = generateGearTypeDrawing(type, drawingParams);
             gearTypeDrawingSvg.innerHTML = drawingSvg;
             gearTypeDrawingContainer.style.display = 'block';
         } catch(e) {
+            console.error('Drawing error', e);
             gearTypeDrawingContainer.style.display = 'none';
         }
 
@@ -1525,10 +1320,7 @@
         isMetric = active;
         metricBtn.classList.toggle('active-mode', active);
         imperialBtn.classList.toggle('active-mode', !active);
-        if (gearType.value !== 'rack' && gearType.value !== 'sprocket') {
-            metricBlock.style.display = active ? 'block' : 'none';
-            imperialBlock.style.display = active ? 'none' : 'block';
-        }
+        if (gearType.value !== 'rack' && gearType.value !== 'sprocket') { metricBlock.style.display = active ? 'block' : 'none'; imperialBlock.style.display = active ? 'none' : 'block'; }
         computeDimensions();
     }
     function updateMethodUI(){ let method=document.getElementById('indexMethod').value; document.getElementById('directDiv').style.display=method==='direct'?'block':'none'; document.getElementById('simpleDiv').style.display=method==='simple'?'block':'none'; document.getElementById('diffDiv').style.display=method==='differential'?'block':'none'; document.getElementById('angularDiv').style.display=method==='angular'?'block':'none'; computeIndexing(); }
@@ -1564,7 +1356,6 @@
     document.getElementById('helicalPressureAngle')?.addEventListener('input', computeDimensions);
     document.getElementById('faceWidth')?.addEventListener('input', computeDimensions);
     document.getElementById('leadGearCount')?.addEventListener('change', computeDimensions);
-
     holePresetSimple?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); });
     customHolesSimple?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); });
     holePresetAngular?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); });
