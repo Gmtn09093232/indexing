@@ -53,107 +53,54 @@
             color: var(--text);
             line-height: 1.5;
         }
-        .container {
-            max-width: 1500px;
-            margin: 0 auto;
-        }
-        /* ============ HEADER ============ */
+        .container { max-width: 1500px; margin: 0 auto; }
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            padding: 24px 28px;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 16px; padding: 24px 28px;
             background: linear-gradient(135deg, #0b1120 0%, #1e293b 60%, #0f3a52 100%);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-lg);
-            margin-bottom: 18px;
-            position: relative;
-            overflow: hidden;
+            border-radius: var(--radius-xl); box-shadow: var(--shadow-lg);
+            margin-bottom: 18px; position: relative; overflow: hidden;
         }
         .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 340px;
-            height: 340px;
+            content: ''; position: absolute; top: -50%; right: -10%;
+            width: 340px; height: 340px;
             background: radial-gradient(circle, rgba(14, 165, 233, 0.28), transparent 70%);
             pointer-events: none;
         }
         .header::after {
-            content: '';
-            position: absolute;
-            bottom: -60%;
-            left: 10%;
-            width: 280px;
-            height: 280px;
+            content: ''; position: absolute; bottom: -60%; left: 10%;
+            width: 280px; height: 280px;
             background: radial-gradient(circle, rgba(139, 92, 246, 0.18), transparent 70%);
             pointer-events: none;
         }
         h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: #ffffff;
-            margin: 0;
-            line-height: 1.25;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-            z-index: 1;
+            font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em;
+            color: #ffffff; margin: 0; line-height: 1.25;
+            display: flex; align-items: center; gap: 12px;
+            position: relative; z-index: 1;
         }
         h1 .logo-mark {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 44px; height: 44px; border-radius: 12px;
             background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            font-size: 1.4rem;
-            box-shadow: var(--shadow-accent);
-            flex-shrink: 0;
+            font-size: 1.4rem; box-shadow: var(--shadow-accent); flex-shrink: 0;
         }
-        h1 .title-stack {
-            display: flex;
-            flex-direction: column;
-        }
-        h1 .title-main {
-            font-size: 1.35rem;
-            line-height: 1.15;
-        }
+        h1 .title-stack { display: flex; flex-direction: column; }
+        h1 .title-main { font-size: 1.35rem; line-height: 1.15; }
         h1 .title-sub {
-            font-size: 0.72rem;
-            font-weight: 500;
-            color: #7dd3fc;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            margin-top: 2px;
+            font-size: 0.72rem; font-weight: 500; color: #7dd3fc;
+            letter-spacing: 0.14em; text-transform: uppercase; margin-top: 2px;
         }
         .header-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            position: relative;
-            z-index: 1;
+            display: flex; gap: 10px; flex-wrap: wrap;
+            position: relative; z-index: 1;
         }
         .print-btn {
             background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            color: white;
-            border: none;
-            border-radius: 999px;
-            padding: 11px 22px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.88rem;
-            text-align: center;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            color: white; border: none; border-radius: 999px;
+            padding: 11px 22px; font-weight: 600; cursor: pointer;
+            font-size: 0.88rem; text-align: center; white-space: nowrap;
+            display: inline-flex; align-items: center; gap: 8px;
             box-shadow: var(--shadow-accent);
             transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
         }
@@ -162,638 +109,327 @@
             box-shadow: 0 12px 24px rgba(14, 165, 233, 0.4);
             filter: brightness(1.05);
         }
-        .print-btn:active {
-            transform: translateY(0);
-        }
-        /* ============ SUB BAR ============ */
         .sub {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 8px 10px;
-            margin: 0 0 22px;
-            padding: 14px 20px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            font-weight: 500;
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 8px 10px; margin: 0 0 22px; padding: 14px 20px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);
+            font-size: 0.82rem; color: var(--text-muted); font-weight: 500;
         }
         .sub .chip {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 12px;
-            border-radius: 999px;
-            background: var(--accent-light);
-            color: var(--accent-dark);
-            font-weight: 600;
-            font-size: 0.78rem;
-            letter-spacing: 0.01em;
+            display: inline-flex; align-items: center; padding: 4px 12px;
+            border-radius: 999px; background: var(--accent-light);
+            color: var(--accent-dark); font-weight: 600; font-size: 0.78rem;
         }
-        .sub .chip.violet {
-            background: #ede9fe;
-            color: #6d28d9;
-        }
-        .sub .chip.emerald {
-            background: #d1fae5;
-            color: #047857;
-        }
-        .sub .divider {
-            color: var(--border-strong);
-            font-weight: 300;
-        }
-        /* ============ GRID ============ */
+        .sub .chip.violet { background: #ede9fe; color: #6d28d9; }
+        .sub .chip.emerald { background: #d1fae5; color: #047857; }
+        .sub .divider { color: var(--border-strong); font-weight: 300; }
         .flex-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 22px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
         }
-        @media (max-width: 1100px) {
-            .flex-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        /* ============ CARDS ============ */
+        @media (max-width: 1100px) { .flex-grid { grid-template-columns: 1fr; } }
         .card {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow);
-            padding: 26px;
-            border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
+            background: var(--surface); border-radius: var(--radius-xl);
+            box-shadow: var(--shadow); padding: 26px;
+            border: 1px solid var(--border); position: relative; overflow: hidden;
         }
         .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
             background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
             opacity: 0.9;
         }
         .card h2 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            margin: 0 0 22px;
-            color: var(--text);
-            letter-spacing: -0.01em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid var(--border);
+            font-size: 1.05rem; font-weight: 700; margin: 0 0 22px;
+            color: var(--text); letter-spacing: -0.01em;
+            display: flex; align-items: center; gap: 10px;
+            padding-bottom: 14px; border-bottom: 1px solid var(--border);
         }
         .card h2 .icon-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 34px; height: 34px; border-radius: 10px;
             background: linear-gradient(135deg, var(--accent-light), #cffafe);
-            color: var(--accent-dark);
-            font-size: 1rem;
-            flex-shrink: 0;
+            color: var(--accent-dark); font-size: 1rem; flex-shrink: 0;
         }
-        /* ============ INPUTS ============ */
         .input-group {
-            margin-bottom: 14px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 14px; display: flex; flex-wrap: wrap;
+            align-items: center; gap: 10px;
         }
         .input-group label {
-            width: 160px;
-            font-weight: 600;
-            color: var(--text);
-            font-size: 0.84rem;
-            letter-spacing: -0.005em;
+            width: 160px; font-weight: 600; color: var(--text);
+            font-size: 0.84rem; letter-spacing: -0.005em;
         }
-        input[type="number"],
-        input[type="text"],
-        input[type="password"],
-        select {
-            background: var(--surface-2);
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius);
-            padding: 10px 14px;
-            flex: 1;
-            min-width: 120px;
-            font-size: 0.88rem;
-            color: var(--text);
+        input[type="number"], input[type="text"], input[type="password"], select {
+            background: var(--surface-2); border: 1.5px solid var(--border);
+            border-radius: var(--radius); padding: 10px 14px; flex: 1;
+            min-width: 120px; font-size: 0.88rem; color: var(--text);
             transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-            font-weight: 500;
-            outline: none;
+            font-weight: 500; outline: none;
         }
-        input:hover, select:hover {
-            border-color: var(--border-strong);
-        }
+        input:hover, select:hover { border-color: var(--border-strong); }
         input:focus, select:focus {
-            border-color: var(--accent);
-            background: #ffffff;
+            border-color: var(--accent); background: #ffffff;
             box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.13);
         }
         select {
-            cursor: pointer;
-            appearance: none;
+            cursor: pointer; appearance: none;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
+            background-repeat: no-repeat; background-position: right 14px center;
             padding-right: 38px;
         }
-        /* ============ BUTTONS ============ */
         .small-btn {
-            background: var(--surface-3);
-            border: 1px solid var(--border-strong);
-            border-radius: 999px;
-            padding: 8px 14px;
-            color: var(--text);
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.76rem;
-            width: auto;
-            margin: 0;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            background: var(--surface-3); border: 1px solid var(--border-strong);
+            border-radius: 999px; padding: 8px 14px; color: var(--text);
+            font-weight: 600; cursor: pointer; font-size: 0.76rem;
+            width: auto; margin: 0; transition: all 0.15s ease;
+            display: inline-flex; align-items: center; gap: 4px;
         }
         .small-btn:hover {
-            background: var(--accent-light);
-            border-color: var(--accent);
+            background: var(--accent-light); border-color: var(--accent);
             color: var(--accent-dark);
         }
         button:not(.small-btn):not(.zoom-controls button):not(.print-btn) {
             background: linear-gradient(135deg, #0f172a, #1e293b);
-            border: none;
-            border-radius: var(--radius);
-            padding: 13px 20px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
+            border: none; border-radius: var(--radius); padding: 13px 20px;
+            color: white; font-weight: 600; cursor: pointer; margin-top: 10px;
             transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-            font-size: 0.9rem;
-            width: 100%;
-            letter-spacing: 0.01em;
-            box-shadow: var(--shadow);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            font-size: 0.9rem; width: 100%; letter-spacing: 0.01em;
+            box-shadow: var(--shadow); display: inline-flex;
+            align-items: center; justify-content: center; gap: 8px;
         }
         button:not(.small-btn):not(.zoom-controls button):not(.print-btn):hover {
             transform: translateY(-1px);
             box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18);
             filter: brightness(1.08);
         }
-        button:not(.small-btn):not(.zoom-controls button):not(.print-btn):active {
-            transform: translateY(0);
-        }
-        #computeDimensionsBtn,
-        #computeIndexingBtn {
+        #computeDimensionsBtn, #computeIndexingBtn {
             background: linear-gradient(135deg, var(--accent), var(--accent-dark));
             box-shadow: var(--shadow-accent);
         }
-        #computeDimensionsBtn:hover,
-        #computeIndexingBtn:hover {
+        #computeDimensionsBtn:hover, #computeIndexingBtn:hover {
             box-shadow: 0 12px 24px rgba(14, 165, 233, 0.35);
         }
-        /* ============ MODE SWITCH ============ */
         .mode-switch {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 20px;
-            padding: 4px;
-            background: var(--surface-3);
-            border-radius: 999px;
+            display: flex; gap: 4px; margin-bottom: 20px; padding: 4px;
+            background: var(--surface-3); border-radius: 999px;
             border: 1px solid var(--border);
         }
         .mode-chip {
-            padding: 9px 16px;
-            border-radius: 999px;
-            cursor: pointer;
-            font-weight: 600;
-            text-align: center;
-            flex: 1;
-            font-size: 0.83rem;
-            color: var(--text-muted);
-            transition: all 0.18s ease;
-            user-select: none;
+            padding: 9px 16px; border-radius: 999px; cursor: pointer;
+            font-weight: 600; text-align: center; flex: 1;
+            font-size: 0.83rem; color: var(--text-muted);
+            transition: all 0.18s ease; user-select: none;
         }
-        .mode-chip:hover {
-            color: var(--text);
-        }
+        .mode-chip:hover { color: var(--text); }
         .mode-chip.active-mode {
-            background: #ffffff;
-            color: var(--accent-dark);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
+            background: #ffffff; color: var(--accent-dark);
+            box-shadow: var(--shadow-sm); border: 1px solid var(--border);
         }
-        /* ============ RESULT BOX ============ */
         .result-box {
             background: linear-gradient(160deg, #0b1120 0%, #101a2e 100%);
-            border-radius: var(--radius-lg);
-            padding: 18px 20px;
-            margin-top: 16px;
-            color: var(--dark-text);
-            font-size: 0.85rem;
-            overflow-x: auto;
-            border: 1px solid var(--dark-border);
+            border-radius: var(--radius-lg); padding: 18px 20px;
+            margin-top: 16px; color: var(--dark-text); font-size: 0.85rem;
+            overflow-x: auto; border: 1px solid var(--dark-border);
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
         }
         .result-box h3 {
-            margin: 0 0 12px;
-            font-size: 0.82rem;
-            color: #7dd3fc;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin: 0 0 12px; font-size: 0.82rem; color: #7dd3fc;
+            font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            display: flex; align-items: center; gap: 8px;
         }
         .result-box h3::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent-2);
-            box-shadow: 0 0 8px var(--accent-2);
+            content: ''; width: 6px; height: 6px; border-radius: 50%;
+            background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2);
         }
-        /* ============ PARAM GRID ============ */
         .param-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px 16px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px;
         }
         .param-item {
-            display: flex;
-            justify-content: space-between;
+            display: flex; justify-content: space-between;
             border-bottom: 1px dashed rgba(148, 163, 184, 0.22);
-            padding: 6px 0;
-            flex-wrap: wrap;
-            gap: 6px;
-            font-size: 0.82rem;
+            padding: 6px 0; flex-wrap: wrap; gap: 6px; font-size: 0.82rem;
         }
-        .param-item span:first-child {
-            color: var(--dark-muted);
-        }
+        .param-item span:first-child { color: var(--dark-muted); }
         .param-item strong {
-            color: #f1f5f9;
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
+            color: #f1f5f9; font-weight: 600; font-variant-numeric: tabular-nums;
         }
-        /* ============ BADGE / WARNING ============ */
         .badge {
             background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            color: white;
-            border-radius: 999px;
-            padding: 4px 14px;
-            font-size: 0.72rem;
-            display: inline-block;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            box-shadow: var(--shadow-accent);
-            margin-top: 6px;
+            color: white; border-radius: 999px; padding: 4px 14px;
+            font-size: 0.72rem; display: inline-block; font-weight: 600;
+            letter-spacing: 0.02em; box-shadow: var(--shadow-accent); margin-top: 6px;
         }
         .warning {
             background: linear-gradient(135deg, #fef3c7, #fde68a);
-            color: #78350f;
-            padding: 10px 14px;
-            border-radius: var(--radius);
-            font-size: 0.84rem;
-            border: 1px solid #fcd34d;
-            font-weight: 500;
-            display: inline-block;
+            color: #78350f; padding: 10px 14px; border-radius: var(--radius);
+            font-size: 0.84rem; border: 1px solid #fcd34d;
+            font-weight: 500; display: inline-block;
         }
-        /* ============ TABLES ============ */
         table.indexing-tab {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.78rem;
-            margin-top: 6px;
+            width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 6px;
         }
         .indexing-tab th {
-            color: #7dd3fc;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            font-size: 0.68rem;
-            padding: 8px 6px;
-            text-align: left;
-            border-bottom: 1px solid var(--dark-border);
+            color: #7dd3fc; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.06em; font-size: 0.68rem; padding: 8px 6px;
+            text-align: left; border-bottom: 1px solid var(--dark-border);
         }
         .indexing-tab td {
-            padding: 8px 6px;
-            text-align: left;
+            padding: 8px 6px; text-align: left;
             border-bottom: 1px solid rgba(51, 65, 85, 0.6);
-            color: var(--dark-text);
-            font-variant-numeric: tabular-nums;
+            color: var(--dark-text); font-variant-numeric: tabular-nums;
         }
-        .indexing-tab tr:hover td {
-            background: rgba(14, 165, 233, 0.07);
-        }
-        hr {
-            margin: 14px 0;
-            border: none;
-            border-top: 1px solid var(--dark-border);
-        }
-        /* ============ NOTES ============ */
+        .indexing-tab tr:hover td { background: rgba(14, 165, 233, 0.07); }
+        hr { margin: 14px 0; border: none; border-top: 1px solid var(--dark-border); }
         .small-note {
-            font-size: 0.74rem;
-            color: var(--text-light);
-            margin-top: 8px;
-            line-height: 1.5;
+            font-size: 0.74rem; color: var(--text-light);
+            margin-top: 8px; line-height: 1.5;
         }
-        .result-box .small-note {
-            color: var(--dark-muted);
-        }
-        /* ============ DRAWINGS ============ */
+        .result-box .small-note { color: var(--dark-muted); }
         .gear-drawing {
-            background: var(--surface-2);
-            border-radius: var(--radius-lg);
-            padding: 16px;
-            margin-top: 16px;
-            border: 1px solid var(--border);
-            text-align: center;
-            overflow-x: auto;
+            background: var(--surface-2); border-radius: var(--radius-lg);
+            padding: 16px; margin-top: 16px; border: 1px solid var(--border);
+            text-align: center; overflow-x: auto;
         }
         .drawing-container {
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: #ffffff;
-            padding: 12px;
-            position: relative;
-            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px; border: 1px solid var(--border);
+            border-radius: var(--radius); background: #ffffff;
+            padding: 12px; position: relative; box-shadow: var(--shadow-sm);
         }
-        .drawing-container:last-child {
-            margin-bottom: 0;
-        }
+        .drawing-container:last-child { margin-bottom: 0; }
         .drawing-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
+            font-size: 0.85rem; font-weight: 700; color: var(--text);
+            margin-bottom: 10px; display: flex; justify-content: space-between;
+            align-items: center; flex-wrap: wrap; gap: 8px;
             letter-spacing: -0.005em;
         }
         .zoom-controls {
-            display: flex;
-            gap: 4px;
-            background: var(--surface-3);
-            padding: 4px;
-            border-radius: 999px;
-            border: 1px solid var(--border);
+            display: flex; gap: 4px; background: var(--surface-3);
+            padding: 4px; border-radius: 999px; border: 1px solid var(--border);
         }
         .zoom-controls button {
-            background: transparent;
-            border: none;
-            border-radius: 999px;
-            padding: 5px 12px;
-            font-size: 0.78rem;
-            margin: 0;
-            width: auto;
-            cursor: pointer;
-            color: var(--text-muted);
-            font-weight: 600;
-            transition: all 0.15s ease;
+            background: transparent; border: none; border-radius: 999px;
+            padding: 5px 12px; font-size: 0.78rem; margin: 0;
+            width: auto; cursor: pointer; color: var(--text-muted);
+            font-weight: 600; transition: all 0.15s ease;
         }
         .zoom-controls button:hover {
-            background: #ffffff;
-            color: var(--accent-dark);
+            background: #ffffff; color: var(--accent-dark);
             box-shadow: var(--shadow-sm);
         }
         .svg-wrapper {
-            overflow: auto;
-            text-align: center;
-            background: #ffffff;
-            border-radius: var(--radius-sm);
-            transition: transform 0.1s ease;
+            overflow: auto; text-align: center; background: #ffffff;
+            border-radius: var(--radius-sm); transition: transform 0.1s ease;
         }
         .svg-wrapper svg {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-            cursor: grab;
+            max-width: 100%; height: auto; display: block;
+            margin: 0 auto; cursor: grab;
         }
-        /* ============ ALT GEARS ============ */
         .alt-gears {
-            margin-top: 12px;
-            padding: 14px;
+            margin-top: 12px; padding: 14px;
             background: rgba(14, 165, 233, 0.09);
             border-radius: var(--radius);
             border: 1px solid rgba(14, 165, 233, 0.28);
         }
         .alt-gears label {
-            display: block;
-            font-size: 0.74rem;
-            font-weight: 700;
-            color: #7dd3fc;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 8px;
+            display: block; font-size: 0.74rem; font-weight: 700;
+            color: #7dd3fc; text-transform: uppercase;
+            letter-spacing: 0.08em; margin-bottom: 8px;
         }
         .alt-select {
-            margin: 0;
-            padding: 10px 14px;
-            border-radius: var(--radius);
-            width: 100%;
-            background: #ffffff;
-            color: var(--text);
-            font-size: 0.82rem;
-            font-weight: 600;
+            margin: 0; padding: 10px 14px; border-radius: var(--radius);
+            width: 100%; background: #ffffff; color: var(--text);
+            font-size: 0.82rem; font-weight: 600;
             border: 1.5px solid var(--border);
         }
         .alt-select:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.13);
         }
-        /* ============ DIFF GEAR DRAWING ============ */
         .diff-gear-drawing {
-            margin-top: 16px;
-            background: #ffffff;
-            border-radius: var(--radius);
-            padding: 12px;
-            border: 1px solid var(--border);
-            font-size: 0.82rem;
+            margin-top: 16px; background: #ffffff;
+            border-radius: var(--radius); padding: 12px;
+            border: 1px solid var(--border); font-size: 0.82rem;
         }
         .diff-gear-drawing svg {
-            max-width: 100%;
-            border-radius: var(--radius-sm);
-            background: #fefefe;
+            max-width: 100%; border-radius: var(--radius-sm); background: #fefefe;
         }
-        /* ============ FOOTER NOTE ============ */
         .footer-note {
-            text-align: center;
-            margin-top: 28px;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            padding: 16px;
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
+            text-align: center; margin-top: 28px; font-size: 0.78rem;
+            color: var(--text-muted); padding: 16px;
+            background: var(--surface); border-radius: var(--radius-lg);
+            border: 1px solid var(--border); box-shadow: var(--shadow-sm);
         }
-        .footer-note strong {
-            color: var(--accent-dark);
-        }
-        /* ============ PRINT STYLES ============ */
+        .footer-note strong { color: var(--accent-dark); }
         @media print {
-            body {
-                background: white;
-                padding: 0;
-                margin: 0;
-            }
+            body { background: white; padding: 0; margin: 0; }
             .header, .sub, .card:first-child, .gear-drawing, .alt-gears,
             .footer-note, .mode-switch, .input-group, button, .zoom-controls,
             .small-btn, .print-btn, #leadGearResult, .diff-gear-drawing,
-            .badge, hr {
-                display: none !important;
-            }
+            .badge, hr { display: none !important; }
             .result-box {
-                break-inside: avoid;
-                page-break-inside: avoid;
-                background: white !important;
-                color: black !important;
-                border: 1px solid #ccc;
-                box-shadow: none;
-                margin: 0 0 20px 0;
-                padding: 12px;
+                break-inside: avoid; page-break-inside: avoid;
+                background: white !important; color: black !important;
+                border: 1px solid #ccc; box-shadow: none;
+                margin: 0 0 20px 0; padding: 12px;
             }
-            .result-box h3 {
-                color: #0f172a !important;
-            }
-            .result-box h3::before {
-                background: #0f172a !important;
-                box-shadow: none !important;
-            }
-            .param-item {
-                border-bottom: 1px solid #ddd;
-            }
-            .param-item span:first-child {
-                color: #475569 !important;
-            }
-            .param-item strong {
-                color: #0f172a !important;
-            }
-            .container {
-                max-width: 100%;
-                padding: 10px;
-            }
-            .flex-grid {
-                display: block;
-            }
-            .card {
-                box-shadow: none;
-                border: none;
-                padding: 0;
-                margin: 0;
-                background: white;
-            }
-            .card::before {
-                display: none;
-            }
-            #dimensionsOutput, #indexingOutput {
-                color: black;
-            }
+            .result-box h3 { color: #0f172a !important; }
+            .result-box h3::before { background: #0f172a !important; box-shadow: none !important; }
+            .param-item { border-bottom: 1px solid #ddd; }
+            .param-item span:first-child { color: #475569 !important; }
+            .param-item strong { color: #0f172a !important; }
+            .container { max-width: 100%; padding: 10px; }
+            .flex-grid { display: block; }
+            .card { box-shadow: none; border: none; padding: 0; margin: 0; background: white; }
+            .card::before { display: none; }
+            #dimensionsOutput, #indexingOutput { color: black; }
             table.indexing-tab td, table.indexing-tab th {
-                border-bottom: 1px solid #aaa;
-                color: black;
+                border-bottom: 1px solid #aaa; color: black;
             }
-            .indexing-tab th {
-                color: #0f172a !important;
-            }
+            .indexing-tab th { color: #0f172a !important; }
         }
-        /* ============ ACCESS DENIED ============ */
         #accessDenied {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
             background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%);
-            color: white;
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-            gap: 16px;
-            padding: 24px;
+            color: white; z-index: 1000;
+            justify-content: center; align-items: center;
+            flex-direction: column; text-align: center; gap: 16px; padding: 24px;
         }
         #accessDenied .lock-icon {
-            font-size: 3rem;
-            margin-bottom: 8px;
+            font-size: 3rem; margin-bottom: 8px;
             filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.5));
         }
         #accessDenied .lock-title {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
+            font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em;
         }
-        #accessDenied .lock-sub {
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
+        #accessDenied .lock-sub { font-size: 0.9rem; color: #94a3b8; }
         #accessDenied input {
             background: rgba(255,255,255,0.06);
             border: 1.5px solid rgba(148, 163, 184, 0.3);
-            color: #ffffff;
-            width: 240px;
-            text-align: center;
-            padding: 12px 16px;
-            font-size: 1rem;
-            letter-spacing: 0.15em;
+            color: #ffffff; width: 240px; text-align: center;
+            padding: 12px 16px; font-size: 1rem; letter-spacing: 0.15em;
         }
         #accessDenied input:focus {
             border-color: var(--accent);
             box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2);
             background: rgba(255,255,255,0.1);
         }
-        #accessDenied input::placeholder {
-            color: #64748b;
-            letter-spacing: normal;
-        }
         #accessDenied button {
-            width: auto;
-            margin-top: 4px;
+            width: auto; margin-top: 4px;
             background: linear-gradient(135deg, var(--accent), var(--accent-2));
             box-shadow: var(--shadow-accent);
         }
-        .workshop-content {
-            display: none;
-        }
-        /* ============ SCROLLBARS ============ */
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
+        .workshop-content { display: none; }
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb {
-            background: var(--border-strong);
-            border-radius: 999px;
-            border: 2px solid transparent;
-            background-clip: content-box;
+            background: var(--border-strong); border-radius: 999px;
+            border: 2px solid transparent; background-clip: content-box;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-light);
-            background-clip: content-box;
+            background: var(--text-light); background-clip: content-box;
         }
         .result-box::-webkit-scrollbar-thumb {
-            background: var(--dark-border);
-            background-clip: content-box;
+            background: var(--dark-border); background-clip: content-box;
         }
     </style>
 </head>
@@ -831,7 +467,6 @@
         <span>Indexing: Direct · Simple · Differential · Angular</span>
     </div>
     <div class="flex-grid">
-        <!-- LEFT CARD: COMPONENT DATA -->
         <div class="card">
             <h2><span class="icon-badge">📐</span> Component & Data</h2>
             <div class="input-group">
@@ -860,12 +495,10 @@
                     <div class="small-note">Distance between teeth. Module = P / π. Rack length = N × P.</div>
                 </div>
             </div>
-            <!-- Spur gear extra: mating teeth -->
             <div id="spurExtra" style="display:none;">
                 <div class="input-group"><label>Mating gear teeth (N₂) :</label><input type="number" id="spurMatingTeeth" placeholder="optional for center distance & contact ratio"></div>
                 <div class="small-note">Enter mating gear teeth to calculate center distance and contact ratio.</div>
             </div>
-            <!-- Helical gear extra -->
             <div id="helicalExtra" style="display:none;">
                 <div class="input-group"><label>Helix angle β (deg) :</label><input type="number" id="helixAngle" value="20"></div>
                 <div class="input-group"><label>Face width (mm) :</label><input type="number" id="faceWidth" value="30"></div>
@@ -959,7 +592,6 @@
             <div class="result-box"><h3>Geometric parameters</h3><div id="dimensionsOutput">—</div></div>
         </div>
 
-        <!-- RIGHT CARD: INDEXING -->
         <div class="card">
             <h2><span class="icon-badge">🔄</span> Dividing Head Indexing</h2>
             <div class="input-group"><label>Method :</label>
@@ -1062,8 +694,7 @@
 </div>
 
 <script>
-    // ---------------------------- Helper functions ----------------------------
-    const SECRET_NUMBER = "1712";  // <-- change this to your desired secret code
+    const SECRET_NUMBER = "1712";
     function checkAccess() {
         const stored = sessionStorage.getItem('workshop_access');
         if (stored === SECRET_NUMBER) {
@@ -1081,25 +712,18 @@
             sessionStorage.setItem('workshop_access', SECRET_NUMBER);
             checkAccess();
             updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth();
-        } else {
-            alert('Wrong secret number. Access denied.');
-        }
+        } else { alert('Wrong secret number. Access denied.'); }
     });
     document.getElementById('secretInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') document.getElementById('submitSecret').click();
     });
-
-    // Print results button
-    document.getElementById('printResultsBtn').addEventListener('click', () => {
-        window.print();
-    });
+    document.getElementById('printResultsBtn').addEventListener('click', () => window.print());
 
     function gcd(a,b){ a=Math.abs(a); while(b){ let t=b; b=a%b; a=t; } return a; }
     function loadPresets(storageKey, selectElement, defaultPresets) { const saved = localStorage.getItem(storageKey); let presets = saved ? JSON.parse(saved) : defaultPresets; selectElement.innerHTML = ''; for (let p of presets) { let option = document.createElement('option'); option.value = p.value; option.textContent = p.label; selectElement.appendChild(option); } return presets; }
     function savePreset(storageKey, selectElement, newValue, newLabel, defaultPresets) { let presets = loadPresets(storageKey, selectElement, defaultPresets); if (!presets.some(p => p.value === newValue)) { presets.push({ value: newValue, label: newLabel }); localStorage.setItem(storageKey, JSON.stringify(presets)); loadPresets(storageKey, selectElement, defaultPresets); selectElement.value = newValue; return true; } return false; }
     function removeLastPreset(storageKey, selectElement, defaultPresets) { let presets = loadPresets(storageKey, selectElement, defaultPresets); if (presets.length > defaultPresets.length) { presets.pop(); localStorage.setItem(storageKey, JSON.stringify(presets)); loadPresets(storageKey, selectElement, defaultPresets); selectElement.selectedIndex = 0; return true; } return false; }
 
-    // DOM refs
     const gearType = document.getElementById('gearType'), teethInput = document.getElementById('teeth'), moduleInput = document.getElementById('module'), dpInput = document.getElementById('dp'), metricBtn = document.getElementById('metricModeBtn'), imperialBtn = document.getElementById('imperialModeBtn'), metricBlock = document.getElementById('metricBlock'), imperialBlock = document.getElementById('imperialBlock');
     const rackPitchBlock = document.getElementById('rackPitchBlock');
     const rackCircularPitch = document.getElementById('rackCircularPitch');
@@ -1113,7 +737,6 @@
     const holePresetAngular = document.getElementById('holePresetAngular'), customHolesAngular = document.getElementById('customHolesAngular');
     let isMetric = true, topScale = 1, sideScale = 1, currentAlternatives = [];
 
-    // Presets for lead & diff gears
     const defaultLeadPresets = [
         { value: "25,25,30,35,40,50,55,60,70,80,90,100", label: "🔧 Standard set (25‑100)" },
         { value: "24,24,28,32,40,44,48,56,64,72,86,100", label: "📐 Alternative set (24‑100)" },
@@ -1145,38 +768,23 @@
         }
         return circles.sort((a,b)=>a-b);
     }
-
     function findHoleOptions(num, den, circles, fullTurnsBase = 0) {
-        let options = [];
-        let g = gcd(num, den); num/=g; den/=g;
-        for(let hc of circles) {
-            if(hc % den === 0) {
-                let mult = hc/den;
-                let holes = num * mult;
-                let extraFull = 0;
-                if(holes >= hc) { extraFull = Math.floor(holes/hc); holes %= hc; }
-                options.push({circle:hc, full:fullTurnsBase + extraFull, holes:holes, fraction:`${num}/${den}`});
-            }
-        }
+        let options = []; let g = gcd(num, den); num/=g; den/=g;
+        for(let hc of circles) { if(hc % den === 0) { let mult = hc/den; let holes = num * mult; let extraFull = 0; if(holes >= hc) { extraFull = Math.floor(holes/hc); holes %= hc; } options.push({circle:hc, full:fullTurnsBase + extraFull, holes:holes, fraction:`${num}/${den}`}); } }
         return options;
     }
 
     function computeIndexing() {
         let method = document.getElementById('indexMethod').value;
         let ratio = parseFloat(document.getElementById('headRatio').value) || 40;
-
         let currentGear = gearType.value;
         if (currentGear === 'wormShaft' && (method === 'simple' || method === 'direct')) {
             let starts = parseInt(document.getElementById('wormStarts').value) || 1;
             if (method === 'simple') {
-                let Ndiv = starts;
-                let circles = getHoleCircles(false);
-                let turns = ratio / Ndiv;
-                let full = Math.floor(turns);
-                let rem = ratio % Ndiv;
-                if (rem === 0) {
-                    indexingOutput.innerHTML = `<strong>Worm shaft indexing (simple)</strong><br>Number of starts = ${starts}<br>Crank = ${full} full turn(s) of crank per start.`;
-                } else {
+                let Ndiv = starts, circles = getHoleCircles(false);
+                let turns = ratio / Ndiv, full = Math.floor(turns), rem = ratio % Ndiv;
+                if (rem === 0) { indexingOutput.innerHTML = `<strong>Worm shaft indexing (simple)</strong><br>Number of starts = ${starts}<br>Crank = ${full} full turn(s) of crank per start.`; }
+                else {
                     let num = rem, den = Ndiv;
                     let options = findHoleOptions(num, den, circles, full);
                     if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`;
@@ -1189,22 +797,16 @@
                 return;
             }
         }
-
         if (method === 'direct') {
             let Ndiv = parseInt(document.getElementById('simpleN').value);
             if (24 % Ndiv !== 0) indexingOutput.innerHTML = `<span class="warning">Direct: N must divide 24. 24/${Ndiv} = ${24/Ndiv} holes (not integer).</span>`;
             else indexingOutput.innerHTML = `<strong>Direct indexing</strong><br>Crank movement = ${24/Ndiv} holes on direct plate.`;
             return;
-        }
-        else if (method === 'simple') {
-            let Ndiv = parseInt(document.getElementById('simpleN').value);
-            let circles = getHoleCircles(false);
-            let turns = ratio / Ndiv;
-            let full = Math.floor(turns);
-            let rem = ratio % Ndiv;
-            if (rem === 0) {
-                indexingOutput.innerHTML = `<strong>Simple indexing</strong><br>${full} full turn(s) of crank.`;
-            } else {
+        } else if (method === 'simple') {
+            let Ndiv = parseInt(document.getElementById('simpleN').value), circles = getHoleCircles(false);
+            let turns = ratio / Ndiv, full = Math.floor(turns), rem = ratio % Ndiv;
+            if (rem === 0) { indexingOutput.innerHTML = `<strong>Simple indexing</strong><br>${full} full turn(s) of crank.`; }
+            else {
                 let num = rem, den = Ndiv;
                 let options = findHoleOptions(num, den, circles, full);
                 if(options.length === 0) indexingOutput.innerHTML = `<span class="warning">No hole circle multiple of ${den}. Use custom plate or differential.</span>`;
@@ -1215,42 +817,20 @@
                 }
             }
             return;
-        }
-        else if (method === 'angular') {
-            let deg = parseFloat(document.getElementById('angleDeg').value) || 0;
-            let minutes = parseFloat(document.getElementById('angleMin').value) || 0;
-            let totalDeg = deg + minutes/60;
-            let degPerTurn = 360 / ratio;
-            let totalTurns = totalDeg / degPerTurn;
-            let fullTurns = Math.floor(totalTurns);
-            let fractional = totalTurns - fullTurns;
-            if (Math.abs(fractional) < 1e-8) {
-                indexingOutput.innerHTML = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}'<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank: ${fullTurns} full turn(s) exactly.`;
-                return;
-            }
-            let circles = getHoleCircles(true);
-            let best = null;
-            for(let den = 1; den <= 200; den++) {
-                let num = Math.round(fractional * den);
-                if(Math.abs(num/den - fractional) < 1e-6) {
-                    let options = findHoleOptions(num, den, circles, fullTurns);
-                    if(options.length > 0) {
-                        best = {fraction: `${num}/${den}`, options: options};
-                        break;
-                    }
-                }
-            }
+        } else if (method === 'angular') {
+            let deg = parseFloat(document.getElementById('angleDeg').value) || 0, minutes = parseFloat(document.getElementById('angleMin').value) || 0;
+            let totalDeg = deg + minutes/60, degPerTurn = 360 / ratio, totalTurns = totalDeg / degPerTurn;
+            let fullTurns = Math.floor(totalTurns), fractional = totalTurns - fullTurns;
+            if (Math.abs(fractional) < 1e-8) { indexingOutput.innerHTML = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}'<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank: ${fullTurns} full turn(s) exactly.`; return; }
+            let circles = getHoleCircles(true), best = null;
+            for(let den = 1; den <= 200; den++) { let num = Math.round(fractional * den); if(Math.abs(num/den - fractional) < 1e-6) { let options = findHoleOptions(num, den, circles, fullTurns); if(options.length > 0) { best = {fraction: `${num}/${den}`, options: options}; break; } } }
             if(best && best.options.length > 0) {
                 let html = `<strong>Angular indexing</strong><br>Angle: ${deg}° ${minutes}' (${totalDeg.toFixed(4)}°)<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank movement = ${totalTurns.toFixed(6)} turns = ${fullTurns} full turn(s) + ${best.fraction} turn<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
                 best.options.forEach(opt => { html += `<tr><td>${opt.circle}</td><td>${opt.full}</td><td>${opt.holes}</td>`; });
-                html += `</tbody></table>`;
-                indexingOutput.innerHTML = html;
-            } else {
-                indexingOutput.innerHTML = `<span class="warning">No suitable hole circle found for fractional turn ${fractional.toFixed(6)}. Try adding more hole circles or adjust angle.</span>`;
-            }
+                html += `</tbody></table>`; indexingOutput.innerHTML = html;
+            } else { indexingOutput.innerHTML = `<span class="warning">No suitable hole circle found for fractional turn ${fractional.toFixed(6)}. Try adding more hole circles or adjust angle.</span>`; }
             return;
-        }
-        else if (method === 'differential') {
+        } else if (method === 'differential') {
             let Nreq = parseInt(document.getElementById('diffRequiredN').value), Aapprox = parseInt(document.getElementById('diffApproxA').value), gearSet = diffGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v)), circles = getHoleCircles(false);
             let simpleRes = (() => { let turns = ratio / Aapprox, full = Math.floor(turns), rem = ratio % Aapprox; if (rem===0) return {exact:true, fullTurns:full}; let num=rem, den=Aapprox, g=gcd(num,den); num/=g; den/=g; for(let hc of circles) if(hc % den === 0){ let mult = hc/den, holes = num * mult, extraFull = 0; if(holes >= hc){ extraFull = Math.floor(holes/hc); holes %= hc; } return {exact:false, fullTurns:full+extraFull, holes:holes, circle:hc}; } return {error:true}; })();
             if(simpleRes.error) { indexingOutput.innerHTML = `<span class="warning">No hole circle for simple indexing of A=${Aapprox}</span>`; return; }
@@ -1261,8 +841,7 @@
                 if (diffRes.compound && diffRes.compoundGears) { html += `<strong>🔧 Compound change gears (exact):</strong><br> ${diffRes.compoundGears.first}  ×  ${diffRes.compoundGears.second}<br>Installation: first pair spindle → intermediate, second pair intermediate → worm.<br>Direction: ${diffRes.sign === "positive" ? "index plate SAME as crank (zero idlers in compound arrangement)" : "plate OPPOSITE direction (use one idler)"}.`; let drawing = generateDiffCompoundDrawing(diffRes.compoundGears.first, diffRes.compoundGears.second, diffRes.sign); html += `<div class="diff-gear-drawing">${drawing}</div>`; }
                 else if (diffRes.drive && diffRes.driven) { html += `<strong>Change gears (simple train): ${diffRes.drive} (spindle) / ${diffRes.driven} (worm)</strong><br>Idler rule: ${diffRes.sign === "positive" ? "1 idler" : "2 idlers"}<br>Mount drive gear on spindle, driven on worm shaft.`; let drawing = generateDiffSimpleDrawing(diffRes.drive, diffRes.driven, diffRes.sign); html += `<div class="diff-gear-drawing">${drawing}</div>`; }
             } else { html += `Exact match not found. ${diffRes.errorMsg || "Try different A value."}`; if (diffRes.suggested) { let drawing = generateDiffSimpleDrawing(diffRes.suggested.drive, diffRes.suggested.driven, diffRes.sign); html += `<div class="diff-gear-drawing"><strong>Closest approximate train:</strong><br>${drawing}</div>`; } }
-            indexingOutput.innerHTML = html;
-            return;
+            indexingOutput.innerHTML = html; return;
         }
     }
 
@@ -1274,161 +853,127 @@
     function generateDiffSimpleDrawing(drive, driven, sign) { let w=500, h=200, cy=100, x1=160, x2=340, r1=Math.min(48,20+drive/2), r2=Math.min(48,20+driven/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="20" x2="${x1}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="20" x2="${x2}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cy}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${drive}</text><text x="${x1}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cy}" r="${r2}" fill="#d9f0ec" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${driven}</text><text x="${x2}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm shaft</text><line x1="${x1+r1-4}" y1="${cy}" x2="${x2-r2+4}" y2="${cy}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="250" y="190" text-anchor="middle" fill="#2c7da0" font-size="12">${sign === "positive" ? "🔄 Same direction (use 1 idler)" : "🔁 Opposite direction (use 2 idlers)"}</text></svg>`; }
     function generateDiffCompoundDrawing(first, second, sign) { let [a,b] = first.split('/').map(Number), [c,d] = second.split('/').map(Number); let w=540, h=280, cyMain=120, cyUpper=40, x1=100, x2=270, x3=440; let r1=Math.min(42,18+a/2), r2=Math.min(42,18+b/2), r3=Math.min(42,18+c/2), r4=Math.min(42,18+d/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="15" x2="${x1}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="5" x2="${x2}" y2="220" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x3}" y1="15" x2="${x3}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cyMain}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${a}</text><text x="${x1}" y="${cyMain+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cyMain}" r="${r2}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${b}</text><circle cx="${x2}" cy="${cyUpper}" r="${r3}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${c}</text><circle cx="${x3}" cy="${cyUpper}" r="${r4}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x3}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${d}</text><text x="${x3}" y="${cyUpper+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm</text><line x1="${x1+r1-4}" y1="${cyMain}" x2="${x2-r2+4}" y2="${cyMain}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><line x1="${x2+r3-4}" y1="${cyUpper}" x2="${x3-r4+4}" y2="${cyUpper}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="270" y="265" text-anchor="middle" fill="#2c7da0" font-size="11">${sign === "positive" ? "🔄 Same direction (zero idlers compound)" : "🔁 Opposite direction (one idler)"}</text></svg>`; }
 
-    // ---------- Multi-stage lead gear generator ----------
     function generateMultiStageTrains(gearSet, numGears, requiredRatio, maxResults = 30) {
         if (numGears % 2 !== 0 || numGears < 2) return [];
         let bestTrains = [];
-
-        function addTrain(pairs, ratio, error) {
-            const train = { pairs, ratio, error };
-            let inserted = false;
-            for (let i = 0; i < bestTrains.length; i++) {
-                if (error < bestTrains[i].error) {
-                    bestTrains.splice(i, 0, train);
-                    inserted = true;
-                    break;
-                }
-            }
-            if (!inserted) bestTrains.push(train);
-            if (bestTrains.length > maxResults) bestTrains = bestTrains.slice(0, maxResults);
-        }
-
-        function combinations(arr, k, start, current) {
-            if (current.length === k) {
-                processCombination(current);
-                return;
-            }
-            for (let i = start; i < arr.length; i++) {
-                current.push(arr[i]);
-                combinations(arr, k, i + 1, current);
-                current.pop();
-            }
-        }
-
+        function addTrain(pairs, ratio, error) { const train = { pairs, ratio, error }; let inserted = false; for (let i = 0; i < bestTrains.length; i++) { if (error < bestTrains[i].error) { bestTrains.splice(i, 0, train); inserted = true; break; } } if (!inserted) bestTrains.push(train); if (bestTrains.length > maxResults) bestTrains = bestTrains.slice(0, maxResults); }
+        function combinations(arr, k, start, current) { if (current.length === k) { processCombination(current); return; } for (let i = start; i < arr.length; i++) { current.push(arr[i]); combinations(arr, k, i + 1, current); current.pop(); } }
         function processCombination(gears) {
             function match(remaining, pairs) {
                 if (remaining.length === 0) {
-                    const numPairs = pairs.length;
-                    const totalAssignments = 1 << numPairs;
-                    for (let mask = 0; mask < totalAssignments; mask++) {
-                        let ratio = 1;
-                        const assignedPairs = [];
-                        for (let i = 0; i < numPairs; i++) {
-                            const [a, b] = pairs[i];
-                            let driver, driven;
-                            if ((mask & (1 << i)) === 0) { driver = a; driven = b; }
-                            else { driver = b; driven = a; }
-                            ratio *= driver / driven;
-                            assignedPairs.push({ driver, driven });
-                        }
-                        const error = Math.abs(ratio - requiredRatio);
-                        addTrain(assignedPairs, ratio, error);
-                    }
+                    const numPairs = pairs.length, totalAssignments = 1 << numPairs;
+                    for (let mask = 0; mask < totalAssignments; mask++) { let ratio = 1; const assignedPairs = []; for (let i = 0; i < numPairs; i++) { const [a, b] = pairs[i]; let driver, driven; if ((mask & (1 << i)) === 0) { driver = a; driven = b; } else { driver = b; driven = a; } ratio *= driver / driven; assignedPairs.push({ driver, driven }); } const error = Math.abs(ratio - requiredRatio); addTrain(assignedPairs, ratio, error); }
                     return;
                 }
                 const first = remaining[0];
-                for (let i = 1; i < remaining.length; i++) {
-                    const second = remaining[i];
-                    const newRemaining = remaining.filter((_, idx) => idx !== 0 && idx !== i);
-                    pairs.push([first, second]);
-                    match(newRemaining, pairs);
-                    pairs.pop();
-                }
+                for (let i = 1; i < remaining.length; i++) { const second = remaining[i]; const newRemaining = remaining.filter((_, idx) => idx !== 0 && idx !== i); pairs.push([first, second]); match(newRemaining, pairs); pairs.pop(); }
             }
             match(gears, []);
         }
-
         combinations(gearSet, numGears, 0, []);
         return bestTrains;
     }
 
-    // ---------- MODERNIZED MULTI-STAGE DRAWING (Image 1 Style) ----------
+    /* ============================================================
+       CLEAN MULTI-STAGE DRAWING — matches Image 1 style
+       ============================================================ */
     function generateMultiStageDrawing(pairs) {
         const numStages = pairs.length;
         const numShafts = numStages + 1;
-        const shaftSpacing = 170;
-        const centerY = 150;
-        const gearOffset = 50;
-        const width = numShafts * shaftSpacing + 100;
-        const height = 300;
+        const shaftSpacing = 175;
+        const gearRadius = 40;
+        const padding = 70;
+        const centerY = 160;
+        const gearOffset = 55;
+        const width = padding * 2 + (numShafts - 1) * shaftSpacing;
+        const height = 320;
 
+        // Build shaft data — driven gear on TOP, driver gear on BOTTOM
         const shafts = [];
         for (let i = 0; i < numShafts; i++) {
             const gears = [];
-            if (i > 0) gears.push({ gear: pairs[i-1].driven, type: 'driven', stage: i-1 });
-            if (i < numStages) gears.push({ gear: pairs[i].driver, type: 'driver', stage: i });
+            if (i > 0) {
+                gears.push({
+                    gear: pairs[i-1].driven,
+                    type: 'driven',
+                    stage: i-1,
+                    y: centerY - gearOffset
+                });
+            }
+            if (i < numStages) {
+                gears.push({
+                    gear: pairs[i].driver,
+                    type: 'driver',
+                    stage: i,
+                    y: centerY + gearOffset
+                });
+            }
             shafts.push(gears);
         }
+        // Single-gear shafts (first and last) at middle height
+        if (shafts[0].length === 1) shafts[0][0].y = centerY;
+        if (shafts[numShafts - 1].length === 1) shafts[numShafts - 1][0].y = centerY;
 
-        let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background:#fafafa; border-radius:8px;">`;
+        let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background:#fafafa; border-radius:8px; display:block;">`;
 
-        // Draw shafts
+        // Draw vertical dashed shafts
         shafts.forEach((gears, i) => {
-            const x = 50 + i * shaftSpacing;
-            svg += `<line x1="${x}" y1="40" x2="${x}" y2="${height-40}" stroke="#aaa" stroke-width="2" stroke-dasharray="6,4"/>`;
+            const x = padding + i * shaftSpacing;
+            svg += `<line x1="${x}" y1="45" x2="${x}" y2="${height - 45}" stroke="#c0c0c0" stroke-width="1.5" stroke-dasharray="5,4"/>`;
         });
 
-        // Draw gears
+        // Draw gears (circles + numbers)
         shafts.forEach((gears, i) => {
-            const x = 50 + i * shaftSpacing;
-            gears.forEach((g, gearIdx) => {
-                let y;
-                if (gears.length === 1) {
-                    y = centerY;
-                } else {
-                    // driven gear at bottom, driver gear at top
-                    y = gearIdx === 0 ? centerY + gearOffset : centerY - gearOffset;
-                }
-                const radius = Math.min(45, 15 + g.gear * 0.3);
-                svg += `<circle cx="${x}" cy="${y}" r="${radius}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2.5"/>`;
-                svg += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" fill="#1e3b4a" font-weight="bold" font-size="14">${g.gear}</text>`;
-                g.x = x; g.y = y; g.radius = radius;
+            const x = padding + i * shaftSpacing;
+            gears.forEach(g => {
+                g.x = x;
+                svg += `<circle cx="${x}" cy="${g.y}" r="${gearRadius}" fill="#d4e8f5" stroke="#2c5282" stroke-width="2.5"/>`;
+                svg += `<text x="${x}" y="${g.y}" text-anchor="middle" dominant-baseline="central" fill="#1a365d" font-family="Inter, system-ui, sans-serif" font-weight="700" font-size="16">${g.gear}</text>`;
             });
         });
 
-        // Draw arrows
+        // Draw arrows (driver → driven)
         for (let i = 0; i < numStages; i++) {
             const driverGear = pairs[i].driver;
             const drivenGear = pairs[i].driven;
-            // Find positions
             const driverPos = shafts[i].find(g => g.gear === driverGear && g.type === 'driver');
             const drivenPos = shafts[i+1].find(g => g.gear === drivenGear && g.type === 'driven');
             if (driverPos && drivenPos) {
-                svg += `<line x1="${driverPos.x + driverPos.radius}" y1="${driverPos.y}" x2="${drivenPos.x - drivenPos.radius}" y2="${drivenPos.y}" stroke="#e67e22" stroke-width="2.5" stroke-dasharray="5,3" marker-end="url(#arrow)"/>`;
+                const x1 = driverPos.x + gearRadius + 3;
+                const y1 = driverPos.y;
+                const x2 = drivenPos.x - gearRadius - 3;
+                const y2 = drivenPos.y;
+                svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#e67e22" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#arrowhead)"/>`;
             }
         }
+        svg += `<defs><marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><polygon points="0 0, 10 4, 0 8" fill="#e67e22"/></marker></defs>`;
 
-        svg += `<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs>`;
-
-        // Add shaft labels
+        // Shaft labels at bottom
         shafts.forEach((gears, i) => {
-            const x = 50 + i * shaftSpacing;
+            const x = padding + i * shaftSpacing;
             let label = '';
             if (i === 0) label = 'Spindle';
             else if (i === numShafts - 1) label = 'Worm';
             else label = `Intermediate ${i}`;
-            svg += `<text x="${x}" y="${height-10}" text-anchor="middle" fill="#2c7da0" font-size="12" font-weight="600">${label}</text>`;
+            svg += `<text x="${x}" y="${height - 12}" text-anchor="middle" fill="#2c5282" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="12">${label}</text>`;
         });
 
-        // Add equation
+        // Equation at top
         const overallRatio = pairs.reduce((acc, p) => acc * (p.driver / p.driven), 1);
         const ratioStr = pairs.map(p => `${p.driver}/${p.driven}`).join(' × ');
-        svg += `<text x="${width/2}" y="25" text-anchor="middle" fill="#1e3b4a" font-size="13" font-weight="bold">${ratioStr} = ${overallRatio.toFixed(6)}</text>`;
+        svg += `<text x="${width/2}" y="22" text-anchor="middle" fill="#1a365d" font-family="Inter, system-ui, sans-serif" font-weight="700" font-size="13">${ratioStr} = ${overallRatio.toFixed(6)}</text>`;
 
         svg += `</svg>`;
         return svg;
     }
 
-    // ---------- Updated lead gear train updater ----------
     function updateLeadGearTrains(lead, leadscrewPitch) {
         let requiredRatio = lead / (leadscrewPitch * 40);
         let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
         if (gearSet.length === 0) gearSet = [25,30,40,50,60,70,80,90,100];
-
         const numGears = parseInt(document.getElementById('leadGearCount').value) || 4;
         let alternatives = generateMultiStageTrains(gearSet, numGears, requiredRatio, 30);
         currentAlternatives = alternatives;
-
         if (currentAlternatives.length > 0) {
             altGearSelect.innerHTML = '';
             currentAlternatives.forEach((alt, i) => {
@@ -1448,7 +993,6 @@
         }
     }
 
-    // ---------- Updated drawing handler ----------
     function updateDrawingFromAlternative(alt) {
         if (!alt) return;
         const svg = generateMultiStageDrawing(alt.pairs);
@@ -1457,37 +1001,15 @@
         gearDrawingContainer.style.display = 'block';
     }
 
-    // ---------- Existing visibility and utility functions ----------
     function updateSprocketVisibility() {
         const isSprocket = (gearType.value === 'sprocket');
-        if (isSprocket) {
-            modDpSwitch.style.display = 'none';
-            metricBlock.style.display = 'none';
-            imperialBlock.style.display = 'none';
-        } else {
-            modDpSwitch.style.display = 'flex';
-            if (gearType.value !== 'rack' && gearType.value !== 'sprocket') {
-                if (isMetric) metricBlock.style.display = 'block';
-                else imperialBlock.style.display = 'block';
-            }
-        }
+        if (isSprocket) { modDpSwitch.style.display = 'none'; metricBlock.style.display = 'none'; imperialBlock.style.display = 'none'; }
+        else { modDpSwitch.style.display = 'flex'; if (gearType.value !== 'rack' && gearType.value !== 'sprocket') { if (isMetric) metricBlock.style.display = 'block'; else imperialBlock.style.display = 'block'; } }
     }
-
     function updateRackInputVisibility() {
         const isRack = (gearType.value === 'rack');
-        if (isRack) {
-            metricBlock.style.display = 'none';
-            imperialBlock.style.display = 'none';
-            modDpSwitch.style.display = 'none';
-            rackPitchBlock.style.display = 'block';
-        } else {
-            if (gearType.value !== 'sprocket') {
-                modDpSwitch.style.display = 'flex';
-                if (isMetric) metricBlock.style.display = 'block';
-                else imperialBlock.style.display = 'block';
-            }
-            rackPitchBlock.style.display = 'none';
-        }
+        if (isRack) { metricBlock.style.display = 'none'; imperialBlock.style.display = 'none'; modDpSwitch.style.display = 'none'; rackPitchBlock.style.display = 'block'; }
+        else { if (gearType.value !== 'sprocket') { modDpSwitch.style.display = 'flex'; if (isMetric) metricBlock.style.display = 'block'; else imperialBlock.style.display = 'block'; } rackPitchBlock.style.display = 'none'; }
         updateSprocketVisibility();
     }
 
@@ -1497,52 +1019,25 @@
         if(isNaN(N) && type!='rack' && type!='wormShaft'){ dimOutput.innerHTML='<span class="warning">Invalid teeth</span>'; return; }
         let m = getModule();
         let rackP = null;
-        if (type === 'rack') {
-            rackP = parseFloat(rackCircularPitch.value);
-            if (isNaN(rackP) || rackP <= 0) {
-                dimOutput.innerHTML = '<span class="warning">Enter valid circular pitch for rack</span>';
-                return;
-            }
-            m = rackP / Math.PI;
-        } else {
-            if (type !== 'sprocket' && (isNaN(m) || m <= 0)) {
-                dimOutput.innerHTML = '<span class="warning">Enter module/DP</span>';
-                return;
-            }
-        }
-
+        if (type === 'rack') { rackP = parseFloat(rackCircularPitch.value); if (isNaN(rackP) || rackP <= 0) { dimOutput.innerHTML = '<span class="warning">Enter valid circular pitch for rack</span>'; return; } m = rackP / Math.PI; }
+        else { if (type !== 'sprocket' && (isNaN(m) || m <= 0)) { dimOutput.innerHTML = '<span class="warning">Enter module/DP</span>'; return; } }
         let html='', note='', cutterMsg='';
         let getCutterNumber=(N)=>{ if(N>=135) return 1; if(N>=55) return 2; if(N>=35) return 3; if(N>=26) return 4; if(N>=21) return 5; if(N>=17) return 6; if(N>=14) return 7; return 8; };
 
         if(type === 'spur'){
-            let d = m*N;
-            let Do = m*(N+2);
-            let dr = d - 2.5*m;
-            let toothThickness = Math.PI * m / 2;
-            let addendum = m;
-            let dedendum = 1.25 * m;
-            let wholeDepth = 2.25 * m;
-            let circularPitch = Math.PI * m;
-            let pressureAngle = 20;
+            let d = m*N, Do = m*(N+2), dr = d - 2.5*m;
+            let toothThickness = Math.PI * m / 2, addendum = m, dedendum = 1.25 * m, wholeDepth = 2.25 * m;
+            let circularPitch = Math.PI * m, pressureAngle = 20;
             let baseCircle = d * Math.cos(pressureAngle * Math.PI/180);
-
-            let matingTeeth = parseInt(document.getElementById('spurMatingTeeth').value);
-            let centerDist = null;
-            let contactRatio = null;
+            let matingTeeth = parseInt(document.getElementById('spurMatingTeeth').value), centerDist = null, contactRatio = null;
             if (!isNaN(matingTeeth) && matingTeeth > 0 && N > 0) {
                 centerDist = m * (N + matingTeeth) / 2;
-                let ra1 = Do/2;
-                let ra2 = m*(matingTeeth+2)/2;
-                let rb1 = baseCircle/2;
-                let rb2 = m*matingTeeth/2 * Math.cos(pressureAngle * Math.PI/180);
-                let alpha_w = pressureAngle;
-                let alpha_rad = alpha_w * Math.PI/180;
+                let ra1 = Do/2, ra2 = m*(matingTeeth+2)/2, rb1 = baseCircle/2, rb2 = m*matingTeeth/2 * Math.cos(pressureAngle * Math.PI/180);
+                let alpha_rad = pressureAngle * Math.PI/180;
                 let Za = Math.sqrt(ra1*ra1 - rb1*rb1) + Math.sqrt(ra2*ra2 - rb2*rb2);
                 let Zp = (d/2 + m*matingTeeth/2) * Math.sin(alpha_rad);
-                contactRatio = Za / (Math.PI * m * Math.cos(alpha_rad));
-                contactRatio = Math.min(2.0, contactRatio);
+                contactRatio = Math.min(2.0, Za / (Math.PI * m * Math.cos(alpha_rad)));
             }
-
             html = `<div class="param-grid">
                 <div class="param-item"><span>Module m</span><strong>${m.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Pressure angle α</span><strong>${pressureAngle}°</strong></div>
@@ -1556,70 +1051,35 @@
                 <div class="param-item"><span>Whole depth h</span><strong>${wholeDepth.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Circular pitch p</span><strong>${circularPitch.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Tooth thickness (pitch) s</span><strong>${toothThickness.toFixed(3)} mm</strong></div>`;
-            if (!isNaN(matingTeeth) && matingTeeth > 0) {
-                html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div>
-                         <div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Contact ratio ε</span><strong>${contactRatio ? contactRatio.toFixed(3) : '—'}</strong> <span style="font-size:0.7rem;">(approx)</span></div>`;
-            } else {
-                html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above</strong></div>`;
-            }
+            if (!isNaN(matingTeeth) && matingTeeth > 0) { html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div><div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div><div class="param-item"><span>Contact ratio ε</span><strong>${contactRatio ? contactRatio.toFixed(3) : '—'}</strong> <span style="font-size:0.7rem;">(approx)</span></div>`; }
+            else { html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above</strong></div>`; }
             html += `</div>`;
             note = `Spur: T = 40/${N}. Cutter No. ${getCutterNumber(N)}. Pressure angle = ${pressureAngle}°. Milling depth = ${wholeDepth.toFixed(2)} mm.`;
             cutterMsg = `Involute cutter No. ${getCutterNumber(N)} (module ${m.toFixed(3)} mm, pressure angle ${pressureAngle}°).`;
         }
         else if(type === 'helical'){
-            let beta = parseFloat(document.getElementById('helixAngle').value) || 0;
-            let betaRad = beta * Math.PI/180;
-            let alpha_n = parseFloat(document.getElementById('helicalPressureAngle').value) || 20;
-            let alpha_n_rad = alpha_n * Math.PI/180;
-            let mn = m;
-            let mt = mn / Math.cos(betaRad);
-            let d = mt * N;
-            let alpha_t = Math.atan(Math.tan(alpha_n_rad) / Math.cos(betaRad));
-            let alpha_t_deg = alpha_t * 180/Math.PI;
-            let db = d * Math.cos(alpha_t);
-            let da = d + 2 * mn;
-            let df = d - 2.5 * mn;
-            let ha = mn;
-            let hf = 1.25 * mn;
-            let h = 2.25 * mn;
-            let c = 0.25 * mn;
-            let pn = Math.PI * mn;
-            let pt = Math.PI * mt;
-            let sn = pn / 2;
-            let st = pt / 2;
-            let px = pt / Math.tan(betaRad);
-            let lead;
-            if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450;
-            else lead = Math.PI * d / Math.tan(betaRad);
+            let beta = parseFloat(document.getElementById('helixAngle').value) || 0, betaRad = beta * Math.PI/180;
+            let alpha_n = parseFloat(document.getElementById('helicalPressureAngle').value) || 20, alpha_n_rad = alpha_n * Math.PI/180;
+            let mn = m, mt = mn / Math.cos(betaRad), d = mt * N;
+            let alpha_t = Math.atan(Math.tan(alpha_n_rad) / Math.cos(betaRad)), alpha_t_deg = alpha_t * 180/Math.PI;
+            let db = d * Math.cos(alpha_t), da = d + 2 * mn, df = d - 2.5 * mn;
+            let ha = mn, hf = 1.25 * mn, h = 2.25 * mn, c = 0.25 * mn;
+            let pn = Math.PI * mn, pt = Math.PI * mt, sn = pn / 2, st = pt / 2, px = pt / Math.tan(betaRad);
+            let lead; if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450; else lead = Math.PI * d / Math.tan(betaRad);
             let zv = N / Math.pow(Math.cos(betaRad), 3);
             let faceWidth = parseFloat(document.getElementById('faceWidth').value) || 0;
             let epsilon_beta = (faceWidth * Math.sin(betaRad)) / (Math.PI * mn);
-            let matingTeeth = parseInt(document.getElementById('helicalMatingTeeth').value);
-            let centerDist = null;
-            let epsilon_alpha = null;
-            let epsilon_gamma = null;
+            let matingTeeth = parseInt(document.getElementById('helicalMatingTeeth').value), centerDist = null, epsilon_alpha = null, epsilon_gamma = null;
             if (!isNaN(matingTeeth) && matingTeeth > 0 && N > 0 && faceWidth > 0) {
-                let d2 = mt * matingTeeth;
-                centerDist = (d + d2) / 2;
-                let da1 = da;
-                let da2 = d2 + 2 * mn;
-                let db1 = db;
-                let db2 = d2 * Math.cos(alpha_t);
-                let ra1 = da1/2;
-                let ra2 = da2/2;
-                let rb1 = db1/2;
-                let rb2 = db2/2;
-                let a_center = centerDist;
+                let d2 = mt * matingTeeth; centerDist = (d + d2) / 2;
+                let da1 = da, da2 = d2 + 2 * mn, db1 = db, db2 = d2 * Math.cos(alpha_t);
+                let ra1 = da1/2, ra2 = da2/2, rb1 = db1/2, rb2 = db2/2, a_center = centerDist;
                 let alpha_wt = Math.acos((rb1 + rb2) / a_center);
                 let za = Math.sqrt(ra1*ra1 - rb1*rb1) + Math.sqrt(ra2*ra2 - rb2*rb2);
                 let zp = a_center * Math.sin(alpha_wt);
                 epsilon_alpha = (za - zp) / (pt * Math.cos(alpha_t));
                 epsilon_gamma = epsilon_alpha + epsilon_beta;
-            } else if (faceWidth > 0) {
-                epsilon_gamma = epsilon_beta;
-            }
-
+            } else if (faceWidth > 0) { epsilon_gamma = epsilon_beta; }
             html = `<div class="param-grid">
                 <div class="param-item"><span>Normal module mₙ</span><strong>${mn.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Transverse module mₜ</span><strong>${mt.toFixed(3)} mm</strong></div>
@@ -1644,18 +1104,11 @@
                 <div class="param-item"><span>Virtual number of teeth z<sub>v</sub></span><strong>${zv.toFixed(2)}</strong></div>
                 <div class="param-item"><span>Face width b</span><strong>${faceWidth.toFixed(1)} mm</strong></div>
                 <div class="param-item"><span>Overlap ratio ε<sub>β</sub></span><strong>${epsilon_beta.toFixed(3)}</strong></div>`;
-            if (!isNaN(matingTeeth) && matingTeeth > 0) {
-                html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div>
-                         <div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Transverse contact ratio ε<sub>α</sub></span><strong>${epsilon_alpha !== null ? epsilon_alpha.toFixed(3) : '—'}</strong></div>
-                         <div class="param-item"><span>Total contact ratio ε<sub>γ</sub></span><strong>${epsilon_gamma !== null ? epsilon_gamma.toFixed(3) : '—'}</strong></div>`;
-            } else {
-                html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above for center distance & ε<sub>α</sub></strong></div>`;
-            }
+            if (!isNaN(matingTeeth) && matingTeeth > 0) { html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div><div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div><div class="param-item"><span>Transverse contact ratio ε<sub>α</sub></span><strong>${epsilon_alpha !== null ? epsilon_alpha.toFixed(3) : '—'}</strong></div><div class="param-item"><span>Total contact ratio ε<sub>γ</sub></span><strong>${epsilon_gamma !== null ? epsilon_gamma.toFixed(3) : '—'}</strong></div>`; }
+            else { html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above for center distance & ε<sub>α</sub></strong></div>`; }
             html += `</div>`;
             note = `Helical gear: set table angle to ${beta}°. Use cutter for ${zv.toFixed(0)} teeth (normal module). Lead = ${lead.toFixed(1)} mm. Milling depth = ${h.toFixed(2)} mm.`;
             cutterMsg = `Involute cutter No. ${getCutterNumber(Math.round(zv))} (based on virtual teeth, normal module ${mn.toFixed(3)} mm).`;
-
             let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
             updateLeadGearTrains(lead, leadscrewPitch);
         }
@@ -1663,101 +1116,47 @@
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
             let delta = parseFloat(document.getElementById('pitchCone').value);
             let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
-            let deltaPinion = delta, deltaGear = null;
-            let d1 = m * N;
-            let d2 = null;
-            let R = null;
-            let faceWidth = null;
+            let deltaPinion = delta, deltaGear = null, d1 = m * N, d2 = null, R = null, faceWidth = null;
             let tipConeAngle = null, backConeAngle = null, rootAngle = null, outsideDia = null, dr = null, toothThickness = null;
-
-            if (!isNaN(matingTeeth) && matingTeeth > 0) {
-                deltaPinion = Math.atan(N / matingTeeth) * 180/Math.PI;
-                deltaGear = 90 - deltaPinion;
-                d2 = m * matingTeeth;
-                R = d1 / (2 * Math.sin(deltaPinion * Math.PI/180));
-                delta = deltaPinion;
-                d1 = m * N;
-                d2 = m * matingTeeth;
-            } else {
-                if(isNaN(delta)) {
-                    delta = Math.atan(Math.sin(shaft*Math.PI/180) / (1 + Math.cos(shaft*Math.PI/180))) * 180/Math.PI;
-                }
-                R = d1 / (2 * Math.sin(delta * Math.PI/180));
-            }
-
-            dr = d1 - 2.2 * m;
-            toothThickness = Math.PI * m / 2;
+            if (!isNaN(matingTeeth) && matingTeeth > 0) { deltaPinion = Math.atan(N / matingTeeth) * 180/Math.PI; deltaGear = 90 - deltaPinion; d2 = m * matingTeeth; R = d1 / (2 * Math.sin(deltaPinion * Math.PI/180)); delta = deltaPinion; d1 = m * N; d2 = m * matingTeeth; }
+            else { if(isNaN(delta)) { delta = Math.atan(Math.sin(shaft*Math.PI/180) / (1 + Math.cos(shaft*Math.PI/180))) * 180/Math.PI; } R = d1 / (2 * Math.sin(delta * Math.PI/180)); }
+            dr = d1 - 2.2 * m; toothThickness = Math.PI * m / 2;
             let addendumAngle = Math.atan(m / R) * 180/Math.PI;
             tipConeAngle = delta + addendumAngle;
             outsideDia = d1 + 2 * m * Math.cos(delta * Math.PI/180);
             backConeAngle = 90 - delta;
             let thetaF = Math.atan(2.4 * Math.sin(delta*Math.PI/180) / N) * 180/Math.PI;
-            rootAngle = delta - thetaF;
-            faceWidth = 0.3 * R;
-
+            rootAngle = delta - thetaF; faceWidth = 0.3 * R;
             html = `<div class="param-grid">`;
-            if (!isNaN(matingTeeth) && matingTeeth > 0) {
-                html += `<div class="param-item"><span>Pinion pitch dia d₁</span><strong>${d1.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Gear pitch dia d₂</span><strong>${d2.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Pinion pitch cone δ₁</span><strong>${deltaPinion.toFixed(2)}°</strong></div>
-                         <div class="param-item"><span>Gear pitch cone δ₂</span><strong>${deltaGear.toFixed(2)}°</strong></div>`;
-            } else {
-                html += `<div class="param-item"><span>Pitch dia d</span><strong>${d1.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div>`;
-            }
-            html += `<div class="param-item"><span>Tip cone angle (face)</span><strong>${tipConeAngle.toFixed(2)}°</strong></div>
-                     <div class="param-item"><span>Back cone angle</span><strong>${backConeAngle.toFixed(2)}°</strong></div>
-                     <div class="param-item"><span>Root angle (setup)</span><strong>${rootAngle.toFixed(2)}°</strong></div>
-                     <div class="param-item"><span>Face width (recommended)</span><strong>${faceWidth.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(0.3×R)</span></div>
-                     <div class="param-item"><span>Outside dia (large end)</span><strong>${outsideDia.toFixed(2)} mm</strong></div>
-                     <div class="param-item"><span>Root diameter (approx)</span><strong>${dr.toFixed(2)} mm</strong></div>
-                     <div class="param-item"><span>Tooth thickness (large end)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
-            </div>`;
+            if (!isNaN(matingTeeth) && matingTeeth > 0) { html += `<div class="param-item"><span>Pinion pitch dia d₁</span><strong>${d1.toFixed(2)} mm</strong></div><div class="param-item"><span>Gear pitch dia d₂</span><strong>${d2.toFixed(2)} mm</strong></div><div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div><div class="param-item"><span>Pinion pitch cone δ₁</span><strong>${deltaPinion.toFixed(2)}°</strong></div><div class="param-item"><span>Gear pitch cone δ₂</span><strong>${deltaGear.toFixed(2)}°</strong></div>`; }
+            else { html += `<div class="param-item"><span>Pitch dia d</span><strong>${d1.toFixed(2)} mm</strong></div><div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div><div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div>`; }
+            html += `<div class="param-item"><span>Tip cone angle (face)</span><strong>${tipConeAngle.toFixed(2)}°</strong></div><div class="param-item"><span>Back cone angle</span><strong>${backConeAngle.toFixed(2)}°</strong></div><div class="param-item"><span>Root angle (setup)</span><strong>${rootAngle.toFixed(2)}°</strong></div><div class="param-item"><span>Face width (recommended)</span><strong>${faceWidth.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(0.3×R)</span></div><div class="param-item"><span>Outside dia (large end)</span><strong>${outsideDia.toFixed(2)} mm</strong></div><div class="param-item"><span>Root diameter (approx)</span><strong>${dr.toFixed(2)} mm</strong></div><div class="param-item"><span>Tooth thickness (large end)</span><strong>${toothThickness.toFixed(3)} mm</strong></div></div>`;
             note = `Tilt dividing head to ${rootAngle.toFixed(1)}°. Face width should not exceed ${faceWidth.toFixed(1)} mm to maintain proper tooth form.`;
             cutterMsg = `Straight bevel cutter (Gleason type). Use standard involute cutter No. ${getCutterNumber(N)}.`;
         }
         else if(type === 'spiralBevel'){
-            let psi = parseFloat(document.getElementById('spiralAngle').value) || 35;
-            let psiRad = psi * Math.PI/180;
-            let mn = m;
-            let mt = mn / Math.cos(psiRad);
-            let d = mt * N;
-
+            let psi = parseFloat(document.getElementById('spiralAngle').value) || 35, psiRad = psi * Math.PI/180;
+            let mn = m, mt = mn / Math.cos(psiRad), d = mt * N;
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
             let deltaInput = parseFloat(document.getElementById('pitchCone').value);
             let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
-
-            let delta = deltaInput;
-            let sigma = shaft;
-            if (!isNaN(matingTeeth) && matingTeeth > 0) {
-                delta = Math.atan(N / matingTeeth) * 180/Math.PI;
-            } else if (isNaN(delta)) {
-                delta = Math.atan(Math.sin(sigma*Math.PI/180) / (1 + Math.cos(sigma*Math.PI/180))) * 180/Math.PI;
-            }
+            let delta = deltaInput, sigma = shaft;
+            if (!isNaN(matingTeeth) && matingTeeth > 0) { delta = Math.atan(N / matingTeeth) * 180/Math.PI; }
+            else if (isNaN(delta)) { delta = Math.atan(Math.sin(sigma*Math.PI/180) / (1 + Math.cos(sigma*Math.PI/180))) * 180/Math.PI; }
             let deltaRad = delta * Math.PI/180;
             let outerConeDist = d / (2 * Math.sin(deltaRad));
             let faceWidth = 0.3 * outerConeDist;
             let meanConeDist = outerConeDist - faceWidth/2;
-            let addendum = mn;
-            let dedendum = 1.25 * mn;
-            let clearance = 0.25 * mn;
-            let wholeDepth = addendum + dedendum;
+            let addendum = mn, dedendum = 1.25 * mn, clearance = 0.25 * mn, wholeDepth = addendum + dedendum;
             let addendumAngle = Math.atan(addendum / outerConeDist) * 180/Math.PI;
             let dedendumAngle = Math.atan(dedendum / outerConeDist) * 180/Math.PI;
-            let tipAngle = delta + addendumAngle;
-            let rootAngle = delta - dedendumAngle;
+            let tipAngle = delta + addendumAngle, rootAngle = delta - dedendumAngle;
             let outerAddendumDia = d + 2*addendum*Math.cos(deltaRad);
             let outerRootDia = d - 2*dedendum*Math.cos(deltaRad);
             let backConeAngle = 90 - delta;
             let meanNormalModule = mn * Math.cos(psiRad);
             let toothThicknessLarge = Math.PI * mt / 2;
-
-            let lead;
-            if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450;
-            else lead = (Math.PI * d) / Math.tan(psiRad);
-
+            let lead; if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450; else lead = (Math.PI * d) / Math.tan(psiRad);
             html = `<div class="param-grid">
                 <div class="param-item"><span>Normal module mₙ</span><strong>${mn.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Transverse module mₜ</span><strong>${mt.toFixed(3)} mm</strong></div>
@@ -1781,7 +1180,6 @@
                 <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div>
             </div>`;
             note = `Swivel ψ = ${psi}°, hand ${document.getElementById('spiralHand').value}. Face width b ≈ ${faceWidth.toFixed(1)} mm, root angle = ${rootAngle.toFixed(1)}° for setup.`;
-
             let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
             updateLeadGearTrains(lead, leadscrewPitch);
             cutterMsg = `Spiral bevel cutter (face mill/hob). Recommended face width ${faceWidth.toFixed(1)} mm. Root angle = ${rootAngle.toFixed(1)}°.`;
@@ -1790,14 +1188,10 @@
             let starts = parseInt(document.getElementById('wormStarts').value) || 1;
             let wormOD = parseFloat(document.getElementById('wormOD').value);
             let d = wormOD ? wormOD - 2*m : 40 - 2*m;
-            let dr = d - 2.2*m;
-            let toothThickness = Math.PI * m / 2;
-            let lead = Math.PI * m * starts;
+            let dr = d - 2.2*m, toothThickness = Math.PI * m / 2, lead = Math.PI * m * starts;
             let gamma = Math.atan(m * starts / d) * 180/Math.PI;
             let indexingTurns = 40 / starts;
-            let lengthFormula = document.getElementById('wormLengthFormula').value;
-            let wormLength = 0;
-            let lengthFormulaDesc = "";
+            let lengthFormula = document.getElementById('wormLengthFormula').value, wormLength = 0, lengthFormulaDesc = "";
             switch(lengthFormula) {
                 case 'starts': wormLength = 2.2 * m * (starts + 2); lengthFormulaDesc = "Starts-based (2.2×m×(starts+2))"; break;
                 case 'constant13': wormLength = 13 * m; lengthFormulaDesc = "Constant 13×m (short)"; break;
@@ -1823,13 +1217,9 @@
             let starts = parseInt(document.getElementById('wwStarts').value) || 1;
             let d_worm = parseFloat(document.getElementById('wormPD').value);
             if(isNaN(d_worm)) d_worm = 40 - 2*m;
-            let d = m * N;
-            let dr = d - 2.5*m;
-            let toothThickness = Math.PI * m / 2;
+            let d = m * N, dr = d - 2.5*m, toothThickness = Math.PI * m / 2;
             let throatFormulaValue = throatFormula.value;
-            let x = parseFloat(document.getElementById('profileShift').value) || 0;
-            let D3 = 0;
-            let formulaDesc = "";
+            let x = parseFloat(document.getElementById('profileShift').value) || 0, D3 = 0, formulaDesc = "";
             switch(throatFormulaValue) {
                 case 'standard': D3 = m * (N + 2); formulaDesc = "Standard: m×(N+2)"; break;
                 case 'shift': D3 = m * (N + 2 + 2*x); formulaDesc = `With profile shift: m×(N+2+2x) (x=${x.toFixed(3)})`; break;
@@ -1837,8 +1227,7 @@
                 case 'cylindrical': D3 = m * (N + 2); formulaDesc = "Cylindrical (non‑throated): m×(N+2)"; break;
                 default: D3 = m * (N + 2); formulaDesc = "Standard";
             }
-            let center = (d_worm + d)/2;
-            let faceWidth = 0.45 * center;
+            let center = (d_worm + d)/2, faceWidth = 0.45 * center;
             let gamma = Math.atan(m*starts/d_worm)*180/Math.PI;
             html = `<div class="param-grid">
                 <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
@@ -1853,11 +1242,7 @@
             cutterMsg = `Hob or involute cutter (throated). Face width = ${faceWidth.toFixed(1)} mm influences hob traverse.`;
         }
         else if(type === 'rack'){
-            let p = rackP;
-            let toothThickness = p / 2;
-            let addendum = m;
-            let dedendum = 1.25 * m;
-            let rackLength = N * p;
+            let p = rackP, toothThickness = p / 2, addendum = m, dedendum = 1.25 * m, rackLength = N * p;
             html = `<div class="param-grid">
                 <div class="param-item"><span>Circular pitch P</span><strong>${p.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Module (derived from P)</span><strong>${m.toFixed(4)} mm</strong> <span style="font-size:0.7rem;">(P/π)</span></div>
@@ -1871,28 +1256,17 @@
             cutterMsg = `Rack form cutter (milling or shaping).`;
         }
         else if(type === 'sprocket'){
-            let P = parseFloat(document.getElementById('chainPitch').value);
-            let Dr = parseFloat(document.getElementById('rollerDia').value);
+            let P = parseFloat(document.getElementById('chainPitch').value), Dr = parseFloat(document.getElementById('rollerDia').value);
             if(isNaN(P) || isNaN(Dr)){ dimOutput.innerHTML='<span class="warning">Enter chain pitch and roller diameter</span>'; return; }
             let z = N;
             if(z < 5) { dimOutput.innerHTML='<span class="warning">Minimum teeth for sprocket is 5</span>'; return; }
-
             let d = P / Math.sin(Math.PI / z);
             let k = (z > 19) ? 0.8 : 0.9;
             let da_common = d + k * Dr;
             let da_exact = P * (0.6 + 1 / Math.tan(Math.PI / z));
-            let df = d - Dr;
-            let toothThickness = 0.93 * P - 0.15;
-            let ri = 0.505 * Dr;
-            let re = 0.12 * Dr;
-            let addendum = (da_common - d) / 2;
-            let dedendum = (d - df) / 2;
-            let wholeDepth = addendum + dedendum;
-            let pressureAngle = 30;
-            let toothAngle = 360 / z;
-            let chordalPitch = P;
-            let equivModule = P / Math.PI;
-
+            let df = d - Dr, toothThickness = 0.93 * P - 0.15, ri = 0.505 * Dr, re = 0.12 * Dr;
+            let addendum = (da_common - d) / 2, dedendum = (d - df) / 2, wholeDepth = addendum + dedendum;
+            let pressureAngle = 30, toothAngle = 360 / z, chordalPitch = P, equivModule = P / Math.PI;
             html = `<div class="param-grid">
                 <div class="param-item"><span>Number of teeth z</span><strong>${z}</strong></div>
                 <div class="param-item"><span>Chain pitch P</span><strong>${P.toFixed(3)} mm</strong></div>
@@ -1918,15 +1292,10 @@
         dimOutput.innerHTML = html + `<hr><span class="badge">${type === 'rack' ? `Circular pitch P = ${rackP.toFixed(3)} mm → module = ${m.toFixed(4)} mm` : (type !== 'sprocket' ? getModuleDisplay() : 'Chain sprocket')}</span>`;
         manufactureNote.innerHTML = note;
         cutterOut.innerHTML = cutterMsg;
-        if(type !== 'helical' && type !== 'spiralBevel') {
-            helicalGearOut.innerHTML = 'Select helical/spiral bevel for lead change gears.';
-            altGearSelection.style.display = 'none';
-            gearDrawingContainer.style.display = 'none';
-        }
+        if(type !== 'helical' && type !== 'spiralBevel') { helicalGearOut.innerHTML = 'Select helical/spiral bevel for lead change gears.'; altGearSelection.style.display = 'none'; gearDrawingContainer.style.display = 'none'; }
     }
 
     function getModuleDisplay() { return isMetric ? `m = ${getModule().toFixed(3)} mm` : `DP = ${dpInput.value}, module = ${getModule().toFixed(3)} mm`; }
-
     function updateVisibility(){
         let t = gearType.value;
         spurExtra.style.display = (t === 'spur') ? 'block' : 'none';
@@ -1944,10 +1313,7 @@
         isMetric = active;
         metricBtn.classList.toggle('active-mode', active);
         imperialBtn.classList.toggle('active-mode', !active);
-        if (gearType.value !== 'rack' && gearType.value !== 'sprocket') {
-            metricBlock.style.display = active ? 'block' : 'none';
-            imperialBlock.style.display = active ? 'none' : 'block';
-        }
+        if (gearType.value !== 'rack' && gearType.value !== 'sprocket') { metricBlock.style.display = active ? 'block' : 'none'; imperialBlock.style.display = active ? 'none' : 'block'; }
         computeDimensions();
     }
     function updateMethodUI(){ let method=document.getElementById('indexMethod').value; document.getElementById('directDiv').style.display=method==='direct'?'block':'none'; document.getElementById('simpleDiv').style.display=method==='simple'?'block':'none'; document.getElementById('diffDiv').style.display=method==='differential'?'block':'none'; document.getElementById('angularDiv').style.display=method==='angular'?'block':'none'; computeIndexing(); }
@@ -1983,23 +1349,13 @@
     document.getElementById('helicalPressureAngle')?.addEventListener('input', computeDimensions);
     document.getElementById('faceWidth')?.addEventListener('input', computeDimensions);
     document.getElementById('leadGearCount')?.addEventListener('change', computeDimensions);
-
     holePresetSimple?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); });
     customHolesSimple?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='simple') computeIndexing(); });
     holePresetAngular?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); });
     customHolesAngular?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); });
 
-    if (throatFormula.value === 'shift') {
-        profileShiftGroup.style.display = 'flex';
-    } else {
-        profileShiftGroup.style.display = 'none';
-    }
-
-    if (!checkAccess()) {
-        // wait for unlock
-    } else {
-        updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth();
-    }
+    if (throatFormula.value === 'shift') { profileShiftGroup.style.display = 'flex'; } else { profileShiftGroup.style.display = 'none'; }
+    if (!checkAccess()) { } else { updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth(); }
     setTimeout(() => {
         let topC = document.getElementById('topViewContainer');
         if(topC) {
