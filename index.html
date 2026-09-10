@@ -829,6 +829,91 @@
     function generateDiffSimpleDrawing(drive, driven, sign) { let w=500, h=200, cy=100, x1=160, x2=340, r1=Math.min(48,20+drive/2), r2=Math.min(48,20+driven/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="20" x2="${x1}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="20" x2="${x2}" y2="180" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cy}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${drive}</text><text x="${x1}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cy}" r="${r2}" fill="#d9f0ec" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cy-10}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${driven}</text><text x="${x2}" y="${cy+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm shaft</text><line x1="${x1+r1-4}" y1="${cy}" x2="${x2-r2+4}" y2="${cy}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="250" y="190" text-anchor="middle" fill="#2c7da0" font-size="12">${sign === "positive" ? "🔄 Same direction (use 1 idler)" : "🔁 Opposite direction (use 2 idlers)"}</text></svg>`; }
     function generateDiffCompoundDrawing(first, second, sign) { let [a,b] = first.split('/').map(Number), [c,d] = second.split('/').map(Number); let w=540, h=280, cyMain=120, cyUpper=40, x1=100, x2=270, x3=440; let r1=Math.min(42,18+a/2), r2=Math.min(42,18+b/2), r3=Math.min(42,18+c/2), r4=Math.min(42,18+d/2); return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/><line x1="${x1}" y1="15" x2="${x1}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x2}" y1="5" x2="${x2}" y2="220" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><line x1="${x3}" y1="15" x2="${x3}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/><circle cx="${x1}" cy="${cyMain}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x1}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${a}</text><text x="${x1}" y="${cyMain+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text><circle cx="${x2}" cy="${cyMain}" r="${r2}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${b}</text><circle cx="${x2}" cy="${cyUpper}" r="${r3}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/><text x="${x2}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${c}</text><circle cx="${x3}" cy="${cyUpper}" r="${r4}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/><text x="${x3}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${d}</text><text x="${x3}" y="${cyUpper+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm</text><line x1="${x1+r1-4}" y1="${cyMain}" x2="${x2-r2+4}" y2="${cyMain}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><line x1="${x2+r3-4}" y1="${cyUpper}" x2="${x3-r4+4}" y2="${cyUpper}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs><text x="270" y="265" text-anchor="middle" fill="#2c7da0" font-size="11">${sign === "positive" ? "🔄 Same direction (zero idlers compound)" : "🔁 Opposite direction (one idler)"}</text></svg>`; }
     
+    // NEW: Function to handle lead gear trains (simple + compound)
+    function updateLeadGearTrains(lead, leadscrewPitch) {
+        let requiredRatio = lead / (leadscrewPitch * 40);
+        let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
+        if(gearSet.length===0) gearSet=[25,30,40,50,60,70,80,90,100];
+        
+        let simpleAlts=[];
+        for(let drv of gearSet) for(let drn of gearSet) simpleAlts.push({type:'simple',drive:drv,driven:drn,ratio:drv/drn,error:Math.abs(drv/drn-requiredRatio)});
+        simpleAlts.sort((a,b)=>a.error-b.error);
+        
+        let compoundAlts = [];
+        // Generate compound combinations: (A/B) * (C/D)
+        for(let a of gearSet) {
+            for(let b of gearSet) {
+                if (a === b) continue;
+                for(let c of gearSet) {
+                    if (c === a || c === b) continue;
+                    for(let d of gearSet) {
+                        if (d === a || d === b || d === c) continue;
+                        let totalRatio = (a / b) * (c / d);
+                        let err = Math.abs(totalRatio - requiredRatio);
+                        compoundAlts.push({
+                            type: 'compound',
+                            drive1: a, driven1: b,
+                            drive2: c, driven2: d,
+                            ratio: totalRatio,
+                            error: err
+                        });
+                    }
+                }
+            }
+        }
+        compoundAlts.sort((a,b)=>a.error-b.error);
+        
+        // Mix top simple and top compound alternatives
+        let allAlts = simpleAlts.slice(0, 10).concat(compoundAlts.slice(0, 10));
+        allAlts.sort((a,b)=>a.error-b.error);
+        currentAlternatives = allAlts.slice(0, 15);
+        
+        if(currentAlternatives.length){
+            altGearSelect.innerHTML='';
+            currentAlternatives.forEach((alt,i)=>{
+                let errP=(alt.error/requiredRatio)*100;
+                let label = alt.type === 'simple' 
+                    ? `Simple: ${alt.drive}/${alt.driven} = ${alt.ratio.toFixed(6)} (err ${errP.toFixed(4)}%)`
+                    : `Compound: (${alt.drive1}/${alt.driven1}) × (${alt.drive2}/${alt.driven2}) = ${alt.ratio.toFixed(6)} (err ${errP.toFixed(4)}%)`;
+                altGearSelect.options.add(new Option(label, i));
+            });
+            altGearSelection.style.display='block';
+            updateDrawingFromAlternative(currentAlternatives[0]);
+            altGearSelect.onchange=()=>updateDrawingFromAlternative(currentAlternatives[parseInt(altGearSelect.value)]);
+            helicalGearOut.innerHTML=`${currentAlternatives.length} alternative gear trains found (simple and compound).`;
+        } else {
+            helicalGearOut.innerHTML='No gear trains';
+            altGearSelection.style.display='none';
+            gearDrawingContainer.style.display='none';
+        }
+    }
+    
+    // NEW: Drawing functions for compound lead gears
+    function generateTopDrawingCompound(a, b, c, d) {
+        let w = 540, h = 280, cyMain = 120, cyUpper = 40, x1 = 100, x2 = 270, x3 = 440;
+        let r1 = Math.min(42, 18 + a / 2), r2 = Math.min(42, 18 + b / 2), r3 = Math.min(42, 18 + c / 2), r4 = Math.min(42, 18 + d / 2);
+        return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="12"/>
+            <line x1="${x1}" y1="15" x2="${x1}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/>
+            <line x1="${x2}" y1="5" x2="${x2}" y2="220" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/>
+            <line x1="${x3}" y1="15" x2="${x3}" y2="200" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4"/>
+            <circle cx="${x1}" cy="${cyMain}" r="${r1}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/>
+            <text x="${x1}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${a}</text>
+            <text x="${x1}" y="${cyMain+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Spindle</text>
+            <circle cx="${x2}" cy="${cyMain}" r="${r2}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/>
+            <text x="${x2}" y="${cyMain-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${b}</text>
+            <circle cx="${x2}" cy="${cyUpper}" r="${r3}" fill="#ffe0b5" stroke="#1f617e" stroke-width="2"/>
+            <text x="${x2}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${c}</text>
+            <circle cx="${x3}" cy="${cyUpper}" r="${r4}" fill="#cfe7ff" stroke="#1f617e" stroke-width="2"/>
+            <text x="${x3}" y="${cyUpper-8}" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${d}</text>
+            <text x="${x3}" y="${cyUpper+18}" text-anchor="middle" fill="#1e3b4a" font-size="11">Worm</text>
+            <line x1="${x1+r1-4}" y1="${cyMain}" x2="${x2-r2+4}" y2="${cyMain}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+            <line x1="${x2+r3-4}" y1="${cyUpper}" x2="${x3-r4+4}" y2="${cyUpper}" stroke="#e67e22" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+            <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#e67e22"/></marker></defs>
+            <text x="270" y="265" text-anchor="middle" fill="#2c7da0" font-size="11">Compound train: (${a}/${b}) × (${c}/${d}) = ${((a/b)*(c/d)).toFixed(4)}</text>
+        </svg>`;
+    }
+    function generateSideDrawingCompound(a, b, c, d) { return generateTopDrawingCompound(a, b, c, d); }
+    
     function updateSprocketVisibility() {
         const isSprocket = (gearType.value === 'sprocket');
         if (isSprocket) {
@@ -1032,30 +1117,9 @@
             note = `Helical gear: set table angle to ${beta}°. Use cutter for ${zv.toFixed(0)} teeth (normal module). Lead = ${lead.toFixed(1)} mm. Milling depth = ${h.toFixed(2)} mm.`;
             cutterMsg = `Involute cutter No. ${getCutterNumber(Math.round(zv))} (based on virtual teeth, normal module ${mn.toFixed(3)} mm).`;
             
-            // Lead change gears (unchanged)
+            // Lead change gears (updated for compound)
             let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
-            let requiredRatio = lead / (leadscrewPitch * 40);
-            let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
-            if(gearSet.length===0) gearSet=[25,30,40,50,60,70,80,90,100];
-            let simpleAlts=[];
-            for(let drv of gearSet) for(let drn of gearSet) simpleAlts.push({type:'simple',drive:drv,driven:drn,ratio:drv/drn,error:Math.abs(drv/drn-requiredRatio)});
-            simpleAlts.sort((a,b)=>a.error-b.error);
-            currentAlternatives=simpleAlts.slice(0,8);
-            if(currentAlternatives.length){
-                altGearSelect.innerHTML='';
-                currentAlternatives.forEach((alt,i)=>{
-                    let errP=(alt.error/requiredRatio)*100;
-                    altGearSelect.options.add(new Option(`Simple: ${alt.drive}/${alt.driven} = ${alt.ratio.toFixed(6)} (err ${errP.toFixed(4)}%)`,i));
-                });
-                altGearSelection.style.display='block';
-                updateDrawingFromAlternative(currentAlternatives[0]);
-                altGearSelect.onchange=()=>updateDrawingFromAlternative(currentAlternatives[parseInt(altGearSelect.value)]);
-                helicalGearOut.innerHTML=`${currentAlternatives.length} alternative gear trains found.`;
-            } else {
-                helicalGearOut.innerHTML='No gear trains';
-                altGearSelection.style.display='none';
-                gearDrawingContainer.style.display='none';
-            }
+            updateLeadGearTrains(lead, leadscrewPitch);
         } 
         else if(type === 'bevel'){
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
@@ -1181,28 +1245,9 @@
             </div>`;
             note = `Swivel ψ = ${psi}°, hand ${document.getElementById('spiralHand').value}. Face width b ≈ ${faceWidth.toFixed(1)} mm, root angle = ${rootAngle.toFixed(1)}° for setup.`;
             
+            // Lead change gears (updated for compound)
             let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
-            let requiredRatio = lead / (leadscrewPitch * 40);
-            let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
-            let simpleAlts=[];
-            for(let drv of gearSet) for(let drn of gearSet) simpleAlts.push({type:'simple',drive:drv,driven:drn,ratio:drv/drn,error:Math.abs(drv/drn-requiredRatio)});
-            simpleAlts.sort((a,b)=>a.error-b.error);
-            currentAlternatives=simpleAlts.slice(0,8);
-            if(currentAlternatives.length){
-                altGearSelect.innerHTML='';
-                currentAlternatives.forEach((alt,i)=>{
-                    let errP=(alt.error/requiredRatio)*100;
-                    altGearSelect.options.add(new Option(`Simple: ${alt.drive}/${alt.driven} = ${alt.ratio.toFixed(6)} (err ${errP.toFixed(4)}%)`,i));
-                });
-                altGearSelection.style.display='block';
-                updateDrawingFromAlternative(currentAlternatives[0]);
-                altGearSelect.onchange=()=>updateDrawingFromAlternative(currentAlternatives[parseInt(altGearSelect.value)]);
-                helicalGearOut.innerHTML=`${currentAlternatives.length} alternatives.`;
-            } else {
-                helicalGearOut.innerHTML = 'No gear trains';
-                altGearSelection.style.display = 'none';
-                gearDrawingContainer.style.display = 'none';
-            }
+            updateLeadGearTrains(lead, leadscrewPitch);
             cutterMsg = `Spiral bevel cutter (face mill/hob). Recommended face width ${faceWidth.toFixed(1)} mm. Root angle = ${rootAngle.toFixed(1)}°.`;
         } 
         else if(type === 'wormShaft'){
@@ -1346,9 +1391,25 @@
     }
     
     function getModuleDisplay() { return isMetric ? `m = ${getModule().toFixed(3)} mm` : `DP = ${dpInput.value}, module = ${getModule().toFixed(3)} mm`; }
-    function updateDrawingFromAlternative(alt) { if (!alt) return; let topSvg = generateTopDrawingSimple(alt.drive, alt.driven), sideSvg = generateSideDrawingSimple(alt.drive, alt.driven); topViewSvgDiv.innerHTML = topSvg; sideViewSvgDiv.innerHTML = sideSvg; gearDrawingContainer.style.display = 'block'; }
+    
+    function updateDrawingFromAlternative(alt) { 
+        if (!alt) return; 
+        let topSvg, sideSvg;
+        if (alt.type === 'simple') {
+            topSvg = generateTopDrawingSimple(alt.drive, alt.driven);
+            sideSvg = generateSideDrawingSimple(alt.drive, alt.driven);
+        } else {
+            topSvg = generateTopDrawingCompound(alt.drive1, alt.driven1, alt.drive2, alt.driven2);
+            sideSvg = generateSideDrawingCompound(alt.drive1, alt.driven1, alt.drive2, alt.driven2);
+        }
+        topViewSvgDiv.innerHTML = topSvg; 
+        sideViewSvgDiv.innerHTML = sideSvg; 
+        gearDrawingContainer.style.display = 'block'; 
+    }
+    
     function generateTopDrawingSimple(drive, driven) { let w=500,h=200; return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="#FAFAFC" rx="10"/><circle cx="160" cy="100" r="45" fill="#cfe7ff" stroke="#2c7da0" stroke-width="2"/><text x="160" y="105" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${drive}</text><circle cx="340" cy="100" r="45" fill="#d9f0ec" stroke="#2c7da0" stroke-width="2"/><text x="340" y="105" text-anchor="middle" fill="#1e3b4a" font-weight="bold">${driven}</text><text x="250" y="185" text-anchor="middle" fill="#555" font-size="11">Lead ratio = ${drive}/${driven} = ${(drive/driven).toFixed(4)}</text></svg>`; }
     function generateSideDrawingSimple(drive, driven) { return generateTopDrawingSimple(drive, driven); }
+    
     function updateVisibility(){ 
         let t = gearType.value; 
         spurExtra.style.display = (t === 'spur') ? 'block' : 'none';
@@ -1375,6 +1436,7 @@
     function updateMethodUI(){ let method=document.getElementById('indexMethod').value; document.getElementById('directDiv').style.display=method==='direct'?'block':'none'; document.getElementById('simpleDiv').style.display=method==='simple'?'block':'none'; document.getElementById('diffDiv').style.display=method==='differential'?'block':'none'; document.getElementById('angularDiv').style.display=method==='angular'?'block':'none'; computeIndexing(); }
     function syncTeeth(){ let idxN=document.getElementById('simpleN'); if(teethInput.value) idxN.value=teethInput.value; let diffReq=document.getElementById('diffRequiredN'); if(diffReq) diffReq.value=teethInput.value; }
     function updatePdfReferences(){ let gearKey = gearType.value; let gearRef = { spur:"Spur Milling", helical:"Helical Milling", bevel:"Bevel Milling", spiralBevel:"Spiral Bevel", wormShaft:"Worm shaft", wormWheel:"Worm wheel", rack:"Rack milling", sprocket:"Sprocket" }[gearKey] || "Gear manufacturing"; pdfRefDimensions.innerHTML = `📖 <strong>Check in PDF:</strong> <a href="/manual" target="_blank" style="color:#ffc107;">Open manual →</a> Section "${gearRef}" for formulas.`; let method = document.getElementById('indexMethod').value; let idxRef = { direct:"Direct indexing", simple:"Simple indexing", differential:"Differential indexing", angular:"Angular indexing" }[method]; pdfRefIndexing.innerHTML = `📖 <strong>Verify indexing:</strong> See "<a href="/manual" target="_blank" style="color:#ffc107;">${idxRef}</a>" in the PDF.`; }
+    
     gearType.addEventListener('change', updateVisibility); document.getElementById('computeDimensionsBtn').addEventListener('click', computeDimensions); document.getElementById('computeIndexingBtn').addEventListener('click', computeIndexing); document.getElementById('indexMethod').addEventListener('change', updateMethodUI); teethInput.addEventListener('input', ()=>{ syncTeeth(); computeDimensions(); }); moduleInput.addEventListener('input', computeDimensions); dpInput.addEventListener('input', computeDimensions); metricBtn.addEventListener('click', ()=>setMetric(true)); imperialBtn.addEventListener('click', ()=>setMetric(false)); rackCircularPitch.addEventListener('input', computeDimensions);
     document.getElementById('helixAngle')?.addEventListener('input', computeDimensions); document.getElementById('leadscrewPitch')?.addEventListener('input', computeDimensions); document.getElementById('shaftAngle')?.addEventListener('input', computeDimensions); document.getElementById('pitchCone')?.addEventListener('input', computeDimensions); document.getElementById('matingTeeth')?.addEventListener('input', computeDimensions);
     document.getElementById('spiralAngle')?.addEventListener('input', computeDimensions); document.getElementById('wormStarts')?.addEventListener('input', computeDimensions); document.getElementById('wormOD')?.addEventListener('input', computeDimensions); document.getElementById('wormLengthFormula')?.addEventListener('change', computeDimensions); document.getElementById('wwStarts')?.addEventListener('input', computeDimensions); document.getElementById('wormPD')?.addEventListener('input', computeDimensions); document.getElementById('profileShift')?.addEventListener('input', computeDimensions); throatFormula?.addEventListener('change', computeDimensions); document.getElementById('chainPitch')?.addEventListener('input', computeDimensions); document.getElementById('rollerDia')?.addEventListener('input', computeDimensions); document.getElementById('spurMatingTeeth')?.addEventListener('input', computeDimensions); document.getElementById('helicalMatingTeeth')?.addEventListener('input', computeDimensions); document.getElementById('helicalPressureAngle')?.addEventListener('input', computeDimensions); document.getElementById('faceWidth')?.addEventListener('input', computeDimensions);
