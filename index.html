@@ -26,9 +26,6 @@
             --dark-border: #334155;
             --dark-text: #e2e8f0;
             --dark-muted: #94a3b8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
             --radius-sm: 10px;
             --radius: 14px;
             --radius-lg: 20px;
@@ -38,744 +35,130 @@
             --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(15, 23, 42, 0.04);
             --shadow-accent: 0 8px 20px rgba(14, 165, 233, 0.25);
         }
-        * {
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        body {
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            margin: 0;
-            padding: 24px;
-            min-height: 100vh;
-            color: var(--text);
-            line-height: 1.5;
-        }
-        .container {
-            max-width: 1500px;
-            margin: 0 auto;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            padding: 24px 28px;
-            background: linear-gradient(135deg, #0b1120 0%, #1e293b 60%, #0f3a52 100%);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-lg);
-            margin-bottom: 18px;
-            position: relative;
-            overflow: hidden;
-        }
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 340px;
-            height: 340px;
-            background: radial-gradient(circle, rgba(14, 165, 233, 0.28), transparent 70%);
-            pointer-events: none;
-        }
-        .header::after {
-            content: '';
-            position: absolute;
-            bottom: -60%;
-            left: 10%;
-            width: 280px;
-            height: 280px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.18), transparent 70%);
-            pointer-events: none;
-        }
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            color: #ffffff;
-            margin: 0;
-            line-height: 1.25;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            position: relative;
-            z-index: 1;
-        }
-        h1 .logo-mark {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            font-size: 1.4rem;
-            box-shadow: var(--shadow-accent);
-            flex-shrink: 0;
-        }
-        h1 .title-stack {
-            display: flex;
-            flex-direction: column;
-        }
-        h1 .title-main {
-            font-size: 1.35rem;
-            line-height: 1.15;
-        }
-        h1 .title-sub {
-            font-size: 0.72rem;
-            font-weight: 500;
-            color: #7dd3fc;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            position: relative;
-            z-index: 1;
-        }
-        .print-btn {
-            background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            color: white;
-            border: none;
-            border-radius: 999px;
-            padding: 11px 22px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.88rem;
-            text-align: center;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: var(--shadow-accent);
-            transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
-        }
-        .print-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.4);
-            filter: brightness(1.05);
-        }
-        .print-btn:active {
-            transform: translateY(0);
-        }
-        .sub {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 8px 10px;
-            margin: 0 0 22px;
-            padding: 14px 20px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-        .sub .chip {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 12px;
-            border-radius: 999px;
-            background: var(--accent-light);
-            color: var(--accent-dark);
-            font-weight: 600;
-            font-size: 0.78rem;
-            letter-spacing: 0.01em;
-        }
-        .sub .chip.violet {
-            background: #ede9fe;
-            color: #6d28d9;
-        }
-        .sub .chip.emerald {
-            background: #d1fae5;
-            color: #047857;
-        }
-        .sub .divider {
-            color: var(--border-strong);
-            font-weight: 300;
-        }
-        .flex-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 22px;
-        }
-        @media (max-width: 1100px) {
-            .flex-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .card {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow);
-            padding: 26px;
-            border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
-        }
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
-            opacity: 0.9;
-        }
-        .card h2 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            margin: 0 0 22px;
-            color: var(--text);
-            letter-spacing: -0.01em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid var(--border);
-        }
-        .card h2 .icon-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--accent-light), #cffafe);
-            color: var(--accent-dark);
-            font-size: 1rem;
-            flex-shrink: 0;
-        }
-        .input-group {
-            margin-bottom: 14px;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-        }
-        .input-group label {
-            width: 160px;
-            font-weight: 600;
-            color: var(--text);
-            font-size: 0.84rem;
-            letter-spacing: -0.005em;
-        }
-        input[type="number"],
-        input[type="text"],
-        input[type="password"],
-        select {
-            background: var(--surface-2);
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius);
-            padding: 10px 14px;
-            flex: 1;
-            min-width: 120px;
-            font-size: 0.88rem;
-            color: var(--text);
-            transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-            font-weight: 500;
-            outline: none;
-        }
-        input:hover, select:hover {
-            border-color: var(--border-strong);
-        }
-        input:focus, select:focus {
-            border-color: var(--accent);
-            background: #ffffff;
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.13);
-        }
-        select {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            padding-right: 38px;
-        }
-        .small-btn {
-            background: var(--surface-3);
-            border: 1px solid var(--border-strong);
-            border-radius: 999px;
-            padding: 8px 14px;
-            color: var(--text);
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.76rem;
-            width: auto;
-            margin: 0;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .small-btn:hover {
-            background: var(--accent-light);
-            border-color: var(--accent);
-            color: var(--accent-dark);
-        }
-        button:not(.small-btn):not(.zoom-controls button):not(.print-btn) {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            border: none;
-            border-radius: var(--radius);
-            padding: 13px 20px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-            font-size: 0.9rem;
-            width: 100%;
-            letter-spacing: 0.01em;
-            box-shadow: var(--shadow);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        button:not(.small-btn):not(.zoom-controls button):not(.print-btn):hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18);
-            filter: brightness(1.08);
-        }
-        button:not(.small-btn):not(.zoom-controls button):not(.print-btn):active {
-            transform: translateY(0);
-        }
-        #computeDimensionsBtn,
-        #computeIndexingBtn {
-            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-            box-shadow: var(--shadow-accent);
-        }
-        #computeDimensionsBtn:hover,
-        #computeIndexingBtn:hover {
-            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.35);
-        }
-        .mode-switch {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 20px;
-            padding: 4px;
-            background: var(--surface-3);
-            border-radius: 999px;
-            border: 1px solid var(--border);
-        }
-        .mode-chip {
-            padding: 9px 16px;
-            border-radius: 999px;
-            cursor: pointer;
-            font-weight: 600;
-            text-align: center;
-            flex: 1;
-            font-size: 0.83rem;
-            color: var(--text-muted);
-            transition: all 0.18s ease;
-            user-select: none;
-        }
-        .mode-chip:hover {
-            color: var(--text);
-        }
-        .mode-chip.active-mode {
-            background: #ffffff;
-            color: var(--accent-dark);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
-        }
-        .result-box {
-            background: linear-gradient(160deg, #0b1120 0%, #101a2e 100%);
-            border-radius: var(--radius-lg);
-            padding: 18px 20px;
-            margin-top: 16px;
-            color: var(--dark-text);
-            font-size: 0.85rem;
-            overflow-x: auto;
-            border: 1px solid var(--dark-border);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-        }
-        .result-box h3 {
-            margin: 0 0 12px;
-            font-size: 0.82rem;
-            color: #7dd3fc;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .result-box h3::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent-2);
-            box-shadow: 0 0 8px var(--accent-2);
-        }
-        .param-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px 16px;
-        }
-        .param-item {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px dashed rgba(148, 163, 184, 0.22);
-            padding: 6px 0;
-            flex-wrap: wrap;
-            gap: 6px;
-            font-size: 0.82rem;
-        }
-        .param-item span:first-child {
-            color: var(--dark-muted);
-        }
-        .param-item strong {
-            color: #f1f5f9;
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
-        }
-        .badge {
-            background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            color: white;
-            border-radius: 999px;
-            padding: 4px 14px;
-            font-size: 0.72rem;
-            display: inline-block;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            box-shadow: var(--shadow-accent);
-            margin-top: 6px;
-        }
-        .warning {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            color: #78350f;
-            padding: 10px 14px;
-            border-radius: var(--radius);
-            font-size: 0.84rem;
-            border: 1px solid #fcd34d;
-            font-weight: 500;
-            display: inline-block;
-        }
-        table.indexing-tab {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.78rem;
-            margin-top: 6px;
-        }
-        .indexing-tab th {
-            color: #7dd3fc;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            font-size: 0.68rem;
-            padding: 8px 6px;
-            text-align: left;
-            border-bottom: 1px solid var(--dark-border);
-        }
-        .indexing-tab td {
-            padding: 8px 6px;
-            text-align: left;
-            border-bottom: 1px solid rgba(51, 65, 85, 0.6);
-            color: var(--dark-text);
-            font-variant-numeric: tabular-nums;
-        }
-        .indexing-tab tr:hover td {
-            background: rgba(14, 165, 233, 0.07);
-        }
-        hr {
-            margin: 14px 0;
-            border: none;
-            border-top: 1px solid var(--dark-border);
-        }
-        .small-note {
-            font-size: 0.74rem;
-            color: var(--text-light);
-            margin-top: 8px;
-            line-height: 1.5;
-        }
-        .result-box .small-note {
-            color: var(--dark-muted);
-        }
-        .gear-drawing {
-            background: var(--surface-2);
-            border-radius: var(--radius-lg);
-            padding: 16px;
-            margin-top: 16px;
-            border: 1px solid var(--border);
-            text-align: center;
-            overflow-x: auto;
-        }
-        .drawing-container {
-            margin-bottom: 16px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            background: #ffffff;
-            padding: 12px;
-            position: relative;
-            box-shadow: var(--shadow-sm);
-        }
-        .drawing-container:last-child {
-            margin-bottom: 0;
-        }
-        .drawing-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            letter-spacing: -0.005em;
-        }
-        .zoom-controls {
-            display: flex;
-            gap: 4px;
-            background: var(--surface-3);
-            padding: 4px;
-            border-radius: 999px;
-            border: 1px solid var(--border);
-        }
-        .zoom-controls button {
-            background: transparent;
-            border: none;
-            border-radius: 999px;
-            padding: 5px 12px;
-            font-size: 0.78rem;
-            margin: 0;
-            width: auto;
-            cursor: pointer;
-            color: var(--text-muted);
-            font-weight: 600;
-            transition: all 0.15s ease;
-        }
-        .zoom-controls button:hover {
-            background: #ffffff;
-            color: var(--accent-dark);
-            box-shadow: var(--shadow-sm);
-        }
-        .svg-wrapper {
-            overflow: auto;
-            text-align: center;
-            background: #ffffff;
-            border-radius: var(--radius-sm);
-            transition: transform 0.1s ease;
-        }
-        .svg-wrapper svg {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-            cursor: grab;
-        }
-        .alt-gears {
-            margin-top: 12px;
-            padding: 14px;
-            background: rgba(14, 165, 233, 0.09);
-            border-radius: var(--radius);
-            border: 1px solid rgba(14, 165, 233, 0.28);
-        }
-        .alt-gears label {
-            display: block;
-            font-size: 0.74rem;
-            font-weight: 700;
-            color: #7dd3fc;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 8px;
-        }
-        .alt-select {
-            margin: 0;
-            padding: 10px 14px;
-            border-radius: var(--radius);
-            width: 100%;
-            background: #ffffff;
-            color: var(--text);
-            font-size: 0.82rem;
-            font-weight: 600;
-            border: 1.5px solid var(--border);
-        }
-        .alt-select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.13);
-        }
-        .diff-gear-drawing {
-            margin-top: 16px;
-            background: #ffffff;
-            border-radius: var(--radius);
-            padding: 12px;
-            border: 1px solid var(--border);
-            font-size: 0.82rem;
-        }
-        .diff-gear-drawing svg {
-            max-width: 100%;
-            border-radius: var(--radius-sm);
-            background: #fefefe;
-        }
-        .footer-note {
-            text-align: center;
-            margin-top: 28px;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            padding: 16px;
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-        }
-        .footer-note strong {
-            color: var(--accent-dark);
-        }
+        * { box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { background: var(--bg-gradient); background-attachment: fixed; margin: 0; padding: 24px; min-height: 100vh; color: var(--text); line-height: 1.5; }
+        .container { max-width: 1500px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 24px 28px; background: linear-gradient(135deg, #0b1120 0%, #1e293b 60%, #0f3a52 100%); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); margin-bottom: 18px; position: relative; overflow: hidden; }
+        .header::before { content: ''; position: absolute; top: -50%; right: -10%; width: 340px; height: 340px; background: radial-gradient(circle, rgba(14, 165, 233, 0.28), transparent 70%); pointer-events: none; }
+        .header::after { content: ''; position: absolute; bottom: -60%; left: 10%; width: 280px; height: 280px; background: radial-gradient(circle, rgba(139, 92, 246, 0.18), transparent 70%); pointer-events: none; }
+        h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: #ffffff; margin: 0; line-height: 1.25; display: flex; align-items: center; gap: 12px; position: relative; z-index: 1; }
+        h1 .logo-mark { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); font-size: 1.4rem; box-shadow: var(--shadow-accent); flex-shrink: 0; }
+        h1 .title-stack { display: flex; flex-direction: column; }
+        h1 .title-main { font-size: 1.35rem; line-height: 1.15; }
+        h1 .title-sub { font-size: 0.72rem; font-weight: 500; color: #7dd3fc; letter-spacing: 0.14em; text-transform: uppercase; margin-top: 2px; }
+        .header-actions { display: flex; gap: 10px; flex-wrap: wrap; position: relative; z-index: 1; }
+        .print-btn { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border: none; border-radius: 999px; padding: 11px 22px; font-weight: 600; cursor: pointer; font-size: 0.88rem; text-align: center; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px; box-shadow: var(--shadow-accent); transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease; }
+        .print-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(14, 165, 233, 0.4); filter: brightness(1.05); }
+        .print-btn:active { transform: translateY(0); }
+        .sub { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin: 0 0 22px; padding: 14px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); font-size: 0.82rem; color: var(--text-muted); font-weight: 500; }
+        .sub .chip { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 999px; background: var(--accent-light); color: var(--accent-dark); font-weight: 600; font-size: 0.78rem; letter-spacing: 0.01em; }
+        .sub .chip.violet { background: #ede9fe; color: #6d28d9; }
+        .sub .chip.emerald { background: #d1fae5; color: #047857; }
+        .sub .divider { color: var(--border-strong); font-weight: 300; }
+        .flex-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+        @media (max-width: 1100px) { .flex-grid { grid-template-columns: 1fr; } }
+        .card { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow); padding: 26px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3)); opacity: 0.9; }
+        .card h2 { font-size: 1.05rem; font-weight: 700; margin: 0 0 22px; color: var(--text); letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+        .card h2 .icon-badge { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, var(--accent-light), #cffafe); color: var(--accent-dark); font-size: 1rem; flex-shrink: 0; }
+        .input-group { margin-bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+        .input-group label { width: 160px; font-weight: 600; color: var(--text); font-size: 0.84rem; letter-spacing: -0.005em; }
+        input[type="number"], input[type="text"], input[type="password"], select { background: var(--surface-2); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 10px 14px; flex: 1; min-width: 120px; font-size: 0.88rem; color: var(--text); transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease; font-weight: 500; outline: none; }
+        input:hover, select:hover { border-color: var(--border-strong); }
+        input:focus, select:focus { border-color: var(--accent); background: #ffffff; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.13); }
+        select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; }
+        .small-btn { background: var(--surface-3); border: 1px solid var(--border-strong); border-radius: 999px; padding: 8px 14px; color: var(--text); font-weight: 600; cursor: pointer; font-size: 0.76rem; width: auto; margin: 0; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 4px; }
+        .small-btn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); }
+        button:not(.small-btn):not(.zoom-controls button):not(.print-btn) { background: linear-gradient(135deg, #0f172a, #1e293b); border: none; border-radius: var(--radius); padding: 13px 20px; color: white; font-weight: 600; cursor: pointer; margin-top: 10px; transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease; font-size: 0.9rem; width: 100%; letter-spacing: 0.01em; box-shadow: var(--shadow); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        button:not(.small-btn):not(.zoom-controls button):not(.print-btn):hover { transform: translateY(-1px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18); filter: brightness(1.08); }
+        button:not(.small-btn):not(.zoom-controls button):not(.print-btn):active { transform: translateY(0); }
+        #computeDimensionsBtn, #computeIndexingBtn { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); box-shadow: var(--shadow-accent); }
+        #computeDimensionsBtn:hover, #computeIndexingBtn:hover { box-shadow: 0 12px 24px rgba(14, 165, 233, 0.35); }
+        .mode-switch { display: flex; gap: 4px; margin-bottom: 20px; padding: 4px; background: var(--surface-3); border-radius: 999px; border: 1px solid var(--border); }
+        .mode-chip { padding: 9px 16px; border-radius: 999px; cursor: pointer; font-weight: 600; text-align: center; flex: 1; font-size: 0.83rem; color: var(--text-muted); transition: all 0.18s ease; user-select: none; }
+        .mode-chip:hover { color: var(--text); }
+        .mode-chip.active-mode { background: #ffffff; color: var(--accent-dark); box-shadow: var(--shadow-sm); border: 1px solid var(--border); }
+        .result-box { background: linear-gradient(160deg, #0b1120 0%, #101a2e 100%); border-radius: var(--radius-lg); padding: 18px 20px; margin-top: 16px; color: var(--dark-text); font-size: 0.85rem; overflow-x: auto; border: 1px solid var(--dark-border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.04); }
+        .result-box h3 { margin: 0 0 12px; font-size: 0.82rem; color: #7dd3fc; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .result-box h3::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-2); box-shadow: 0 0 8px var(--accent-2); }
+        .param-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; }
+        .param-item { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(148, 163, 184, 0.22); padding: 6px 0; flex-wrap: wrap; gap: 6px; font-size: 0.82rem; }
+        .param-item span:first-child { color: var(--dark-muted); }
+        .param-item strong { color: #f1f5f9; font-weight: 600; font-variant-numeric: tabular-nums; }
+        .badge { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border-radius: 999px; padding: 4px 14px; font-size: 0.72rem; display: inline-block; font-weight: 600; letter-spacing: 0.02em; box-shadow: var(--shadow-accent); margin-top: 6px; }
+        .warning { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #78350f; padding: 10px 14px; border-radius: var(--radius); font-size: 0.84rem; border: 1px solid #fcd34d; font-weight: 500; display: inline-block; }
+        table.indexing-tab { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 6px; }
+        .indexing-tab th { color: #7dd3fc; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.68rem; padding: 8px 6px; text-align: left; border-bottom: 1px solid var(--dark-border); }
+        .indexing-tab td { padding: 8px 6px; text-align: left; border-bottom: 1px solid rgba(51, 65, 85, 0.6); color: var(--dark-text); font-variant-numeric: tabular-nums; }
+        .indexing-tab tr:hover td { background: rgba(14, 165, 233, 0.07); }
+        hr { margin: 14px 0; border: none; border-top: 1px solid var(--dark-border); }
+        .small-note { font-size: 0.74rem; color: var(--text-light); margin-top: 8px; line-height: 1.5; }
+        .result-box .small-note { color: var(--dark-muted); }
+        .gear-drawing { background: var(--surface-2); border-radius: var(--radius-lg); padding: 16px; margin-top: 16px; border: 1px solid var(--border); text-align: center; overflow-x: auto; }
+        .drawing-container { margin-bottom: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: #ffffff; padding: 12px; position: relative; box-shadow: var(--shadow-sm); }
+        .drawing-container:last-child { margin-bottom: 0; }
+        .drawing-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; letter-spacing: -0.005em; }
+        .zoom-controls { display: flex; gap: 4px; background: var(--surface-3); padding: 4px; border-radius: 999px; border: 1px solid var(--border); }
+        .zoom-controls button { background: transparent; border: none; border-radius: 999px; padding: 5px 12px; font-size: 0.78rem; margin: 0; width: auto; cursor: pointer; color: var(--text-muted); font-weight: 600; transition: all 0.15s ease; }
+        .zoom-controls button:hover { background: #ffffff; color: var(--accent-dark); box-shadow: var(--shadow-sm); }
+        .svg-wrapper { overflow: auto; text-align: center; background: #ffffff; border-radius: var(--radius-sm); transition: transform 0.1s ease; }
+        .svg-wrapper svg { max-width: 100%; height: auto; display: block; margin: 0 auto; cursor: grab; }
+        .alt-gears { margin-top: 12px; padding: 14px; background: rgba(14, 165, 233, 0.09); border-radius: var(--radius); border: 1px solid rgba(14, 165, 233, 0.28); }
+        .alt-gears label { display: block; font-size: 0.74rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+        .alt-select { margin: 0; padding: 10px 14px; border-radius: var(--radius); width: 100%; background: #ffffff; color: var(--text); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--border); }
+        .alt-select:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.13); }
+        .diff-gear-drawing { margin-top: 16px; background: #ffffff; border-radius: var(--radius); padding: 12px; border: 1px solid var(--border); font-size: 0.82rem; }
+        .diff-gear-drawing svg { max-width: 100%; border-radius: var(--radius-sm); background: #fefefe; }
+        .footer-note { text-align: center; margin-top: 28px; font-size: 0.78rem; color: var(--text-muted); padding: 16px; background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+        .footer-note strong { color: var(--accent-dark); }
+
+        /* ============ PRINT STYLES ============ */
         @media print {
-            body {
-                background: white;
-                padding: 0;
-                margin: 0;
-            }
-            .header, .sub, .card:first-child, .gear-drawing, .alt-gears,
-            .footer-note, .mode-switch, .input-group, button, .zoom-controls,
-            .small-btn, .print-btn, #leadGearResult, .diff-gear-drawing,
+            body { background: white; padding: 0; margin: 0; }
+            .header, .sub, .footer-note, .mode-switch,
+            .input-group, .small-btn, .print-btn,
+            #computeDimensionsBtn, #computeIndexingBtn,
+            .zoom-controls, .alt-gears, .small-note,
             .badge, hr {
                 display: none !important;
             }
-            .result-box {
-                break-inside: avoid;
-                page-break-inside: avoid;
-                background: white !important;
-                color: black !important;
-                border: 1px solid #ccc;
-                box-shadow: none;
-                margin: 0 0 20px 0;
-                padding: 12px;
-            }
-            .result-box h3 {
-                color: #0f172a !important;
-            }
-            .result-box h3::before {
-                background: #0f172a !important;
-                box-shadow: none !important;
-            }
-            .param-item {
-                border-bottom: 1px solid #ddd;
-            }
-            .param-item span:first-child {
-                color: #475569 !important;
-            }
-            .param-item strong {
-                color: #0f172a !important;
-            }
-            .container {
-                max-width: 100%;
-                padding: 10px;
-            }
-            .flex-grid {
-                display: block;
-            }
-            .card {
-                box-shadow: none;
-                border: none;
-                padding: 0;
-                margin: 0;
-                background: white;
-            }
-            .card::before {
-                display: none;
-            }
-            #dimensionsOutput, #indexingOutput {
-                color: black;
-            }
-            table.indexing-tab td, table.indexing-tab th {
-                border-bottom: 1px solid #aaa;
-                color: black;
-            }
-            .indexing-tab th {
-                color: #0f172a !important;
-            }
+            .container { max-width: 100%; padding: 10px; }
+            .flex-grid { display: block; }
+            .card { box-shadow: none; border: 1px solid #ccc; border-radius: 8px; padding: 15px; margin: 0 0 20px 0; background: white; page-break-inside: avoid; }
+            .card::before { display: none; }
+            .card h2 { color: #0f172a !important; border-bottom: 2px solid #0f172a; font-size: 1.1rem; }
+            .card h2 .icon-badge { background: #f1f5f9 !important; color: #0f172a !important; }
+            .result-box { background: white !important; color: black !important; border: 1px solid #999; box-shadow: none !important; page-break-inside: avoid; padding: 12px; margin-top: 10px; }
+            .result-box h3 { color: #0f172a !important; }
+            .result-box h3::before { background: #0f172a !important; box-shadow: none !important; }
+            .param-item { border-bottom: 1px solid #ddd; color: #0f172a; }
+            .param-item span:first-child { color: #475569 !important; }
+            .param-item strong { color: #0f172a !important; }
+            .warning { background: #fef3c7 !important; color: #78350f !important; border: 1px solid #fcd34d; }
+            .gear-drawing { background: white !important; border: 1px solid #999; page-break-inside: avoid; display: block !important; margin-top: 12px; }
+            .drawing-container { border: 1px solid #999; page-break-inside: avoid; background: white !important; }
+            .drawing-title { color: #0f172a !important; }
+            .svg-wrapper { background: white !important; }
+            #leadGearResult { display: block !important; }
+            #gearDrawingContainer { display: block !important; }
+            #gearTypeDrawingContainer { display: block !important; }
+            #indexingOutput { color: black; }
         }
-        #accessDenied {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%);
-            color: white;
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            text-align: center;
-            gap: 16px;
-            padding: 24px;
-        }
-        #accessDenied .lock-icon {
-            font-size: 3rem;
-            margin-bottom: 8px;
-            filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.5));
-        }
-        #accessDenied .lock-title {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-        #accessDenied .lock-sub {
-            font-size: 0.9rem;
-            color: #94a3b8;
-        }
-        #accessDenied input {
-            background: rgba(255,255,255,0.06);
-            border: 1.5px solid rgba(148, 163, 184, 0.3);
-            color: #ffffff;
-            width: 240px;
-            text-align: center;
-            padding: 12px 16px;
-            font-size: 1rem;
-            letter-spacing: 0.15em;
-        }
-        #accessDenied input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2);
-            background: rgba(255,255,255,0.1);
-        }
-        #accessDenied input::placeholder {
-            color: #64748b;
-            letter-spacing: normal;
-        }
-        #accessDenied button {
-            width: auto;
-            margin-top: 4px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-2));
-            box-shadow: var(--shadow-accent);
-        }
-        .workshop-content {
-            display: none;
-        }
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-strong);
-            border-radius: 999px;
-            border: 2px solid transparent;
-            background-clip: content-box;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-light);
-            background-clip: content-box;
-        }
-        .result-box::-webkit-scrollbar-thumb {
-            background: var(--dark-border);
-            background-clip: content-box;
-        }
+
+        #accessDenied { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0b1120 0%, #1e293b 100%); color: white; z-index: 1000; justify-content: center; align-items: center; flex-direction: column; text-align: center; gap: 16px; padding: 24px; }
+        #accessDenied .lock-icon { font-size: 3rem; margin-bottom: 8px; filter: drop-shadow(0 0 20px rgba(14, 165, 233, 0.5)); }
+        #accessDenied .lock-title { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
+        #accessDenied .lock-sub { font-size: 0.9rem; color: #94a3b8; }
+        #accessDenied input { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(148, 163, 184, 0.3); color: #ffffff; width: 240px; text-align: center; padding: 12px 16px; font-size: 1rem; letter-spacing: 0.15em; }
+        #accessDenied input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2); background: rgba(255,255,255,0.1); }
+        #accessDenied input::placeholder { color: #64748b; letter-spacing: normal; }
+        #accessDenied button { width: auto; margin-top: 4px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: var(--shadow-accent); }
+        .workshop-content { display: none; }
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-light); background-clip: content-box; }
+        .result-box::-webkit-scrollbar-thumb { background: var(--dark-border); background-clip: content-box; }
     </style>
 </head>
 <body>
@@ -935,6 +318,12 @@
             </div>
             <button id="computeDimensionsBtn">⟳ Compute dimensions</button>
             <div class="result-box"><h3>Geometric parameters</h3><div id="dimensionsOutput">—</div></div>
+            <div class="gear-drawing" id="gearTypeDrawingContainer" style="display:none;">
+                <div class="drawing-title">
+                    <span>📐 Manufacturing Drawing</span>
+                </div>
+                <div id="gearTypeDrawingSvg" class="svg-wrapper"></div>
+            </div>
         </div>
 
         <div class="card">
@@ -1065,9 +454,7 @@
     document.getElementById('secretInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') document.getElementById('submitSecret').click();
     });
-    document.getElementById('printResultsBtn').addEventListener('click', () => {
-        window.print();
-    });
+    document.getElementById('printResultsBtn').addEventListener('click', () => { window.print(); });
 
     function gcd(a,b){ a=Math.abs(a); while(b){ let t=b; b=a%b; a=t; } return a; }
     function loadPresets(storageKey, selectElement, defaultPresets) { const saved = localStorage.getItem(storageKey); let presets = saved ? JSON.parse(saved) : defaultPresets; selectElement.innerHTML = ''; for (let p of presets) { let option = document.createElement('option'); option.value = p.value; option.textContent = p.label; selectElement.appendChild(option); } return presets; }
@@ -1082,6 +469,7 @@
     const helicalDiv = document.getElementById('helicalExtra'), bevelDiv = document.getElementById('bevelExtra'), spiralDiv = document.getElementById('spiralExtra'), wormDiv = document.getElementById('wormExtra'), wormWheelDiv = document.getElementById('wormWheelExtra'), sprocketDiv = document.getElementById('sprocketExtra'), rackExtra = document.getElementById('rackExtra');
     const dimOutput = document.getElementById('dimensionsOutput'), indexingOutput = document.getElementById('indexingOutput'), helicalGearOut = document.getElementById('helicalGearOutput'), altGearSelection = document.getElementById('altGearSelection'), altGearSelect = document.getElementById('altGearSelect'), manufactureNote = document.getElementById('manufactureNote'), cutterOut = document.getElementById('cutterOut');
     const gearDrawingContainer = document.getElementById('gearDrawingContainer'), topViewSvgDiv = document.getElementById('topViewSvg'), sideViewSvgDiv = document.getElementById('sideViewSvg');
+    const gearTypeDrawingContainer = document.getElementById('gearTypeDrawingContainer'), gearTypeDrawingSvg = document.getElementById('gearTypeDrawingSvg');
     const diffGearPreset = document.getElementById('diffGearPreset'), diffGearSet = document.getElementById('diffGearSet'), leadGearPreset = document.getElementById('leadGearPreset'), leadGearSet = document.getElementById('leadGearSet'), leadMode = document.getElementById('leadMode'), manualLeadGroup = document.getElementById('manualLeadGroup'), manualLead = document.getElementById('manualLead');
     const holePresetSimple = document.getElementById('holePresetSimple'), customHolesSimple = document.getElementById('customHolesSimple');
     const holePresetAngular = document.getElementById('holePresetAngular'), customHolesAngular = document.getElementById('customHolesAngular');
@@ -1207,10 +595,7 @@
                 let num = Math.round(fractional * den);
                 if(Math.abs(num/den - fractional) < 1e-6) {
                     let options = findHoleOptions(num, den, circles, fullTurns);
-                    if(options.length > 0) {
-                        best = {fraction: `${num}/${den}`, options: options};
-                        break;
-                    }
+                    if(options.length > 0) { best = {fraction: `${num}/${den}`, options: options}; break; }
                 }
             }
             if(best && best.options.length > 0) {
@@ -1250,33 +635,17 @@
     function generateMultiStageTrains(gearSet, numGears, requiredRatio, maxResults = 30) {
         if (numGears % 2 !== 0 || numGears < 2) return [];
         let bestTrains = [];
-
         function addTrain(pairs, ratio, error) {
             const train = { pairs, ratio, error };
             let inserted = false;
-            for (let i = 0; i < bestTrains.length; i++) {
-                if (error < bestTrains[i].error) {
-                    bestTrains.splice(i, 0, train);
-                    inserted = true;
-                    break;
-                }
-            }
+            for (let i = 0; i < bestTrains.length; i++) { if (error < bestTrains[i].error) { bestTrains.splice(i, 0, train); inserted = true; break; } }
             if (!inserted) bestTrains.push(train);
             if (bestTrains.length > maxResults) bestTrains = bestTrains.slice(0, maxResults);
         }
-
         function combinations(arr, k, start, current) {
-            if (current.length === k) {
-                processCombination(current);
-                return;
-            }
-            for (let i = start; i < arr.length; i++) {
-                current.push(arr[i]);
-                combinations(arr, k, i + 1, current);
-                current.pop();
-            }
+            if (current.length === k) { processCombination(current); return; }
+            for (let i = start; i < arr.length; i++) { current.push(arr[i]); combinations(arr, k, i + 1, current); current.pop(); }
         }
-
         function processCombination(gears) {
             function match(remaining, pairs) {
                 if (remaining.length === 0) {
@@ -1288,8 +657,7 @@
                         for (let i = 0; i < numPairs; i++) {
                             const [a, b] = pairs[i];
                             let driver, driven;
-                            if ((mask & (1 << i)) === 0) { driver = a; driven = b; }
-                            else { driver = b; driven = a; }
+                            if ((mask & (1 << i)) === 0) { driver = a; driven = b; } else { driver = b; driven = a; }
                             ratio *= driver / driven;
                             assignedPairs.push({ driver, driven });
                         }
@@ -1309,75 +677,43 @@
             }
             match(gears, []);
         }
-
         combinations(gearSet, numGears, 0, []);
         return bestTrains;
     }
 
     // ============================================================
-    // CLEAN SCHEMATIC DRAWING (matches first reference image)
+    // CLEAN SCHEMATIC DRAWING (lead change gears)
     // ============================================================
     function generateMultiStageDrawing(pairs) {
         const numStages = pairs.length;
         const numShafts = numStages + 1;
-
         const shaftSpacing = 180;
         const centerY = 165;
         const levelOffset = 60;
         const width = numShafts * shaftSpacing + 100;
         const height = 330;
-
-        // Build gear list per shaft
         const shafts = [];
         for (let i = 0; i < numShafts; i++) {
             const gears = [];
-            if (i > 0) {
-                // Driven gear from previous stage
-                gears.push({
-                    gear: pairs[i - 1].driven,
-                    level: (i - 1) % 2,
-                    role: 'driven'
-                });
-            }
-            if (i < numStages) {
-                // Driver gear for current stage
-                gears.push({
-                    gear: pairs[i].driver,
-                    level: i % 2,
-                    role: 'driver'
-                });
-            }
+            if (i > 0) gears.push({ gear: pairs[i - 1].driven, level: (i - 1) % 2, role: 'driven' });
+            if (i < numStages) gears.push({ gear: pairs[i].driver, level: i % 2, role: 'driver' });
             shafts.push(gears);
         }
-
         let svg = `<svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; border-radius:8px; display:block; margin:0 auto; font-family:'Inter', sans-serif;">`;
-
-        // Draw vertical dashed shafts
-        shafts.forEach((gears, i) => {
-            const x = 50 + i * shaftSpacing;
-            svg += `<line x1="${x}" y1="45" x2="${x}" y2="${height - 45}" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="7,6" stroke-linecap="round"/>`;
-        });
-
-        // Draw gears
+        shafts.forEach((gears, i) => { const x = 50 + i * shaftSpacing; svg += `<line x1="${x}" y1="45" x2="${x}" y2="${height - 45}" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="7,6" stroke-linecap="round"/>`; });
         shafts.forEach((gears, i) => {
             const x = 50 + i * shaftSpacing;
             gears.forEach((g) => {
                 const y = centerY + (g.level === 0 ? levelOffset : -levelOffset);
-                // Radius based on tooth count, capped for neatness
                 const radius = Math.min(48, 22 + Math.sqrt(g.gear) * 3.2);
-                // Color coding: blue for spindle/worm, peach for intermediates
                 const isBlue = (i === 0 || i === numShafts - 1);
                 const fill = isBlue ? '#dbeafe' : '#fde8d5';
                 const stroke = '#1e5f8a';
                 svg += `<circle cx="${x}" cy="${y}" r="${radius}" fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>`;
                 svg += `<text x="${x}" y="${y + 5}" text-anchor="middle" fill="#0f172a" font-weight="700" font-size="16">${g.gear}</text>`;
-                g.x = x;
-                g.y = y;
-                g.radius = radius;
+                g.x = x; g.y = y; g.radius = radius;
             });
         });
-
-        // Draw dashed orange arrows between driver and driven of each stage
         for (let i = 0; i < numStages; i++) {
             const driverGear = pairs[i].driver;
             const drivenGear = pairs[i].driven;
@@ -1386,16 +722,10 @@
             if (driverPos && drivenPos) {
                 const x1 = driverPos.x + driverPos.radius + 4;
                 const x2 = drivenPos.x - drivenPos.radius - 4;
-                const y1 = driverPos.y;
-                const y2 = drivenPos.y;
-                svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#e67e22" stroke-width="2.5" stroke-dasharray="6,4" stroke-linecap="round" marker-end="url(#arrowHead)"/>`;
+                svg += `<line x1="${x1}" y1="${driverPos.y}" x2="${x2}" y2="${drivenPos.y}" stroke="#e67e22" stroke-width="2.5" stroke-dasharray="6,4" stroke-linecap="round" marker-end="url(#arrowHead)"/>`;
             }
         }
-
-        // Arrow marker definition
         svg += `<defs><marker id="arrowHead" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0 0, 10 5, 0 10" fill="#e67e22"/></marker></defs>`;
-
-        // Shaft labels
         shafts.forEach((gears, i) => {
             const x = 50 + i * shaftSpacing;
             let label = '';
@@ -1404,12 +734,313 @@
             else label = `Intermediate ${i}`;
             svg += `<text x="${x}" y="${height - 12}" text-anchor="middle" fill="#2c7da0" font-size="12.5" font-weight="700">${label}</text>`;
         });
-
-        // Overall ratio equation at top
         const overallRatio = pairs.reduce((acc, p) => acc * (p.driver / p.driven), 1);
         const ratioStr = pairs.map(p => `${p.driver}/${p.driven}`).join(' × ');
         svg += `<text x="${width / 2}" y="28" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">${ratioStr} = ${overallRatio.toFixed(6)}</text>`;
+        svg += `</svg>`;
+        return svg;
+    }
 
+    // ============================================================
+    // MANUFACTURING DRAWINGS FOR EACH GEAR TYPE
+    // ============================================================
+    function gearOutlinePath(cx, cy, rOut, rRoot, N, maxDraw) {
+        const n = Math.min(N, maxDraw || 30);
+        const step = (Math.PI * 2) / n;
+        let d = '';
+        for (let i = 0; i < n; i++) {
+            const a = i * step - Math.PI / 2;
+            const aR0 = a - step * 0.32;
+            const aT0 = a - step * 0.17;
+            const aT1 = a + step * 0.17;
+            const aR1 = a + step * 0.32;
+            const x1 = cx + rRoot * Math.cos(aR0), y1 = cy + rRoot * Math.sin(aR0);
+            const x2 = cx + rOut * Math.cos(aT0), y2 = cy + rOut * Math.sin(aT0);
+            const x3 = cx + rOut * Math.cos(aT1), y3 = cy + rOut * Math.sin(aT1);
+            const x4 = cx + rRoot * Math.cos(aR1), y4 = cy + rRoot * Math.sin(aR1);
+            d += (i === 0 ? `M${x1.toFixed(1)},${y1.toFixed(1)}` : `L${x1.toFixed(1)},${y1.toFixed(1)}`);
+            d += `L${x2.toFixed(1)},${y2.toFixed(1)}L${x3.toFixed(1)},${y3.toFixed(1)}L${x4.toFixed(1)},${y4.toFixed(1)}`;
+        }
+        return d + 'Z';
+    }
+
+    function generateGearTypeDrawing(type, p) {
+        const W = 700, H = 360;
+        const stroke = '#1e3a5f';
+        const accent = '#e67e22';
+        const dimColor = '#2c7da0';
+        const fillColor = '#dbeafe';
+        const fillAccent = '#fde8d5';
+        let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="background:#fafafa; border-radius:8px; display:block; margin:0 auto; font-family:'Inter',system-ui,sans-serif;" preserveAspectRatio="xMidYMid meet">`;
+        svg += `<defs>
+            <marker id="dArrL" markerWidth="8" markerHeight="8" refX="0" refY="4" orient="auto"><polygon points="8 0, 0 4, 8 8" fill="${dimColor}"/></marker>
+            <marker id="dArrR" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="${dimColor}"/></marker>
+            <marker id="oArr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="${accent}"/></marker>
+        </defs>`;
+        svg += `<rect x="0" y="0" width="${W}" height="${H}" fill="#fafafa"/>`;
+
+        if (type === 'spur' || type === 'helical') {
+            const isHelical = (type === 'helical');
+            const cx = 175, cy = H/2 + 10;
+            const rOut = 110, rPitch = 92, rRoot = 78, rBore = 22;
+            svg += `<path d="${gearOutlinePath(cx, cy, rOut, rRoot, p.N || 28, 30)}" fill="${fillColor}" stroke="${stroke}" stroke-width="2"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${dimColor}" stroke-width="1.4" stroke-dasharray="10,4,2,4"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${stroke}" stroke-width="1.5"/>`;
+            const kw = 8;
+            svg += `<rect x="${cx - kw/2}" y="${cy - rBore - 5}" width="${kw}" height="10" fill="#fff" stroke="${stroke}" stroke-width="1"/>`;
+            svg += `<line x1="${cx - rOut - 15}" y1="${cy}" x2="${cx + rOut + 15}" y2="${cy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            svg += `<line x1="${cx}" y1="${cy - rOut - 15}" x2="${cx}" y2="${cy + rOut + 15}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            if (isHelical) {
+                // Diagonal lines to indicate helix on teeth
+                for (let a = 0; a < 12; a++) {
+                    const ang = (a / 12) * Math.PI * 2;
+                    const x1 = cx + (rRoot + 2) * Math.cos(ang);
+                    const y1 = cy + (rRoot + 2) * Math.sin(ang);
+                    const x2 = cx + (rOut - 2) * Math.cos(ang + 0.35);
+                    const y2 = cy + (rOut - 2) * Math.sin(ang + 0.35);
+                    svg += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${dimColor}" stroke-width="0.9" opacity="0.7"/>`;
+                }
+            }
+            svg += `<text x="${cx}" y="${cy - rOut - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">FRONT VIEW</text>`;
+            svg += `<text x="${cx}" y="${cy + rOut + 35}" text-anchor="middle" font-size="10" fill="${dimColor}">d=${p.d.toFixed(1)}  dₐ=${p.Do.toFixed(1)}  d_f=${p.dr.toFixed(1)}  z=${p.N}</text>`;
+
+            // Side/section view
+            const sx = 500, scy = H/2 + 10;
+            const faceW = Math.max(50, Math.min(100, p.faceWidth || rOut * 0.6));
+            svg += `<rect x="${sx - faceW/2}" y="${scy - rOut}" width="${faceW}" height="${rOut * 2}" fill="${fillColor}" stroke="${stroke}" stroke-width="1.8"/>`;
+            const hubW = faceW + 30, hubR = rOut * 0.55;
+            svg += `<rect x="${sx - hubW/2}" y="${scy - hubR}" width="${hubW}" height="${hubR * 2}" fill="#e0f2fe" stroke="${stroke}" stroke-width="1.5"/>`;
+            svg += `<rect x="${sx - 11}" y="${scy - rBore}" width="22" height="${rBore * 2}" fill="#fff" stroke="${stroke}" stroke-width="1.2"/>`;
+            svg += `<rect x="${sx - kw/2}" y="${scy - rBore - 5}" width="${kw}" height="10" fill="#fff" stroke="${stroke}" stroke-width="1"/>`;
+            // Hatching
+            for (let i = 0; i < 12; i++) {
+                const y1 = scy - rOut + 6 + i * 14;
+                svg += `<line x1="${sx - faceW/2 + 3}" y1="${y1}" x2="${sx + faceW/2 - 3}" y2="${y1 - 12}" stroke="${stroke}" stroke-width="0.5" opacity="0.5"/>`;
+            }
+            if (isHelical) {
+                // Show helix angle at the top
+                const baseY = scy - rOut - 15;
+                svg += `<line x1="${sx - faceW/2}" y1="${baseY}" x2="${sx + faceW/2}" y2="${baseY - 25}" stroke="${accent}" stroke-width="1.8"/>`;
+                svg += `<text x="${sx + faceW/2 + 5}" y="${baseY - 22}" fill="${accent}" font-size="11" font-weight="700">β=${p.beta}°</text>`;
+            }
+            svg += `<line x1="${sx - faceW/2}" y1="${scy + rOut + 22}" x2="${sx + faceW/2}" y2="${scy + rOut + 22}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
+            svg += `<text x="${sx}" y="${scy + rOut + 38}" text-anchor="middle" font-size="10" fill="${dimColor}">b = ${(p.faceWidth || faceW).toFixed(1)}</text>`;
+            svg += `<text x="${sx}" y="${scy - rOut - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">SECTION A-A</text>`;
+        }
+        else if (type === 'bevel' || type === 'spiralBevel') {
+            const isSpiral = (type === 'spiralBevel');
+            const delta = p.delta || 30;
+            const d = p.d || 100;
+            // Front view
+            const cx = 175, cy = H/2 + 10;
+            const rPitch = 100, rOut = 108, rRoot = 82, rBore = 20;
+            svg += `<path d="${gearOutlinePath(cx, cy, rOut, rRoot, p.N || 28, 28)}" fill="${fillAccent}" stroke="${stroke}" stroke-width="2"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${dimColor}" stroke-width="1.4" stroke-dasharray="10,4,2,4"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${stroke}" stroke-width="1.5"/>`;
+            if (isSpiral) {
+                // Spiral curved lines on face
+                for (let r = 30; r < 95; r += 12) {
+                    let pathD = '';
+                    for (let t = 0; t < 60; t++) {
+                        const ang = (t / 60) * Math.PI * 1.5;
+                        const rr = r + t * 0.3;
+                        const x = cx + rr * Math.cos(ang);
+                        const y = cy + rr * Math.sin(ang);
+                        pathD += (t === 0 ? `M${x.toFixed(1)},${y.toFixed(1)}` : `L${x.toFixed(1)},${y.toFixed(1)}`);
+                    }
+                    svg += `<path d="${pathD}" fill="none" stroke="${dimColor}" stroke-width="0.8" opacity="0.6"/>`;
+                }
+            }
+            svg += `<line x1="${cx - rOut - 15}" y1="${cy}" x2="${cx + rOut + 15}" y2="${cy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            svg += `<line x1="${cx}" y1="${cy - rOut - 15}" x2="${cx}" y2="${cy + rOut + 15}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            svg += `<text x="${cx}" y="${cy - rOut - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">FRONT VIEW</text>`;
+            svg += `<text x="${cx}" y="${cy + rOut + 35}" text-anchor="middle" font-size="10" fill="${dimColor}">dₑ=${p.d.toFixed(1)}  δ=${delta.toFixed(1)}°</text>`;
+
+            // Side view (triangle showing cone)
+            const sx = 500, scy = H/2 + 10;
+            const baseHalf = 110;
+            const height = baseHalf / Math.tan(delta * Math.PI/180);
+            const apexX = sx + height; // apex to the right
+            // Cone triangle profile
+            svg += `<line x1="${sx - baseHalf}" y1="${scy}" x2="${apexX}" y2="${scy - 20}" stroke="${stroke}" stroke-width="1.8"/>`;
+            svg += `<line x1="${sx - baseHalf}" y1="${scy}" x2="${apexX}" y2="${scy + 20}" stroke="${stroke}" stroke-width="1.8"/>`;
+            svg += `<line x1="${sx - baseHalf}" y1="${scy}" x2="${sx - baseHalf}" y2="${scy}" stroke="${stroke}"/>`;
+            // Vertical base line
+            svg += `<line x1="${sx - baseHalf}" y1="${scy - baseHalf * 0.55}" x2="${sx - baseHalf}" y2="${scy + baseHalf * 0.55}" stroke="${stroke}" stroke-width="2"/>`;
+            // Face width shaded region
+            const fb = baseHalf * 0.35;
+            const apex = { x: apexX, y: scy };
+            const ratio = (baseHalf - fb) / baseHalf;
+            const fx1 = apex.x + (sx - baseHalf - apex.x) * ratio;
+            svg += `<polygon points="${sx - baseHalf},${scy - fb} ${fx1},${scy - 20 - (20-20*ratio) - 3} ${fx1},${scy + 20 - (20-20*ratio) + 3} ${sx - baseHalf},${scy + fb}" fill="${fillAccent}" stroke="${stroke}" stroke-width="1.5" opacity="0.75"/>`;
+            // Cone angle arc
+            svg += `<path d="M ${sx - baseHalf + 30} ${scy - 25} Q ${sx - baseHalf + 5} ${scy} ${sx - baseHalf + 30} ${scy + 25}" fill="none" stroke="${accent}" stroke-width="1.5"/>`;
+            svg += `<text x="${sx - baseHalf + 38}" y="${scy + 5}" fill="${accent}" font-size="11" font-weight="700">δ=${delta.toFixed(1)}°</text>`;
+            // Face width arrow
+            svg += `<line x1="${sx - baseHalf - 12}" y1="${scy - fb}" x2="${sx - baseHalf - 12}" y2="${scy + fb}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
+            svg += `<text x="${sx - baseHalf - 20}" y="${scy}" text-anchor="end" font-size="10" fill="${dimColor}">b</text>`;
+            // Cone distance arrow
+            svg += `<line x1="${sx - baseHalf}" y1="${scy + baseHalf * 0.55 + 15}" x2="${apexX}" y2="${scy + 20 + 15}" stroke="${dimColor}" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#dArrR)"/>`;
+            svg += `<text x="${(sx + apexX)/2 - 20}" y="${scy + baseHalf * 0.55 + 32}" font-size="10" fill="${dimColor}">Re</text>`;
+            svg += `<text x="${sx}" y="${scy - baseHalf * 0.55 - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">SIDE VIEW</text>`;
+            svg += `<text x="${sx}" y="${H - 15}" text-anchor="middle" font-size="10" fill="${dimColor}">${isSpiral ? `ψ=${p.psi}°  ` : ''}Face width b≈${(p.faceWidth||fb*2).toFixed(1)}</text>`;
+        }
+        else if (type === 'wormShaft') {
+            // Side profile of worm with helical thread
+            const cy = H/2;
+            const d = p.d || 40;
+            const len = 260;
+            const x1 = 100, x2 = x1 + len;
+            const R = 55;
+            // Body outline
+            svg += `<rect x="${x1}" y="${cy - R}" width="${len}" height="${R*2}" fill="${fillColor}" stroke="${stroke}" stroke-width="2"/>`;
+            // Helical thread lines
+            const starts = p.starts || 1;
+            const lead = p.lead || 30;
+            const pitch = (lead / starts) / (p.d || 40) * R * 0.6;
+            for (let xo = 0; xo < len; xo += pitch) {
+                const xa = x1 + xo;
+                const xb = x1 + xo + pitch;
+                svg += `<path d="M${xa} ${cy - R} L${xb} ${cy + R}" stroke="${stroke}" stroke-width="1.4" fill="none"/>`;
+                if (starts > 1) {
+                    for (let s = 1; s < starts; s++) {
+                        const off = (pitch / starts) * s;
+                        svg += `<path d="M${xa + off} ${cy - R} L${xb + off} ${cy + R}" stroke="${stroke}" stroke-width="1.4" fill="none"/>`;
+                    }
+                }
+            }
+            // End faces
+            svg += `<line x1="${x1}" y1="${cy - R}" x2="${x1}" y2="${cy + R}" stroke="${stroke}" stroke-width="2"/>`;
+            svg += `<line x1="${x2}" y1="${cy - R}" x2="${x2}" y2="${cy + R}" stroke="${stroke}" stroke-width="2"/>`;
+            // Centerline
+            svg += `<line x1="${x1 - 20}" y1="${cy}" x2="${x2 + 20}" y2="${cy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            // Length dim
+            svg += `<line x1="${x1}" y1="${cy + R + 25}" x2="${x2}" y2="${cy + R + 25}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
+            svg += `<text x="${(x1+x2)/2}" y="${cy + R + 42}" text-anchor="middle" font-size="10" fill="${dimColor}">L = ${p.wormLength || len}</text>`;
+            svg += `<text x="${(x1+x2)/2}" y="${cy - R - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">WORM SHAFT (SIDE VIEW)</text>`;
+
+            // Cross section front view (circle)
+            const cx = 540, ccy = cy;
+            const rPitch = 40, rRoot = 30;
+            svg += `<circle cx="${cx}" cy="${ccy}" r="${rRoot}" fill="${fillColor}" stroke="${stroke}" stroke-width="2"/>`;
+            svg += `<circle cx="${cx}" cy="${ccy}" r="${rPitch}" fill="none" stroke="${dimColor}" stroke-width="1.2" stroke-dasharray="8,3,2,3"/>`;
+            svg += `<line x1="${cx - rRoot - 15}" y1="${ccy}" x2="${cx + rRoot + 15}" y2="${ccy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            svg += `<line x1="${cx}" y1="${ccy - rRoot - 15}" x2="${cx}" y2="${ccy + rRoot + 15}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            svg += `<text x="${cx}" y="${ccy - rRoot - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">FRONT VIEW</text>`;
+            svg += `<text x="${cx}" y="${ccy + rRoot + 30}" text-anchor="middle" font-size="10" fill="${dimColor}">d=${p.d ? p.d.toFixed(1) : '—'}  γ=${p.gamma ? p.gamma.toFixed(1) : '—'}°  starts=${p.starts}</text>`;
+        }
+        else if (type === 'wormWheel') {
+            const cx = 175, cy = H/2 + 10;
+            const rOut = 110, rPitch = 92, rRoot = 78, rBore = 22;
+            svg += `<path d="${gearOutlinePath(cx, cy, rOut, rRoot, p.N || 30, 30)}" fill="${fillAccent}" stroke="${stroke}" stroke-width="2"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${dimColor}" stroke-width="1.4" stroke-dasharray="10,4,2,4"/>`;
+            // Throat circle (larger, dashed)
+            const rThroat = rOut * 1.02;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rThroat}" fill="none" stroke="${accent}" stroke-width="1.6" stroke-dasharray="6,3"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${stroke}" stroke-width="1.5"/>`;
+            svg += `<line x1="${cx - rOut - 15}" y1="${cy}" x2="${cx + rOut + 15}" y2="${cy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            svg += `<line x1="${cx}" y1="${cy - rOut - 15}" x2="${cx}" y2="${cy + rOut + 15}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            svg += `<text x="${cx}" y="${cy - rOut - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">FRONT VIEW (THROATED)</text>`;
+            svg += `<text x="${cx}" y="${cy + rOut + 35}" text-anchor="middle" font-size="10" fill="${dimColor}">d=${p.d.toFixed(1)}  D₃=${p.D3 ? p.D3.toFixed(1) : '—'}  z=${p.N}</text>`;
+
+            // Side section showing throat
+            const sx = 500, scy = H/2 + 10;
+            const faceW = 100;
+            // Rect body
+            svg += `<rect x="${sx - faceW/2}" y="${scy - rOut*0.6}" width="${faceW}" height="${rOut * 1.2}" fill="${fillAccent}" stroke="${stroke}" stroke-width="1.8"/>`;
+            // Throat curve (concave on top)
+            const throatD = `M${sx - faceW/2} ${scy - rOut*0.6} Q${sx} ${scy - rOut*1.0} ${sx + faceW/2} ${scy - rOut*0.6}`;
+            svg += `<path d="${throatD}" fill="${fillAccent}" stroke="${stroke}" stroke-width="1.8"/>`;
+            // Bore
+            svg += `<rect x="${sx - 11}" y="${scy - rBore}" width="22" height="${rBore * 2}" fill="#fff" stroke="${stroke}" stroke-width="1.2"/>`;
+            // Hatching
+            for (let i = 0; i < 8; i++) {
+                const y1 = scy - rOut*0.6 + 6 + i * 10;
+                svg += `<line x1="${sx - faceW/2 + 3}" y1="${y1}" x2="${sx + faceW/2 - 3}" y2="${y1 - 10}" stroke="${stroke}" stroke-width="0.5" opacity="0.5"/>`;
+            }
+            svg += `<text x="${sx}" y="${scy - rOut*0.6 - 30}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">SECTION B-B</text>`;
+            svg += `<text x="${sx}" y="${H - 15}" text-anchor="middle" font-size="10" fill="${dimColor}">Face width b≈${(p.faceWidth || faceW).toFixed(1)}</text>`;
+        }
+        else if (type === 'rack') {
+            const cx = W/2, cy = H/2;
+            const pitch = p.P || 8;
+            const moduleScale = 8;
+            const rackLen = 520;
+            const toothH = Math.max(20, pitch * moduleScale * 0.55);
+            const topY = cy - toothH/2;
+            const botY = cy + toothH/2;
+            const x0 = (W - rackLen) / 2;
+            const x1 = x0 + rackLen;
+            const Ndraw = Math.max(8, Math.min(Math.floor(rackLen / (pitch * moduleScale)), 20));
+            const toothStep = rackLen / Ndraw;
+            const half = toothStep / 2;
+            // Build path
+            let path = `M${x0},${botY}`;
+            for (let i = 0; i < Ndraw; i++) {
+                const xs = x0 + i * toothStep;
+                const xe = xs + toothStep;
+                // root → up → top → down → root
+                path += ` L${xs + half*0.35},${botY}`;
+                path += ` L${xs + half*0.5},${topY}`;
+                path += ` L${xe - half*0.5},${topY}`;
+                path += ` L${xe - half*0.35},${botY}`;
+                if (i < Ndraw - 1) path += ` L${xe},${botY}`;
+            }
+            path += ` L${x1},${botY} L${x1},${botY + 25} L${x0},${botY + 25} Z`;
+            // Body
+            svg += `<path d="${path}" fill="${fillColor}" stroke="${stroke}" stroke-width="2"/>`;
+            // Pitch line
+            svg += `<line x1="${x0 - 15}" y1="${cy}" x2="${x1 + 15}" y2="${cy}" stroke="${accent}" stroke-width="1" stroke-dasharray="10,4,2,4"/>`;
+            svg += `<text x="${x0 - 20}" y="${cy + 4}" text-anchor="end" font-size="10" fill="${accent}">pitch</text>`;
+            // Tooth height arrow
+            svg += `<line x1="${x1 + 25}" y1="${topY}" x2="${x1 + 25}" y2="${botY}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
+            svg += `<text x="${x1 + 30}" y="${cy + 4}" font-size="10" fill="${dimColor}">h</text>`;
+            // Pitch dim
+            svg += `<line x1="${x0 + half*0.5}" y1="${botY + 40}" x2="${x0 + half*1.5}" y2="${botY + 40}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
+            svg += `<text x="${x0 + half}" y="${botY + 55}" text-anchor="middle" font-size="10" fill="${dimColor}">P = ${pitch.toFixed(2)}</text>`;
+            // Total length dim
+            svg += `<line x1="${x0}" y1="${botY + 80}" x2="${x1}" y2="${botY + 80}" stroke="${dimColor}" stroke-width="1" marker-start="url(#dArrL)" marker-end="url(#dArrR)"/>`;
+            svg += `<text x="${(x0+x1)/2}" y="${botY + 95}" text-anchor="middle" font-size="10" fill="${dimColor}">Total length = ${(Ndraw * pitch).toFixed(1)} mm</text>`;
+            svg += `<text x="${W/2}" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="${stroke}">RACK (SIDE VIEW)</text>`;
+        }
+        else if (type === 'sprocket') {
+            const cx = 175, cy = H/2 + 10;
+            const rPitch = 100;
+            const rOut = 115;
+            const rRoot = 82;
+            const z = p.N || 20;
+            const nDraw = Math.min(z, 20);
+            const dr = (p.Dr || 8) * 1.2;
+            // Chain roller seat radius
+            const rSeat = 10;
+            svg += `<path d="${gearOutlinePath(cx, cy, rOut, rRoot, z, nDraw)}" fill="${fillColor}" stroke="${stroke}" stroke-width="2"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rPitch}" fill="none" stroke="${dimColor}" stroke-width="1.4" stroke-dasharray="10,4,2,4"/>`;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rRoot}" fill="none" stroke="${dimColor}" stroke-width="0.8" stroke-dasharray="4,3"/>`;
+            // Roller seats
+            for (let i = 0; i < nDraw; i++) {
+                const ang = (i / nDraw) * Math.PI * 2 - Math.PI / 2;
+                const xr = cx + rPitch * Math.cos(ang);
+                const yr = cy + rPitch * Math.sin(ang);
+                svg += `<circle cx="${xr.toFixed(1)}" cy="${yr.toFixed(1)}" r="${rSeat}" fill="#fff" stroke="${accent}" stroke-width="1.2"/>`;
+            }
+            const rBore = 22;
+            svg += `<circle cx="${cx}" cy="${cy}" r="${rBore}" fill="#fff" stroke="${stroke}" stroke-width="1.5"/>`;
+            svg += `<line x1="${cx - rOut - 15}" y1="${cy}" x2="${cx + rOut + 15}" y2="${cy}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            svg += `<line x1="${cx}" y1="${cy - rOut - 15}" x2="${cx}" y2="${cy + rOut + 15}" stroke="${accent}" stroke-width="0.8" stroke-dasharray="12,4,2,4"/>`;
+            svg += `<text x="${cx}" y="${cy - rOut - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">FRONT VIEW</text>`;
+            svg += `<text x="${cx}" y="${cy + rOut + 35}" text-anchor="middle" font-size="10" fill="${dimColor}">d=${p.d ? p.d.toFixed(1) : '—'}  z=${z}  P=${(p.P||0).toFixed(2)}</text>`;
+            // Side section
+            const sx = 500, scy = H/2 + 10;
+            svg += `<rect x="${sx - 55}" y="${scy - rOut * 0.5}" width="110" height="${rOut}" fill="${fillColor}" stroke="${stroke}" stroke-width="1.8"/>`;
+            svg += `<rect x="${sx - 30}" y="${scy - rOut * 0.35}" width="60" height="${rOut * 0.7}" fill="#e0f2fe" stroke="${stroke}" stroke-width="1.2"/>`;
+            svg += `<rect x="${sx - 11}" y="${scy - rBore}" width="22" height="${rBore * 2}" fill="#fff" stroke="${stroke}" stroke-width="1.2"/>`;
+            for (let i = 0; i < 8; i++) {
+                const y1 = scy - rOut * 0.5 + 4 + i * 12;
+                svg += `<line x1="${sx - 52}" y1="${y1}" x2="${sx + 52}" y2="${y1 - 10}" stroke="${stroke}" stroke-width="0.5" opacity="0.5"/>`;
+            }
+            svg += `<text x="${sx}" y="${scy - rOut * 0.5 - 25}" text-anchor="middle" font-size="12" font-weight="700" fill="${stroke}">SECTION A-A</text>`;
+            svg += `<text x="${sx}" y="${H - 15}" text-anchor="middle" font-size="10" fill="${dimColor}">Chain roller seats shown as circles</text>`;
+        }
         svg += `</svg>`;
         return svg;
     }
@@ -1418,11 +1049,9 @@
         let requiredRatio = lead / (leadscrewPitch * 40);
         let gearSet = leadGearSet.value.split(',').map(v=>parseInt(v.trim())).filter(v=>!isNaN(v));
         if (gearSet.length === 0) gearSet = [25,30,40,50,60,70,80,90,100];
-
         const numGears = parseInt(document.getElementById('leadGearCount').value) || 4;
         let alternatives = generateMultiStageTrains(gearSet, numGears, requiredRatio, 30);
         currentAlternatives = alternatives;
-
         if (currentAlternatives.length > 0) {
             altGearSelect.innerHTML = '';
             currentAlternatives.forEach((alt, i) => {
@@ -1491,19 +1120,14 @@
         let rackP = null;
         if (type === 'rack') {
             rackP = parseFloat(rackCircularPitch.value);
-            if (isNaN(rackP) || rackP <= 0) {
-                dimOutput.innerHTML = '<span class="warning">Enter valid circular pitch for rack</span>';
-                return;
-            }
+            if (isNaN(rackP) || rackP <= 0) { dimOutput.innerHTML = '<span class="warning">Enter valid circular pitch for rack</span>'; return; }
             m = rackP / Math.PI;
         } else {
-            if (type !== 'sprocket' && (isNaN(m) || m <= 0)) {
-                dimOutput.innerHTML = '<span class="warning">Enter module/DP</span>';
-                return;
-            }
+            if (type !== 'sprocket' && (isNaN(m) || m <= 0)) { dimOutput.innerHTML = '<span class="warning">Enter module/DP</span>'; return; }
         }
 
         let html='', note='', cutterMsg='';
+        let drawingParams = {};
         let getCutterNumber=(N)=>{ if(N>=135) return 1; if(N>=55) return 2; if(N>=35) return 3; if(N>=26) return 4; if(N>=21) return 5; if(N>=17) return 6; if(N>=14) return 7; return 8; };
 
         if(type === 'spur'){
@@ -1517,7 +1141,6 @@
             let circularPitch = Math.PI * m;
             let pressureAngle = 20;
             let baseCircle = d * Math.cos(pressureAngle * Math.PI/180);
-
             let matingTeeth = parseInt(document.getElementById('spurMatingTeeth').value);
             let centerDist = null;
             let contactRatio = null;
@@ -1527,14 +1150,11 @@
                 let ra2 = m*(matingTeeth+2)/2;
                 let rb1 = baseCircle/2;
                 let rb2 = m*matingTeeth/2 * Math.cos(pressureAngle * Math.PI/180);
-                let alpha_w = pressureAngle;
-                let alpha_rad = alpha_w * Math.PI/180;
+                let alpha_rad = pressureAngle * Math.PI/180;
                 let Za = Math.sqrt(ra1*ra1 - rb1*rb1) + Math.sqrt(ra2*ra2 - rb2*rb2);
                 let Zp = (d/2 + m*matingTeeth/2) * Math.sin(alpha_rad);
-                contactRatio = Za / (Math.PI * m * Math.cos(alpha_rad));
-                contactRatio = Math.min(2.0, contactRatio);
+                contactRatio = Math.min(2.0, Za / (Math.PI * m * Math.cos(alpha_rad)));
             }
-
             html = `<div class="param-grid">
                 <div class="param-item"><span>Module m</span><strong>${m.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Pressure angle α</span><strong>${pressureAngle}°</strong></div>
@@ -1551,13 +1171,12 @@
             if (!isNaN(matingTeeth) && matingTeeth > 0) {
                 html += `<div class="param-item"><span>Mating gear teeth z<sub>2</sub></span><strong>${matingTeeth}</strong></div>
                          <div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div>
-                         <div class="param-item"><span>Contact ratio ε</span><strong>${contactRatio ? contactRatio.toFixed(3) : '—'}</strong> <span style="font-size:0.7rem;">(approx)</span></div>`;
-            } else {
-                html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above</strong></div>`;
-            }
+                         <div class="param-item"><span>Contact ratio ε</span><strong>${contactRatio ? contactRatio.toFixed(3) : '—'}</strong></div>`;
+            } else { html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above</strong></div>`; }
             html += `</div>`;
             note = `Spur: T = 40/${N}. Cutter No. ${getCutterNumber(N)}. Pressure angle = ${pressureAngle}°. Milling depth = ${wholeDepth.toFixed(2)} mm.`;
             cutterMsg = `Involute cutter No. ${getCutterNumber(N)} (module ${m.toFixed(3)} mm, pressure angle ${pressureAngle}°).`;
+            drawingParams = { N: N, m: m, d: d, Do: Do, dr: dr, faceWidth: m*10 };
         }
         else if(type === 'helical'){
             let beta = parseFloat(document.getElementById('helixAngle').value) || 0;
@@ -1572,46 +1191,29 @@
             let db = d * Math.cos(alpha_t);
             let da = d + 2 * mn;
             let df = d - 2.5 * mn;
-            let ha = mn;
-            let hf = 1.25 * mn;
-            let h = 2.25 * mn;
-            let c = 0.25 * mn;
-            let pn = Math.PI * mn;
-            let pt = Math.PI * mt;
-            let sn = pn / 2;
-            let st = pt / 2;
+            let ha = mn, hf = 1.25 * mn, h = 2.25 * mn, c = 0.25 * mn;
+            let pn = Math.PI * mn, pt = Math.PI * mt;
+            let sn = pn / 2, st = pt / 2;
             let px = pt / Math.tan(betaRad);
-            let lead;
-            if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450;
-            else lead = Math.PI * d / Math.tan(betaRad);
+            let lead = (leadMode.value === 'manual') ? (parseFloat(manualLead.value) || 450) : (Math.PI * d / Math.tan(betaRad));
             let zv = N / Math.pow(Math.cos(betaRad), 3);
             let faceWidth = parseFloat(document.getElementById('faceWidth').value) || 0;
             let epsilon_beta = (faceWidth * Math.sin(betaRad)) / (Math.PI * mn);
             let matingTeeth = parseInt(document.getElementById('helicalMatingTeeth').value);
-            let centerDist = null;
-            let epsilon_alpha = null;
-            let epsilon_gamma = null;
+            let centerDist = null, epsilon_alpha = null, epsilon_gamma = null;
             if (!isNaN(matingTeeth) && matingTeeth > 0 && N > 0 && faceWidth > 0) {
                 let d2 = mt * matingTeeth;
                 centerDist = (d + d2) / 2;
-                let da1 = da;
-                let da2 = d2 + 2 * mn;
-                let db1 = db;
-                let db2 = d2 * Math.cos(alpha_t);
-                let ra1 = da1/2;
-                let ra2 = da2/2;
-                let rb1 = db1/2;
-                let rb2 = db2/2;
+                let da1 = da, da2 = d2 + 2 * mn;
+                let db1 = db, db2 = d2 * Math.cos(alpha_t);
+                let ra1 = da1/2, ra2 = da2/2, rb1 = db1/2, rb2 = db2/2;
                 let a_center = centerDist;
                 let alpha_wt = Math.acos((rb1 + rb2) / a_center);
                 let za = Math.sqrt(ra1*ra1 - rb1*rb1) + Math.sqrt(ra2*ra2 - rb2*rb2);
                 let zp = a_center * Math.sin(alpha_wt);
                 epsilon_alpha = (za - zp) / (pt * Math.cos(alpha_t));
                 epsilon_gamma = epsilon_alpha + epsilon_beta;
-            } else if (faceWidth > 0) {
-                epsilon_gamma = epsilon_beta;
-            }
-
+            } else if (faceWidth > 0) { epsilon_gamma = epsilon_beta; }
             html = `<div class="param-grid">
                 <div class="param-item"><span>Normal module mₙ</span><strong>${mn.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Transverse module mₜ</span><strong>${mt.toFixed(3)} mm</strong></div>
@@ -1641,42 +1243,32 @@
                          <div class="param-item"><span>Center distance a</span><strong>${centerDist.toFixed(2)} mm</strong></div>
                          <div class="param-item"><span>Transverse contact ratio ε<sub>α</sub></span><strong>${epsilon_alpha !== null ? epsilon_alpha.toFixed(3) : '—'}</strong></div>
                          <div class="param-item"><span>Total contact ratio ε<sub>γ</sub></span><strong>${epsilon_gamma !== null ? epsilon_gamma.toFixed(3) : '—'}</strong></div>`;
-            } else {
-                html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above for center distance & ε<sub>α</sub></strong></div>`;
-            }
+            } else { html += `<div class="param-item"><span>Mating gear (optional)</span><strong>enter teeth above for center distance & ε<sub>α</sub></strong></div>`; }
             html += `</div>`;
             note = `Helical gear: set table angle to ${beta}°. Use cutter for ${zv.toFixed(0)} teeth (normal module). Lead = ${lead.toFixed(1)} mm. Milling depth = ${h.toFixed(2)} mm.`;
             cutterMsg = `Involute cutter No. ${getCutterNumber(Math.round(zv))} (based on virtual teeth, normal module ${mn.toFixed(3)} mm).`;
-
             let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
             updateLeadGearTrains(lead, leadscrewPitch);
+            drawingParams = { N: N, m: mn, d: d, Do: da, dr: df, faceWidth: faceWidth, beta: beta.toFixed(1), isHelical: true };
         }
         else if(type === 'bevel'){
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
             let delta = parseFloat(document.getElementById('pitchCone').value);
             let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
             let deltaPinion = delta, deltaGear = null;
-            let d1 = m * N;
-            let d2 = null;
-            let R = null;
-            let faceWidth = null;
+            let d1 = m * N, d2 = null, R = null, faceWidth = null;
             let tipConeAngle = null, backConeAngle = null, rootAngle = null, outsideDia = null, dr = null, toothThickness = null;
-
             if (!isNaN(matingTeeth) && matingTeeth > 0) {
                 deltaPinion = Math.atan(N / matingTeeth) * 180/Math.PI;
                 deltaGear = 90 - deltaPinion;
                 d2 = m * matingTeeth;
                 R = d1 / (2 * Math.sin(deltaPinion * Math.PI/180));
                 delta = deltaPinion;
-                d1 = m * N;
-                d2 = m * matingTeeth;
+                d1 = m * N; d2 = m * matingTeeth;
             } else {
-                if(isNaN(delta)) {
-                    delta = Math.atan(Math.sin(shaft*Math.PI/180) / (1 + Math.cos(shaft*Math.PI/180))) * 180/Math.PI;
-                }
+                if(isNaN(delta)) { delta = Math.atan(Math.sin(shaft*Math.PI/180) / (1 + Math.cos(shaft*Math.PI/180))) * 180/Math.PI; }
                 R = d1 / (2 * Math.sin(delta * Math.PI/180));
             }
-
             dr = d1 - 2.2 * m;
             toothThickness = Math.PI * m / 2;
             let addendumAngle = Math.atan(m / R) * 180/Math.PI;
@@ -1686,7 +1278,6 @@
             let thetaF = Math.atan(2.4 * Math.sin(delta*Math.PI/180) / N) * 180/Math.PI;
             rootAngle = delta - thetaF;
             faceWidth = 0.3 * R;
-
             html = `<div class="param-grid">`;
             if (!isNaN(matingTeeth) && matingTeeth > 0) {
                 html += `<div class="param-item"><span>Pinion pitch dia d₁</span><strong>${d1.toFixed(2)} mm</strong></div>
@@ -1709,6 +1300,7 @@
             </div>`;
             note = `Tilt dividing head to ${rootAngle.toFixed(1)}°. Face width should not exceed ${faceWidth.toFixed(1)} mm to maintain proper tooth form.`;
             cutterMsg = `Straight bevel cutter (Gleason type). Use standard involute cutter No. ${getCutterNumber(N)}.`;
+            drawingParams = { N: N, m: m, d: d1, Do: outsideDia, dr: dr, delta: delta, faceWidth: faceWidth };
         }
         else if(type === 'spiralBevel'){
             let psi = parseFloat(document.getElementById('spiralAngle').value) || 35;
@@ -1716,25 +1308,17 @@
             let mn = m;
             let mt = mn / Math.cos(psiRad);
             let d = mt * N;
-
             let shaft = parseFloat(document.getElementById('shaftAngle').value) || 90;
             let deltaInput = parseFloat(document.getElementById('pitchCone').value);
             let matingTeeth = parseInt(document.getElementById('matingTeeth').value);
-
-            let delta = deltaInput;
-            let sigma = shaft;
-            if (!isNaN(matingTeeth) && matingTeeth > 0) {
-                delta = Math.atan(N / matingTeeth) * 180/Math.PI;
-            } else if (isNaN(delta)) {
-                delta = Math.atan(Math.sin(sigma*Math.PI/180) / (1 + Math.cos(sigma*Math.PI/180))) * 180/Math.PI;
-            }
+            let delta = deltaInput, sigma = shaft;
+            if (!isNaN(matingTeeth) && matingTeeth > 0) { delta = Math.atan(N / matingTeeth) * 180/Math.PI; }
+            else if (isNaN(delta)) { delta = Math.atan(Math.sin(sigma*Math.PI/180) / (1 + Math.cos(sigma*Math.PI/180))) * 180/Math.PI; }
             let deltaRad = delta * Math.PI/180;
             let outerConeDist = d / (2 * Math.sin(deltaRad));
             let faceWidth = 0.3 * outerConeDist;
             let meanConeDist = outerConeDist - faceWidth/2;
-            let addendum = mn;
-            let dedendum = 1.25 * mn;
-            let clearance = 0.25 * mn;
+            let addendum = mn, dedendum = 1.25 * mn, clearance = 0.25 * mn;
             let wholeDepth = addendum + dedendum;
             let addendumAngle = Math.atan(addendum / outerConeDist) * 180/Math.PI;
             let dedendumAngle = Math.atan(dedendum / outerConeDist) * 180/Math.PI;
@@ -1745,11 +1329,7 @@
             let backConeAngle = 90 - delta;
             let meanNormalModule = mn * Math.cos(psiRad);
             let toothThicknessLarge = Math.PI * mt / 2;
-
-            let lead;
-            if(leadMode.value === 'manual') lead = parseFloat(manualLead.value) || 450;
-            else lead = (Math.PI * d) / Math.tan(psiRad);
-
+            let lead = (leadMode.value === 'manual') ? (parseFloat(manualLead.value) || 450) : ((Math.PI * d) / Math.tan(psiRad));
             html = `<div class="param-grid">
                 <div class="param-item"><span>Normal module mₙ</span><strong>${mn.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Transverse module mₜ</span><strong>${mt.toFixed(3)} mm</strong></div>
@@ -1769,14 +1349,14 @@
                 <div class="param-item"><span>Outer root diameter d_fₑ</span><strong>${outerRootDia.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Back cone angle (δ_b)</span><strong>${backConeAngle.toFixed(2)}°</strong></div>
                 <div class="param-item"><span>Mean normal module mₙₘ</span><strong>${meanNormalModule.toFixed(4)} mm</strong></div>
-                <div class="param-item"><span>Tooth thickness (large end, transverse)</span><strong>${toothThicknessLarge.toFixed(3)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness (large end)</span><strong>${toothThicknessLarge.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Lead L</span><strong>${lead.toFixed(1)} mm</strong></div>
             </div>`;
             note = `Swivel ψ = ${psi}°, hand ${document.getElementById('spiralHand').value}. Face width b ≈ ${faceWidth.toFixed(1)} mm, root angle = ${rootAngle.toFixed(1)}° for setup.`;
-
             let leadscrewPitch = parseFloat(document.getElementById('leadscrewPitch').value) || 5;
             updateLeadGearTrains(lead, leadscrewPitch);
             cutterMsg = `Spiral bevel cutter (face mill/hob). Recommended face width ${faceWidth.toFixed(1)} mm. Root angle = ${rootAngle.toFixed(1)}°.`;
+            drawingParams = { N: N, m: mn, d: d, Do: outerAddendumDia, dr: outerRootDia, delta: delta, faceWidth: faceWidth, psi: psi.toFixed(1) };
         }
         else if(type === 'wormShaft'){
             let starts = parseInt(document.getElementById('wormStarts').value) || 1;
@@ -1788,14 +1368,13 @@
             let gamma = Math.atan(m * starts / d) * 180/Math.PI;
             let indexingTurns = 40 / starts;
             let lengthFormula = document.getElementById('wormLengthFormula').value;
-            let wormLength = 0;
-            let lengthFormulaDesc = "";
+            let wormLength = 0, lengthFormulaDesc = "";
             switch(lengthFormula) {
-                case 'starts': wormLength = 2.2 * m * (starts + 2); lengthFormulaDesc = "Starts-based (2.2×m×(starts+2))"; break;
-                case 'constant13': wormLength = 13 * m; lengthFormulaDesc = "Constant 13×m (short)"; break;
-                case 'constant14.5': wormLength = 14.5 * m; lengthFormulaDesc = "Constant 14.5×m (medium)"; break;
-                case 'constant16': wormLength = 16 * m; lengthFormulaDesc = "Constant 16×m (long)"; break;
-                default: wormLength = 2.2 * m * (starts + 2); lengthFormulaDesc = "Starts-based (2.2×m×(starts+2))";
+                case 'starts': wormLength = 2.2 * m * (starts + 2); lengthFormulaDesc = "Starts-based"; break;
+                case 'constant13': wormLength = 13 * m; lengthFormulaDesc = "Short (13×m)"; break;
+                case 'constant14.5': wormLength = 14.5 * m; lengthFormulaDesc = "Medium (14.5×m)"; break;
+                case 'constant16': wormLength = 16 * m; lengthFormulaDesc = "Long (16×m)"; break;
+                default: wormLength = 2.2 * m * (starts + 2); lengthFormulaDesc = "Starts-based";
             }
             let tipWidth = 0.697 * m;
             html = `<div class="param-grid">
@@ -1810,6 +1389,7 @@
             </div>`;
             note = `Table swivel ${gamma.toFixed(1)}°, use simple indexing with 40/${starts} turns per start. Helical milling with leadscrew required. Length formula: ${lengthFormulaDesc}.`;
             cutterMsg = `Single-point cutter, tip width ${tipWidth.toFixed(2)} mm (standard for module ${m.toFixed(2)}).`;
+            drawingParams = { d: d, starts: starts, lead: lead, wormLength: wormLength.toFixed(0), gamma: gamma };
         }
         else if(type === 'wormWheel'){
             let starts = parseInt(document.getElementById('wwStarts').value) || 1;
@@ -1820,13 +1400,12 @@
             let toothThickness = Math.PI * m / 2;
             let throatFormulaValue = throatFormula.value;
             let x = parseFloat(document.getElementById('profileShift').value) || 0;
-            let D3 = 0;
-            let formulaDesc = "";
+            let D3 = 0, formulaDesc = "";
             switch(throatFormulaValue) {
-                case 'standard': D3 = m * (N + 2); formulaDesc = "Standard: m×(N+2)"; break;
-                case 'shift': D3 = m * (N + 2 + 2*x); formulaDesc = `With profile shift: m×(N+2+2x) (x=${x.toFixed(3)})`; break;
-                case 'reduced': D3 = m * (N + 1.6); formulaDesc = "Reduced addendum: m×(N+1.6)"; break;
-                case 'cylindrical': D3 = m * (N + 2); formulaDesc = "Cylindrical (non‑throated): m×(N+2)"; break;
+                case 'standard': D3 = m * (N + 2); formulaDesc = "Standard"; break;
+                case 'shift': D3 = m * (N + 2 + 2*x); formulaDesc = `With profile shift (x=${x.toFixed(3)})`; break;
+                case 'reduced': D3 = m * (N + 1.6); formulaDesc = "Reduced addendum"; break;
+                case 'cylindrical': D3 = m * (N + 2); formulaDesc = "Cylindrical"; break;
                 default: D3 = m * (N + 2); formulaDesc = "Standard";
             }
             let center = (d_worm + d)/2;
@@ -1836,13 +1415,14 @@
                 <div class="param-item"><span>Pitch dia d</span><strong>${d.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Root diameter dr</span><strong>${dr.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Tooth thickness (pitch)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Face width (auto)</span><strong>${faceWidth.toFixed(1)} mm</strong> <span style="font-size:0.7rem;">(0.45×center)</span></div>
+                <div class="param-item"><span>Face width (auto)</span><strong>${faceWidth.toFixed(1)} mm</strong></div>
                 <div class="param-item"><span>Throat diameter D3</span><strong>${D3.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(${formulaDesc})</span></div>
                 <div class="param-item"><span>Center distance</span><strong>${center.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Table swivel γ</span><strong>${gamma.toFixed(2)}°</strong></div>
             </div>`;
-            note = `Indexing T = 40/${N}. Table swivel = ${gamma.toFixed(1)}°. Face width (auto) = ${faceWidth.toFixed(1)} mm. ${throatFormulaValue === 'shift' ? `Profile shift coefficient x = ${x.toFixed(3)} applied.` : ''}`;
+            note = `Indexing T = 40/${N}. Table swivel = ${gamma.toFixed(1)}°. Face width (auto) = ${faceWidth.toFixed(1)} mm.`;
             cutterMsg = `Hob or involute cutter (throated). Face width = ${faceWidth.toFixed(1)} mm influences hob traverse.`;
+            drawingParams = { N: N, m: m, d: d, Do: D3, dr: dr, D3: D3, faceWidth: faceWidth };
         }
         else if(type === 'rack'){
             let p = rackP;
@@ -1852,15 +1432,16 @@
             let rackLength = N * p;
             html = `<div class="param-grid">
                 <div class="param-item"><span>Circular pitch P</span><strong>${p.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>Module (derived from P)</span><strong>${m.toFixed(4)} mm</strong> <span style="font-size:0.7rem;">(P/π)</span></div>
+                <div class="param-item"><span>Module (derived from P)</span><strong>${m.toFixed(4)} mm</strong></div>
                 <div class="param-item"><span>Tooth thickness (pitch line)</span><strong>${toothThickness.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Addendum</span><strong>${addendum.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Dedendum</span><strong>${dedendum.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Whole depth</span><strong>${(2.25*m).toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Rack length (N × P)</span><strong>${rackLength.toFixed(2)} mm</strong></div>
             </div>`;
-            note = `Linear spacing = ${p.toFixed(2)} mm per tooth. Use rack indexing plate. Total length = ${rackLength.toFixed(1)} mm for ${N} teeth. Derived module = ${m.toFixed(4)} mm.`;
+            note = `Linear spacing = ${p.toFixed(2)} mm per tooth. Use rack indexing plate. Total length = ${rackLength.toFixed(1)} mm for ${N} teeth.`;
             cutterMsg = `Rack form cutter (milling or shaping).`;
+            drawingParams = { N: N, m: m, P: p, rackLength: rackLength };
         }
         else if(type === 'sprocket'){
             let P = parseFloat(document.getElementById('chainPitch').value);
@@ -1868,7 +1449,6 @@
             if(isNaN(P) || isNaN(Dr)){ dimOutput.innerHTML='<span class="warning">Enter chain pitch and roller diameter</span>'; return; }
             let z = N;
             if(z < 5) { dimOutput.innerHTML='<span class="warning">Minimum teeth for sprocket is 5</span>'; return; }
-
             let d = P / Math.sin(Math.PI / z);
             let k = (z > 19) ? 0.8 : 0.9;
             let da_common = d + k * Dr;
@@ -1884,32 +1464,41 @@
             let toothAngle = 360 / z;
             let chordalPitch = P;
             let equivModule = P / Math.PI;
-
             html = `<div class="param-grid">
                 <div class="param-item"><span>Number of teeth z</span><strong>${z}</strong></div>
                 <div class="param-item"><span>Chain pitch P</span><strong>${P.toFixed(3)} mm</strong></div>
                 <div class="param-item"><span>Roller diameter Dᵣ</span><strong>${Dr.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Pitch circle diameter d</span><strong>${d.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span style="color:#ffd966;">📐 Outer diameter (common, workshop)</span><strong>${da_common.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(d + ${k}·Dᵣ)</span></div>
-                <div class="param-item"><span style="color:#bbe4f0;">⚙️ Outer diameter (exact ISO)</span><strong>${da_exact.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">P·(0.6 + cot(180/z))</span></div>
+                <div class="param-item"><span>Outer diameter (workshop)</span><strong>${da_common.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Outer diameter (ISO)</span><strong>${da_exact.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Root diameter d_f</span><strong>${df.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Tooth thickness (pitch line)</span><strong>${toothThickness.toFixed(2)} mm</strong></div>
-                <div class="param-item"><span>Roller seating radius rᵢ</span><strong>${ri.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(≈0.505·Dᵣ)</span></div>
-                <div class="param-item"><span>Tooth flank radius rₑ</span><strong>${re.toFixed(2)} mm</strong> <span style="font-size:0.7rem;">(≈0.12·Dᵣ)</span></div>
-                <div class="param-item"><span>Addendum hₐ (common method)</span><strong>${addendum.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Tooth thickness (pitch)</span><strong>${toothThickness.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Roller seating radius rᵢ</span><strong>${ri.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Tooth flank radius rₑ</span><strong>${re.toFixed(2)} mm</strong></div>
+                <div class="param-item"><span>Addendum hₐ (common)</span><strong>${addendum.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Dedendum h_f</span><strong>${dedendum.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Whole tooth depth h</span><strong>${wholeDepth.toFixed(2)} mm</strong></div>
                 <div class="param-item"><span>Pressure angle α</span><strong>${pressureAngle}°</strong></div>
                 <div class="param-item"><span>Tooth angle (360°/z)</span><strong>${toothAngle.toFixed(2)}°</strong></div>
-                <div class="param-item"><span>Chordal pitch (chain pitch)</span><strong>${chordalPitch.toFixed(3)} mm</strong></div>
-                <div class="param-item"><span>🔁 Equivalent module (P/π)</span><strong>${equivModule.toFixed(4)} mm</strong> <span style="font-size:0.7rem;">(reference only)</span></div>
+                <div class="param-item"><span>Equivalent module (P/π)</span><strong>${equivModule.toFixed(4)} mm</strong></div>
             </div>`;
-            note = `Indexing: ${40/z} turns per tooth (simple indexing). Use a sprocket form cutter or side milling cutter. Outer diameter: workshop formula = ${da_common.toFixed(2)} mm (recommended for manual machining), ISO exact = ${da_exact.toFixed(2)} mm. Equivalent module = ${equivModule.toFixed(4)} mm (for informational use only – do not use as gear module).`;
+            note = `Indexing: ${40/z} turns per tooth (simple indexing). Use a sprocket form cutter or side milling cutter.`;
             cutterMsg = `Sprocket form cutter for pitch ${P.toFixed(2)} mm, roller dia ${Dr.toFixed(2)} mm. Root radius = ${ri.toFixed(2)} mm, flank radius = ${re.toFixed(2)} mm.`;
+            drawingParams = { N: z, m: equivModule, d: d, Do: da_common, dr: df, P: P, Dr: Dr };
         }
         dimOutput.innerHTML = html + `<hr><span class="badge">${type === 'rack' ? `Circular pitch P = ${rackP.toFixed(3)} mm → module = ${m.toFixed(4)} mm` : (type !== 'sprocket' ? getModuleDisplay() : 'Chain sprocket')}</span>`;
         manufactureNote.innerHTML = note;
         cutterOut.innerHTML = cutterMsg;
+
+        // Update the gear type drawing
+        try {
+            const drawingSvg = generateGearTypeDrawing(type, drawingParams);
+            gearTypeDrawingSvg.innerHTML = drawingSvg;
+            gearTypeDrawingContainer.style.display = 'block';
+        } catch(e) {
+            gearTypeDrawingContainer.style.display = 'none';
+        }
+
         if(type !== 'helical' && type !== 'spiralBevel') {
             helicalGearOut.innerHTML = 'Select helical/spiral bevel for lead change gears.';
             altGearSelection.style.display = 'none';
@@ -1981,17 +1570,10 @@
     holePresetAngular?.addEventListener('change', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); });
     customHolesAngular?.addEventListener('input', ()=>{ if(document.getElementById('indexMethod').value==='angular') computeIndexing(); });
 
-    if (throatFormula.value === 'shift') {
-        profileShiftGroup.style.display = 'flex';
-    } else {
-        profileShiftGroup.style.display = 'none';
-    }
+    if (throatFormula.value === 'shift') { profileShiftGroup.style.display = 'flex'; } else { profileShiftGroup.style.display = 'none'; }
 
-    if (!checkAccess()) {
-        // wait for unlock
-    } else {
-        updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth();
-    }
+    if (!checkAccess()) { /* wait */ } else { updateVisibility(); updateMethodUI(); computeDimensions(); syncTeeth(); }
+
     setTimeout(() => {
         let topC = document.getElementById('topViewContainer');
         if(topC) {
