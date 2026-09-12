@@ -472,7 +472,9 @@ function computeIndexing(){
       indexingOutput.innerHTML=`<strong>Direct indexing</strong><br>Crank movement = <strong>${24/N} holes</strong> on the 24-hole direct plate.<br><span class="small-note">Head ratio is not used in this direct-plate calculation.</span>`;return;
     }
     if(method==='simple'||(currentGear==='wormShaft'&&method==='simple')){
-      const N=integerAtLeast(currentGear==='wormShaft'?document.getElementById('wormStarts').value:document.getElementById('simpleN').value,1,currentGear==='wormShaft'?'Worm starts':'Divisions');
+      // CORRECTION: Use the Number of teeth (N₁) from the left panel for worm shaft indexing,
+      // instead of the Number of starts. This matches the primary workpiece data.
+      const N=integerAtLeast(currentGear==='wormShaft'?teethInput.value:document.getElementById('simpleN').value,1,currentGear==='wormShaft'?'Number of teeth':'Divisions');
       const turns=ratio/N,full=Math.floor(turns),rem=turns-full;
       if(Math.abs(rem)<1e-12){indexingOutput.innerHTML=`<strong>${currentGear==='wormShaft'?'Worm shaft indexing':'Simple indexing'}</strong><br>Crank = <strong>${full} full turn(s)</strong>.`;return;}
       const den=N,num=Math.round(rem*den),options=findHoleOptions(num,den,getHoleCircles(false),full);
