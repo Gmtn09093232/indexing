@@ -76,7 +76,6 @@ hr{margin:14px 0;border:none;border-top:1px solid #334155}
 .diff-gear-drawing svg{max-width:100%;border-radius:var(--radius-sm);background:#fefefe}
 .footer-note{text-align:center;margin-top:28px;font-size:.78rem;color:var(--text-muted);padding:16px;background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);box-shadow:var(--shadow-sm)}
 
-/* PRINT STYLES */
 @media print{
   body{background:#fff;padding:0;margin:0}
   .header,.sub,.footer-note,.mode-switch,.input-group,.small-btn,.print-btn,
@@ -278,7 +277,7 @@ hr{margin:14px 0;border:none;border-top:1px solid #334155}
     </div>
 
     <div class="right-column-stack">
-      <!-- ====== Lead change gears card (moved ABOVE Dividing Head Indexing) ====== -->
+      <!-- ====== Lead change gears card ====== -->
       <div class="card">
         <h2><span class="icon-badge">⚙️</span> Helical / Spiral change gears (lead)</h2>
         <div class="result-box" id="leadGearResult" style="margin-top:0;">
@@ -330,6 +329,13 @@ hr{margin:14px 0;border:none;border-top:1px solid #334155}
         <div id="diffDiv" style="display:none;">
           <div class="input-group"><label>Required divisions (N) :</label><input type="number" id="diffRequiredN" value="67"></div>
           <div class="input-group"><label>Approx divisions (A) :</label><input type="number" id="diffApproxA" value="70" step="1"></div>
+          <div class="input-group"><label>Hole circles preset :</label>
+            <select id="holePresetDiff">
+              <option value="15,16,17,18,19,20,21,23,27,29,31,33,37,39,41,43,47,49">📋 Plate 1-3</option>
+              <option value="24,25,28,30,34,37,38,39,41,42,43,46,47,49,51,53,54,57,58,59,62,66">📋 Set A-D</option>
+            </select>
+          </div>
+          <div class="input-group"><label>Custom holes :</label><input type="text" id="customHolesDiff" placeholder="21,39,49"></div>
           <div class="input-group"><label>Change gear preset :</label>
             <select id="diffGearPreset">
               <option value="25,25,30,35,40,50,55,60,70,80,90,100">🔧 Standard set (25‑100)</option>
@@ -425,13 +431,27 @@ function getModuleDisplay(){
   const m=getModule();
   return m===null?'Module/DP not set':(isMetric?`m = ${m.toFixed(3)} mm`:`DP = ${dpInput.value}, module = ${m.toFixed(3)} mm`);
 }
-function getHoleCircles(isAngular=false){
-  const preset=isAngular?holePresetAngular.value:holePresetSimple.value;
-  const custom=isAngular?customHolesAngular.value:customHolesSimple.value;
+
+/**
+ * getHoleCircles — reads hole circle presets + custom holes.
+ * mode: 'simple' | 'diff' | 'angular'
+ * The 'diff' mode reads the differential-specific preset and custom holes.
+ */
+function getHoleCircles(mode='simple'){
+  let presetSel, customSel;
+  if(mode==='angular'){presetSel=holePresetAngular;customSel=customHolesAngular;}
+  else if(mode==='diff'){presetSel=holePresetDiff;customSel=customHolesDiff;}
+  else {presetSel=holePresetSimple;customSel=customHolesSimple;}
+  const preset=presetSel?presetSel.value:'';
+  const custom=customSel?customSel.value:'';
   const c=parseGearSet(preset,[]);
-  for(const x of String(custom??'').split(',')){const n=Number(x.trim());if(Number.isInteger(n)&&n>0&&!c.includes(n))c.push(n);}
+  for(const x of String(custom??'').split(',')){
+    const n=Number(x.trim());
+    if(Number.isInteger(n)&&n>0&&!c.includes(n))c.push(n);
+  }
   return c.sort((a,b)=>a-b);
 }
+
 function findHoleOptions(num,den,circles,fullTurnsBase=0){
   num=Math.trunc(num);den=Math.trunc(den);if(den<=0)return[];
   const g=gcd(num,den);num/=g;den/=g;
@@ -460,6 +480,7 @@ const gearTypeDrawingContainer=document.getElementById('gearTypeDrawingContainer
 const diffGearPreset=document.getElementById('diffGearPreset'),diffGearSet=document.getElementById('diffGearSet'),leadGearPreset=document.getElementById('leadGearPreset'),leadGearSet=document.getElementById('leadGearSet'),leadMode=document.getElementById('leadMode'),manualLeadGroup=document.getElementById('manualLeadGroup'),manualLead=document.getElementById('manualLead');
 const spiralLeadGearPreset=document.getElementById('spiralLeadGearPreset'),spiralLeadGearSet=document.getElementById('spiralLeadGearSet'),spiralLeadMode=document.getElementById('spiralLeadMode'),spiralManualLeadGroup=document.getElementById('spiralManualLeadGroup'),spiralManualLead=document.getElementById('spiralManualLead');
 const holePresetSimple=document.getElementById('holePresetSimple'),customHolesSimple=document.getElementById('customHolesSimple'),holePresetAngular=document.getElementById('holePresetAngular'),customHolesAngular=document.getElementById('customHolesAngular');
+const holePresetDiff=document.getElementById('holePresetDiff'),customHolesDiff=document.getElementById('customHolesDiff');
 const throatFormula=document.getElementById('throatFormula'),profileShiftGroup=document.getElementById('profileShiftGroup');
 let isMetric=true,topScale=1,sideScale=1,currentAlternatives=[];
 
@@ -522,7 +543,7 @@ function computeIndexing(){
       const N=integerAtLeast(currentGear==='wormShaft'?teethInput.value:document.getElementById('simpleN').value,1,currentGear==='wormShaft'?'Number of teeth':'Divisions');
       const turns=ratio/N,full=Math.floor(turns),rem=turns-full;
       if(Math.abs(rem)<1e-12){indexingOutput.innerHTML=`<strong>${currentGear==='wormShaft'?'Worm shaft indexing':'Simple indexing'}</strong><br>Crank = <strong>${full} full turn(s)</strong>.`;return;}
-      const den=N,num=Math.round(rem*den),options=findHoleOptions(num,den,getHoleCircles(false),full);
+      const den=N,num=Math.round(rem*den),options=findHoleOptions(num,den,getHoleCircles('simple'),full);
       if(!options.length)throw new Error(`No listed hole circle can represent the fractional turn ${num}/${den}.`);
       let html=`<strong>${currentGear==='wormShaft'?'Worm shaft indexing':'Simple indexing'}</strong><br>Crank = ${ratio}/${N} = ${turns.toFixed(6)} turns<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
       for(const o of options)html+=`<tr><td>${o.circle}</td><td>${o.full}</td><td>${o.holes}</td></tr>`;
@@ -534,7 +555,7 @@ function computeIndexing(){
       if(deg<0)throw new Error('Angle cannot be negative.');
       const totalDeg=deg+min/60,degPerTurn=360/ratio,totalTurns=totalDeg/degPerTurn,full=Math.floor(totalTurns),frac=totalTurns-full;
       if(Math.abs(frac)<1e-10){indexingOutput.innerHTML=`<strong>Angular indexing</strong><br>Angle: ${deg}° ${min}'<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank = <strong>${full} full turn(s)</strong> exactly.`;return;}
-      let best=null;const circles=getHoleCircles(true);
+      let best=null;const circles=getHoleCircles('angular');
       for(let den=1;den<=500;den++){const num=Math.round(frac*den);if(Math.abs(num/den-frac)<1e-8){const opts=findHoleOptions(num,den,circles,full);if(opts.length){best={fraction:`${num}/${den}`,options:opts};break;}}}
       if(!best)throw new Error(`No suitable hole circle found for fractional crank turn ${frac.toFixed(6)}.`);
       let html=`<strong>Angular indexing</strong><br>Angle: ${totalDeg.toFixed(4)}°<br>1 crank turn = ${degPerTurn.toFixed(4)}°<br>Crank = ${full} full + ${best.fraction} turn<br><table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
@@ -552,7 +573,7 @@ function computeIndexing(){
       if(Math.abs(simpleFrac)<1e-12){
         simpleTableHtml=`<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td>—</td><td>${simpleFull}</td><td>0</td></tr></tbody></table>`;
       } else {
-        const opts=findHoleOptions(Math.round(simpleFrac*A),A,getHoleCircles(false),simpleFull);
+        const opts=findHoleOptions(Math.round(simpleFrac*A),A,getHoleCircles('diff'),simpleFull);
         if(!opts.length)throw new Error(`No hole circle for simple indexing of A=${A}.`);
         simpleTableHtml=`<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
         for(const o of opts)simpleTableHtml+=`<tr><td>${o.circle}</td><td>${o.full}</td><td>${o.holes}</td></tr>`;
@@ -778,10 +799,14 @@ document.getElementById('leadMode').addEventListener('change',()=>{manualLeadGro
 document.getElementById('leadGearCount').addEventListener('change',computeDimensions);
 document.getElementById('leadGearSet').addEventListener('input',computeDimensions);
 
-holePresetSimple.addEventListener('change',()=>{const m=document.getElementById('indexMethod').value;if(m==='simple'||m==='differential')computeIndexing();});
-customHolesSimple.addEventListener('input',()=>{const m=document.getElementById('indexMethod').value;if(m==='simple'||m==='differential')computeIndexing();});
+/* Hole circle presets & custom holes for simple, differential, angular */
+holePresetSimple.addEventListener('change',()=>{const m=document.getElementById('indexMethod').value;if(m==='simple')computeIndexing();});
+customHolesSimple.addEventListener('input',()=>{const m=document.getElementById('indexMethod').value;if(m==='simple')computeIndexing();});
+holePresetDiff.addEventListener('change',()=>{if(document.getElementById('indexMethod').value==='differential')computeIndexing();});
+customHolesDiff.addEventListener('input',()=>{if(document.getElementById('indexMethod').value==='differential')computeIndexing();});
 holePresetAngular.addEventListener('change',()=>{if(document.getElementById('indexMethod').value==='angular')computeIndexing();});
 customHolesAngular.addEventListener('input',()=>{if(document.getElementById('indexMethod').value==='angular')computeIndexing();});
+
 document.getElementById('headRatio').addEventListener('input',computeIndexing);
 document.getElementById('simpleN').addEventListener('input',computeIndexing);
 document.getElementById('diffRequiredN').addEventListener('input',computeIndexing);
