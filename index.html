@@ -25,8 +25,9 @@ h1 .title-sub{font-size:.72rem;font-weight:500;color:#7dd3fc;letter-spacing:.14e
 .sub .chip.violet{background:#ede9fe;color:#6d28d9}
 .sub .chip.emerald{background:#d1fae5;color:#047857}
 .sub .divider{color:var(--border-strong);font-weight:300}
-.flex-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.flex-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
 @media(max-width:1100px){.flex-grid{grid-template-columns:1fr}}
+.right-column-stack{display:flex;flex-direction:column;gap:22px}
 .card{background:var(--surface);border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:26px;border:1px solid var(--border);position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-2),var(--accent-3));opacity:.9}
 .card h2{font-size:1.05rem;font-weight:700;margin:0 0 22px;color:var(--text);letter-spacing:-.01em;display:flex;align-items:center;gap:10px;padding-bottom:14px;border-bottom:1px solid var(--border)}
@@ -83,6 +84,7 @@ hr{margin:14px 0;border:none;border-top:1px solid #334155}
   .small-note,.badge,hr,.sub .chip{display:none!important}
   .container{max-width:100%;padding:10px}
   .flex-grid{display:block}
+  .right-column-stack{display:block}
   .card{box-shadow:none;border:1px solid #999;border-radius:6px;padding:14px;margin:0 0 20px 0;background:#fff;page-break-inside:avoid}
   .card::before{display:none}
   .card h2{color:#0f172a!important;border-bottom:2px solid #0f172a;font-size:1.05rem}
@@ -275,81 +277,88 @@ hr{margin:14px 0;border:none;border-top:1px solid #334155}
       </div>
     </div>
 
-    <div class="card">
-      <h2><span class="icon-badge">🔄</span> Dividing Head Indexing</h2>
-      <div class="input-group"><label>Method :</label>
-        <select id="indexMethod">
-          <option value="direct">🎯 Direct indexing (24/N)</option>
-          <option value="simple">🔁 Simple indexing (40/N)</option>
-          <option value="differential">⚙️ Differential indexing (A-N)*40/A</option>
-          <option value="angular">📐 Angular indexing (degrees)</option>
-        </select>
-      </div>
-      <div class="input-group"><label>Head ratio (usually 40) :</label><input type="number" id="headRatio" value="40" step="1"></div>
-      <div id="directDiv" class="small-note">Direct: 24 must be divisible by N. Crank = 24/N holes.</div>
-      <div id="simpleDiv">
-        <div class="input-group"><label>Number of divisions (N) :</label><input type="number" id="simpleN" value="28"></div>
-        <div class="input-group"><label>Hole circles preset :</label>
-          <select id="holePresetSimple">
-            <option value="15,16,17,18,19,20,21,23,27,29,31,33,37,39,41,43,47,49">📋 Plate 1-3</option>
-            <option value="24,25,28,30,34,37,38,39,41,42,43,46,47,49,51,53,54,57,58,59,62,66">📋 Set A-D</option>
-          </select>
-        </div>
-        <div class="input-group"><label>Custom holes :</label><input type="text" id="customHolesSimple" placeholder="21,39,49"></div>
-      </div>
-      <div id="diffDiv" style="display:none;">
-        <div class="input-group"><label>Required divisions (N) :</label><input type="number" id="diffRequiredN" value="67"></div>
-        <div class="input-group"><label>Approx divisions (A) :</label><input type="number" id="diffApproxA" value="70" step="1"></div>
-        <div class="input-group"><label>Change gear preset :</label>
-          <select id="diffGearPreset">
-            <option value="25,25,30,35,40,50,55,60,70,80,90,100">🔧 Standard set (25‑100)</option>
-            <option value="24,24,28,32,40,44,48,56,64,72,86,100">📐 Alternative set (24‑100)</option>
-            <option value="20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120">🔄 Extended set (20‑120)</option>
-          </select>
-        </div>
-        <div class="input-group"><label>Custom change gears :</label>
-          <input type="text" id="diffGearSet" value="25,25,30,35,40,50,55,60,70,80,90,100">
-          <button class="small-btn" id="saveDiffPreset">💾 Save</button>
-          <button class="small-btn" id="removeDiffPreset">🗑️ Remove</button>
-        </div>
-      </div>
-      <div id="angularDiv" style="display:none;">
-        <div class="input-group"><label>Angle (deg) :</label><input type="number" id="angleDeg" value="15" step="0.5"></div>
-        <div class="input-group"><label>Minutes :</label><input type="number" id="angleMin" value="0" step="1" min="0" max="59"></div>
-        <div class="input-group"><label>Hole circles preset :</label>
-          <select id="holePresetAngular">
-            <option value="15,16,17,18,19,20,21,23,27,29,31,33,37,39,41,43,47,49">📋 Plate 1-3</option>
-            <option value="24,25,28,30,34,37,38,39,41,42,43,46,47,49,51,53,54,57,58,59,62,66">📋 Set A-D</option>
-          </select>
-        </div>
-        <div class="input-group"><label>Custom holes :</label><input type="text" id="customHolesAngular" placeholder="21,39,49"></div>
-      </div>
-      <button id="computeIndexingBtn">⚙️ Compute Indexing Settings</button>
-      <div class="result-box"><h3>Indexing result</h3><div id="indexingOutput">—</div></div>
-      <div class="gear-drawing" id="gearDrawingContainer" style="display:none;">
-        <div id="topViewContainer" class="drawing-container">
-          <div class="drawing-title"><span>📐 Top View (Meshing)</span>
-            <div class="zoom-controls"><button id="zoomTopOut">−</button><button id="zoomTopReset">Reset</button><button id="zoomTopIn">+</button></div>
+    <div class="right-column-stack">
+      <!-- ====== Lead change gears card (moved ABOVE Dividing Head Indexing) ====== -->
+      <div class="card">
+        <h2><span class="icon-badge">⚙️</span> Helical / Spiral change gears (lead)</h2>
+        <div class="result-box" id="leadGearResult" style="margin-top:0;">
+          <div id="helicalGearOutput">—</div>
+          <div id="altGearSelection" class="alt-gears" style="display:none;">
+            <label>🔁 Alternative gear trains :</label>
+            <select id="altGearSelect" class="alt-select"></select>
           </div>
-          <div id="topViewWrapper" class="svg-wrapper"><div id="topViewSvg"></div></div>
         </div>
-        <div id="sideViewContainer" class="drawing-container">
-          <div class="drawing-title"><span>📐 Side View (Stacked on shafts)</span>
-            <div class="zoom-controls"><button id="zoomSideOut">−</button><button id="zoomSideReset">Reset</button><button id="zoomSideIn">+</button></div>
+        <div class="gear-drawing" id="gearDrawingContainer" style="display:none;">
+          <div id="topViewContainer" class="drawing-container">
+            <div class="drawing-title"><span>📐 Top View (Meshing)</span>
+              <div class="zoom-controls"><button id="zoomTopOut">−</button><button id="zoomTopReset">Reset</button><button id="zoomTopIn">+</button></div>
+            </div>
+            <div id="topViewWrapper" class="svg-wrapper"><div id="topViewSvg"></div></div>
           </div>
-          <div id="sideViewWrapper" class="svg-wrapper"><div id="sideViewSvg"></div></div>
+          <div id="sideViewContainer" class="drawing-container">
+            <div class="drawing-title"><span>📐 Side View (Stacked on shafts)</span>
+              <div class="zoom-controls"><button id="zoomSideOut">−</button><button id="zoomSideReset">Reset</button><button id="zoomSideIn">+</button></div>
+            </div>
+            <div id="sideViewWrapper" class="svg-wrapper"><div id="sideViewSvg"></div></div>
+          </div>
         </div>
       </div>
-      <div class="result-box" id="leadGearResult">
-        <h3>Helical / Spiral change gears (lead)</h3>
-        <div id="helicalGearOutput">—</div>
-        <div id="altGearSelection" class="alt-gears" style="display:none;">
-          <label>🔁 Alternative gear trains :</label>
-          <select id="altGearSelect" class="alt-select"></select>
+
+      <!-- ====== Dividing Head Indexing card ====== -->
+      <div class="card">
+        <h2><span class="icon-badge">🔄</span> Dividing Head Indexing</h2>
+        <div class="input-group"><label>Method :</label>
+          <select id="indexMethod">
+            <option value="direct">🎯 Direct indexing (24/N)</option>
+            <option value="simple">🔁 Simple indexing (40/N)</option>
+            <option value="differential">⚙️ Differential indexing (A-N)*40/A</option>
+            <option value="angular">📐 Angular indexing (degrees)</option>
+          </select>
         </div>
+        <div class="input-group"><label>Head ratio (usually 40) :</label><input type="number" id="headRatio" value="40" step="1"></div>
+        <div id="directDiv" class="small-note">Direct: 24 must be divisible by N. Crank = 24/N holes.</div>
+        <div id="simpleDiv">
+          <div class="input-group"><label>Number of divisions (N) :</label><input type="number" id="simpleN" value="28"></div>
+          <div class="input-group"><label>Hole circles preset :</label>
+            <select id="holePresetSimple">
+              <option value="15,16,17,18,19,20,21,23,27,29,31,33,37,39,41,43,47,49">📋 Plate 1-3</option>
+              <option value="24,25,28,30,34,37,38,39,41,42,43,46,47,49,51,53,54,57,58,59,62,66">📋 Set A-D</option>
+            </select>
+          </div>
+          <div class="input-group"><label>Custom holes :</label><input type="text" id="customHolesSimple" placeholder="21,39,49"></div>
+        </div>
+        <div id="diffDiv" style="display:none;">
+          <div class="input-group"><label>Required divisions (N) :</label><input type="number" id="diffRequiredN" value="67"></div>
+          <div class="input-group"><label>Approx divisions (A) :</label><input type="number" id="diffApproxA" value="70" step="1"></div>
+          <div class="input-group"><label>Change gear preset :</label>
+            <select id="diffGearPreset">
+              <option value="25,25,30,35,40,50,55,60,70,80,90,100">🔧 Standard set (25‑100)</option>
+              <option value="24,24,28,32,40,44,48,56,64,72,86,100">📐 Alternative set (24‑100)</option>
+              <option value="20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120">🔄 Extended set (20‑120)</option>
+            </select>
+          </div>
+          <div class="input-group"><label>Custom change gears :</label>
+            <input type="text" id="diffGearSet" value="25,25,30,35,40,50,55,60,70,80,90,100">
+            <button class="small-btn" id="saveDiffPreset">💾 Save</button>
+            <button class="small-btn" id="removeDiffPreset">🗑️ Remove</button>
+          </div>
+        </div>
+        <div id="angularDiv" style="display:none;">
+          <div class="input-group"><label>Angle (deg) :</label><input type="number" id="angleDeg" value="15" step="0.5"></div>
+          <div class="input-group"><label>Minutes :</label><input type="number" id="angleMin" value="0" step="1" min="0" max="59"></div>
+          <div class="input-group"><label>Hole circles preset :</label>
+            <select id="holePresetAngular">
+              <option value="15,16,17,18,19,20,21,23,27,29,31,33,37,39,41,43,47,49">📋 Plate 1-3</option>
+              <option value="24,25,28,30,34,37,38,39,41,42,43,46,47,49,51,53,54,57,58,59,62,66">📋 Set A-D</option>
+            </select>
+          </div>
+          <div class="input-group"><label>Custom holes :</label><input type="text" id="customHolesAngular" placeholder="21,39,49"></div>
+        </div>
+        <button id="computeIndexingBtn">⚙️ Compute Indexing Settings</button>
+        <div class="result-box"><h3>Indexing result</h3><div id="indexingOutput">—</div></div>
+        <div class="result-box"><h3>Manufacturing note</h3><div id="manufactureNote">—</div></div>
+        <div class="result-box"><h3>Cutter recommendation</h3><div id="cutterOut">—</div></div>
       </div>
-      <div class="result-box"><h3>Manufacturing note</h3><div id="manufactureNote">—</div></div>
-      <div class="result-box"><h3>Cutter recommendation</h3><div id="cutterOut">—</div></div>
     </div>
   </div>
   <div class="footer-note">✅ Lead change gears: multiple alternatives (simple &amp; compound, 2–12 gears) with true relative error (%). Select any to see the 2D drawing.</div>
@@ -538,11 +547,20 @@ function computeIndexing(){
       if(A===N)throw new Error('Approximate divisions A must differ from required divisions N.');
       const gearSet=parseGearSet(diffGearSet.value,parseGearSet(defaultDiffPresets[0].value,[]),false);
       const simpleTurns=ratio/A,simpleFull=Math.floor(simpleTurns),simpleFrac=simpleTurns-simpleFull;
-      let simpleTable='';
-      if(Math.abs(simpleFrac)<1e-12)simpleTable=`${simpleFull} full turn(s)`;
-      else {const opts=findHoleOptions(Math.round(simpleFrac*A),A,getHoleCircles(false),simpleFull);if(!opts.length)throw new Error(`No hole circle for simple indexing of A=${A}.`);simpleTable=opts.map(o=>`${o.circle}-hole: ${o.full} turns + ${o.holes} holes`).join(' · ');}
+
+      let simpleTableHtml;
+      if(Math.abs(simpleFrac)<1e-12){
+        simpleTableHtml=`<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody><tr><td>—</td><td>${simpleFull}</td><td>0</td></tr></tbody></table>`;
+      } else {
+        const opts=findHoleOptions(Math.round(simpleFrac*A),A,getHoleCircles(false),simpleFull);
+        if(!opts.length)throw new Error(`No hole circle for simple indexing of A=${A}.`);
+        simpleTableHtml=`<table class="indexing-tab"><thead><tr><th>Hole circle</th><th>Full turns</th><th>Holes</th></tr></thead><tbody>`;
+        for(const o of opts)simpleTableHtml+=`<tr><td>${o.circle}</td><td>${o.full}</td><td>${o.holes}</td></tr>`;
+        simpleTableHtml+=`</tbody></table>`;
+      }
+
       const diff=computeDifferentialExact(ratio,N,A,gearSet);
-      let html=`<strong>⚙️ Differential indexing</strong><br>Approximate divisions A = ${A}<br>Simple crank for A: ${ratio}/${A} = ${simpleTurns.toFixed(6)} turns (${simpleTable})<br>Required correction magnitude: |A−N|×${ratio}/A = ${diff.rawFraction||'—'}`;
+      let html=`<strong>⚙️ Differential indexing</strong><br>Approximate divisions A = ${A}<br>Step 1 — Simple indexing for A:<br>Crank = ${ratio}/${A} = ${simpleTurns.toFixed(6)} turns<br>${simpleTableHtml}<br>Step 2 — Differential correction ratio: |A−N|×${ratio}/A = ${diff.rawFraction||'—'}`;
       if(diff.exactMatch){
         if(diff.compound){html+=`<br><strong>Compound change gears:</strong> ${diff.compoundGears.first} × ${diff.compoundGears.second}<br><span class="small-note">Direction: ${diff.sign==='positive'?'same direction':'opposite direction'} — verify against the actual dividing-head gear layout.</span><div class="diff-gear-drawing">${generateDiffCompoundDrawing(diff.compoundGears.first,diff.compoundGears.second,diff.sign)}</div>`;}
         else html+=`<br><strong>Change gears:</strong> ${diff.drive} / ${diff.driven}<br><span class="small-note">Idler arrangement and direction are machine-specific; verify before cutting.</span><div class="diff-gear-drawing">${generateDiffSimpleDrawing(diff.drive,diff.driven,diff.sign)}</div>`;
@@ -606,11 +624,6 @@ function generateLeadSideDrawing(alt){
   for(let i=0;i<n;i++){const x=90+i*sp;s+=`<line x1="${x}" y1="60" x2="${x}" y2="210" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6,5"/>`;if(i<n-1){const a=alt.pairs[i];s+=`<rect x="${x-45}" y="${cy-28}" width="90" height="56" rx="8" fill="#dbeafe" stroke="#1e5f8a"/><text x="${x}" y="${cy+5}" text-anchor="middle" font-weight="700">${a.driver}/${a.driven}</text>`;}else s+=`<circle cx="${x}" cy="${cy}" r="30" fill="#fde8d5" stroke="#1e5f8a"/><text x="${x}" y="${cy+5}" text-anchor="middle" font-weight="700">Output</text>`;}
   s+=`<text x="450" y="35" text-anchor="middle" font-size="14" font-weight="700">SIDE / SHAFT TRAIN VIEW — ${alt.pairs.map(p=>`${p.driver}/${p.driven}`).join(' × ')}</text><text x="450" y="240" text-anchor="middle" fill="#64748b" font-size="12">Schematic only — not a shaft-spacing or interference drawing</text></svg>`;return s;
 }
-
-/**
- * UPDATED: updateLeadGearTrains now accepts optional gearSetValue and gearCountValue
- * so both Helical and Spiral Bevel can drive it with their own controls.
- */
 function updateLeadGearTrains(lead,leadscrewPitch,gearSetValue,gearCountValue){
   try{
     positiveNumber(lead,'Lead');positiveNumber(leadscrewPitch,'Leadscrew pitch');
@@ -700,7 +713,6 @@ function computeDimensions(){
       html=`<div class="param-grid"><div class="param-item"><span>Normal module m_n</span><strong>${mn.toFixed(3)} mm</strong></div><div class="param-item"><span>Transverse module m_t</span><strong>${mt.toFixed(3)} mm</strong></div><div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div><div class="param-item"><span>Spiral angle ψ</span><strong>${psi.toFixed(2)}°</strong></div><div class="param-item"><span>Hand</span><strong>${document.getElementById('spiralHand').value}</strong></div><div class="param-item"><span>Outer pitch dia d_e</span><strong>${d.toFixed(2)} mm</strong></div><div class="param-item"><span>Outer cone distance R_e</span><strong>${R.toFixed(2)} mm</strong></div><div class="param-item"><span>Face width (approx.)</span><strong>${face.toFixed(2)} mm</strong></div><div class="param-item"><span>Mean cone distance R_m</span><strong>${meanR.toFixed(2)} mm</strong></div><div class="param-item"><span>Addendum h_a</span><strong>${ha.toFixed(3)} mm</strong></div><div class="param-item"><span>Dedendum h_f</span><strong>${hf.toFixed(3)} mm</strong></div><div class="param-item"><span>Whole depth h</span><strong>${h.toFixed(3)} mm</strong></div><div class="param-item"><span>Tip angle</span><strong>${tip.toFixed(2)}°</strong></div><div class="param-item"><span>Root angle (approx.)</span><strong>${root.toFixed(2)}°</strong></div><div class="param-item"><span>Outer addendum dia</span><strong>${Do.toFixed(2)} mm</strong></div><div class="param-item"><span>Outer root dia</span><strong>${Df.toFixed(2)} mm</strong></div><div class="param-item"><span>Back cone angle</span><strong>${back.toFixed(2)}°</strong></div></div>`;
       note=`Spiral-bevel values are approximate workshop geometry. A spiral-bevel cutter system requires a specific standard and machine setup; the displayed “equivalent lead” should not be treated as a universal spiral-bevel tooth lead.`;cutterMsg=`Spiral-bevel cutter system required; select the cutter standard and machine settings from the actual manufacturer/setup.`;
       drawP={N,m:mn,d,Do,dr:Df,delta,faceWidth:face,psi:psi.toFixed(1)};
-      /* NEW: Spiral Bevel now has its own lead controls (mirrors Helical) */
       const autoEquivalentLead=Math.PI*d/Math.tan(pr);
       const spiralLead=spiralLeadMode.value==='manual'?positiveNumber(spiralManualLead.value,'Manual lead'):autoEquivalentLead;
       updateLeadGearTrains(spiralLead,positiveNumber(document.getElementById('spiralLeadscrewPitch').value,'Leadscrew pitch'),spiralLeadGearSet.value,document.getElementById('spiralLeadGearCount').value);
@@ -738,7 +750,7 @@ document.getElementById('removeDiffPreset').addEventListener('click',()=>{remove
 document.getElementById('saveLeadPreset').addEventListener('click',()=>{const v=leadGearSet.value.trim();if(v)savePreset('leadPresets',leadGearPreset,v,`📌 Custom (${v.substring(0,20)})`,defaultLeadPresets);computeDimensions();});
 document.getElementById('removeLeadPreset').addEventListener('click',()=>{removeLastPreset('leadPresets',leadGearPreset,defaultLeadPresets);leadGearSet.value=leadGearPreset.value;computeDimensions();});
 
-/* NEW: Spiral Bevel lead controls */
+/* Spiral Bevel lead controls */
 spiralLeadGearPreset.addEventListener('change',()=>{if(spiralLeadGearPreset.value!=='custom')spiralLeadGearSet.value=spiralLeadGearPreset.value;computeDimensions();});
 document.getElementById('saveSpiralLeadPreset').addEventListener('click',()=>{const v=spiralLeadGearSet.value.trim();if(v)savePreset('spiralLeadPresets',spiralLeadGearPreset,v,`📌 Custom (${v.substring(0,20)})`,defaultSpiralLeadPresets);computeDimensions();});
 document.getElementById('removeSpiralLeadPreset').addEventListener('click',()=>{removeLastPreset('spiralLeadPresets',spiralLeadGearPreset,defaultSpiralLeadPresets);spiralLeadGearSet.value=spiralLeadGearPreset.value;computeDimensions();});
@@ -886,7 +898,6 @@ function generateGearTypeDrawing(type,p){
   svg+=`<rect x="4" y="4" width="${W-8}" height="${H-8}" fill="none" stroke="${black}" stroke-width="2.5"/>`;
   svg+=`<rect x="10" y="10" width="${W-20}" height="${H-20}" fill="none" stroke="${black}" stroke-width="0.6"/>`;
 
-  // ============ SPUR / HELICAL ============
   if(type==='spur'||type==='helical'){
     const isH=(type==='helical');
     const N=p.N||28,m=p.m||2.5,d=p.d||m*N,Do=p.Do||m*(N+2),dr=p.dr||d-2.5*m;
@@ -964,15 +975,12 @@ function generateGearTypeDrawing(type,p){
     if(isH){dataRows.push(['Helix angle β',`${p.beta}°`]);dataRows.push(['Face width b',`${(p.faceWidth||30).toFixed(2)} mm`]);}
     svg+=drawDataTable(dataRows,isH?'HELICAL GEAR DATA':'SPUR GEAR DATA',W);
   }
-
-  // ============ BEVEL / SPIRAL BEVEL ============
   else if(type==='bevel'||type==='spiralBevel'){
     const isSp=(type==='spiralBevel');
     const N=p.N||28,m=p.m||2.5,d=p.d||m*N,Do=p.Do||d+2*m,dr=p.dr||d-2.5*m;
     const delta=p.delta||30;
     const rOut=95,rPitch=rOut*(d/Do),rRoot=rOut*(dr/Do);
     const cx=210,cy=200;
-
     svg+=`<text x="${cx}" y="${cy-rOut-30}" text-anchor="middle" font-size="12" font-weight="800" fill="${black}" letter-spacing="0.5">FRONT VIEW</text>`;
     svg+=`<line x1="${cx-rOut-25}" y1="${cy}" x2="${cx+rOut+25}" y2="${cy}" stroke="${red}" stroke-width="0.7" stroke-dasharray="14,4,3,4"/>`;
     svg+=`<line x1="${cx}" y1="${cy-rOut-25}" x2="${cx}" y2="${cy+rOut+25}" stroke="${red}" stroke-width="0.7" stroke-dasharray="14,4,3,4"/>`;
@@ -1022,8 +1030,6 @@ function generateGearTypeDrawing(type,p){
     if(isSp)rows.push(['Spiral angle ψ',`${p.psi}°`]);
     svg+=drawDataTable(rows,isSp?'SPIRAL BEVEL GEAR DATA':'BEVEL GEAR DATA',W);
   }
-
-  // ============ WORM SHAFT ============
   else if(type==='wormShaft'){
     const d=p.d||35,starts=p.starts||1,lead=p.lead||30,gamma=p.gamma||8,WL=p.wormLength||80;
     const scale=2.2;
@@ -1058,8 +1064,6 @@ function generateGearTypeDrawing(type,p){
     const rows=[['Pitch dia d',`${d.toFixed(3)} mm`],['Number of starts',`${starts}`],['Lead L',`${lead.toFixed(3)} mm`],['Lead angle γ',`${gamma.toFixed(3)}°`],['Axial pitch px',`${(lead/starts).toFixed(3)} mm`],['Addendum ha',`${m.toFixed(3)} mm`],['Dedendum hf',`${(1.2*m).toFixed(3)} mm`],['Worm length',`${WL.toFixed(2)} mm`],['Tip width',`${(0.697*m).toFixed(3)} mm`]];
     svg+=drawDataTable(rows,'WORM SHAFT DATA',W);
   }
-
-  // ============ WORM WHEEL ============
   else if(type==='wormWheel'){
     const N=p.N||30,m=p.m||2.5,d=p.d||m*N,Do=p.Do||m*(N+2),dr=p.dr||d-2.5*m;
     const rOut=95,rPitch=rOut*(d/Do),rRoot=rOut*(dr/Do);
@@ -1091,8 +1095,6 @@ function generateGearTypeDrawing(type,p){
     const rows=[['Module m',`${m.toFixed(3)} mm`],['Number of teeth z',`${N}`],['Pitch diameter d',`${d.toFixed(3)} mm`],['Outside diameter da',`${Do.toFixed(3)} mm`],['Root diameter df',`${dr.toFixed(3)} mm`],['Throat diameter D3',`${(p.D3||Do).toFixed(3)} mm`],['Face width b',`${(p.faceWidth||60).toFixed(2)} mm`],['Circular pitch p',`${(Math.PI*m).toFixed(3)} mm`],['Whole depth h',`${(2.25*m).toFixed(3)} mm`],['Worm pitch dia',`${(40-2*m).toFixed(3)} mm`]];
     svg+=drawDataTable(rows,'WORM WHEEL DATA',W);
   }
-
-  // ============ RACK ============
   else if(type==='rack'){
     const N=p.N||28,m=p.m||2.5,P=p.P||Math.PI*m;
     const scale=2;
@@ -1129,15 +1131,12 @@ function generateGearTypeDrawing(type,p){
     const rows=[['Circular pitch P',`${P.toFixed(3)} mm`],['Module (derived)',`${m.toFixed(3)} mm`],['Number of teeth z',`${N}`],['Rack length',`${(N*P).toFixed(3)} mm`],['Tooth thickness s',`${(P/2).toFixed(3)} mm`],['Addendum ha',`${m.toFixed(3)} mm`],['Dedendum hf',`${(1.25*m).toFixed(3)} mm`],['Whole depth h',`${(2.25*m).toFixed(3)} mm`]];
     svg+=drawDataTable(rows,'RACK DATA',W);
   }
-
-  // ============ SPROCKET ============
   else if(type==='sprocket'){
     const z=p.N||20,d=p.d||100,Do=p.Do||110,dr=p.dr||90;
     const P=p.P||12.7,Dr=p.Dr||7.92;
     const rOut=95,rPitch=rOut*(d/Do),rRoot=rOut*(dr/Do);
     const cx=210,cy=200;
     const nDraw=Math.min(z,24);
-
     svg+=`<text x="${cx}" y="${cy-rOut-30}" text-anchor="middle" font-size="12" font-weight="800" fill="${black}" letter-spacing="0.5">FRONT VIEW</text>`;
     svg+=`<line x1="${cx-rOut-25}" y1="${cy}" x2="${cx+rOut+25}" y2="${cy}" stroke="${red}" stroke-width="0.7" stroke-dasharray="14,4,3,4"/>`;
     svg+=`<line x1="${cx}" y1="${cy-rOut-25}" x2="${cx}" y2="${cy+rOut+25}" stroke="${red}" stroke-width="0.7" stroke-dasharray="14,4,3,4"/>`;
