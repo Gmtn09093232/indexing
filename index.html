@@ -431,7 +431,7 @@ hr{margin:14px 0;border:none;border-top:1px solid #334155}
 
 <script>
 
-const SECRET_NUMBER="1712";
+const SECRET_NUMBER="0120";
 function checkAccess(){const s=sessionStorage.getItem('workshop_access');const allowed=s===SECRET_NUMBER;document.getElementById('accessDenied').style.display=allowed?'none':'flex';document.getElementById('workshopContent').style.display=allowed?'block':'none';return allowed;}
 function gcd(a,b){a=Math.abs(Math.trunc(a));b=Math.abs(Math.trunc(b));while(b){const t=b;b=a%b;a=t;}return a||1;}
 function finiteNumber(value){const n=Number(value);return Number.isFinite(n)?n:null;}
