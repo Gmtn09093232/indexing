@@ -12,6 +12,7 @@
 @keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(14,165,233,.4)}50%{box-shadow:0 0 0 8px rgba(14,165,233,0)}}
 @keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 @keyframes bounceIn{0%{opacity:0;transform:scale(.8)}60%{opacity:1;transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes flashUpdate{0%{background-color:rgba(14,165,233,.18)}100%{background-color:transparent}}
 body{background:var(--bg-gradient);background-attachment:fixed;margin:0;padding:24px;min-height:100vh;color:var(--text);line-height:1.5;overflow-x:hidden}
 .container{max-width:1500px;margin:0 auto}
 .header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;padding:24px 28px;background:linear-gradient(135deg,#0b1120 0%,#1e293b 60%,#0f3a52 100%);border-radius:var(--radius-xl);box-shadow:var(--shadow-lg);margin-bottom:18px;position:relative;overflow:hidden;animation:fadeInUp .5s var(--ease) both}
@@ -54,7 +55,8 @@ button:not(.small-btn):not(.zoom-controls button):not(.print-btn):hover svg{tran
 .mode-switch{display:flex;gap:4px;margin-bottom:20px;padding:4px;background:var(--surface-3);border-radius:999px;border:1px solid var(--border)}
 .mode-chip{padding:9px 16px;border-radius:999px;cursor:pointer;font-weight:600;text-align:center;flex:1;font-size:.83rem;color:var(--text-muted);transition:all .3s var(--ease);user-select:none}
 .mode-chip.active-mode{background:#fff;color:var(--accent-dark);box-shadow:var(--shadow-sm);border:1px solid var(--border)}
-.result-box{background:linear-gradient(160deg,#0b1120 0%,#101a2e 100%);border-radius:var(--radius-lg);padding:18px 20px;margin-top:16px;color:var(--dark-text);font-size:.85rem;overflow-x:auto;border:1px solid #334155}
+.result-box{background:linear-gradient(160deg,#0b1120 0%,#101a2e 100%);border-radius:var(--radius-lg);padding:18px 20px;margin-top:16px;color:var(--dark-text);font-size:.85rem;overflow-x:auto;border:1px solid #334155;transition:background-color .4s var(--ease)}
+.result-box.updating{animation:flashUpdate .9s var(--ease)}
 .result-box h3{margin:0 0 12px;font-size:.82rem;color:#7dd3fc;font-weight:700;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .result-box h3 svg{width:14px;height:14px;stroke:#7dd3fc;stroke-width:2.4;fill:none;stroke-linecap:round;stroke-linejoin:round}
 .param-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
@@ -101,6 +103,7 @@ hr{margin:14px 0;border:none;border-top:1px solid #334155}
 .zoom-controls button:hover{background:#fff;color:var(--accent-dark);box-shadow:var(--shadow-sm);transform:scale(1.1)}
 .svg-wrapper{overflow:auto;text-align:center;background:#fff;border-radius:var(--radius-sm)}
 .svg-wrapper svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.svg-wrapper>div{transition:width .3s cubic-bezier(.4,0,.2,1);margin:0 auto}
 .alt-gears{margin-top:12px;padding:14px;background:rgba(14,165,233,.09);border-radius:var(--radius);border:1px solid rgba(14,165,233,.28)}
 .alt-gears label{display:flex;align-items:center;gap:6px;font-size:.74rem;font-weight:700;color:#7dd3fc;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
 .alt-gears label svg{width:12px;height:12px;stroke:#7dd3fc;stroke-width:2.4;fill:none}
@@ -443,6 +446,7 @@ function parseGearSet(value,fallback=[],dedupe=true){const nums=String(value??''
 function loadPresets(k,sel,def){let p=def.map(x=>({...x}));try{const raw=localStorage.getItem(k);if(raw){const parsed=JSON.parse(raw);if(Array.isArray(parsed))p=parsed;}}catch(e){}sel.replaceChildren();for(const x of p){const o=document.createElement('option');o.value=x.value;o.textContent=x.label;sel.appendChild(o);}return p;}
 function savePreset(k,sel,nv,nl,def){const value=String(nv).trim();if(!value)return false;const p=loadPresets(k,sel,def);if(!p.some(x=>x.value===value)){p.push({value,label:nl});localStorage.setItem(k,JSON.stringify(p));loadPresets(k,sel,def);sel.value=value;return true;}sel.value=value;return false;}
 function removeLastPreset(k,sel,def){const p=loadPresets(k,sel,def);const custom=p.slice(def.length);if(custom.length){custom.pop();const next=def.concat(custom);localStorage.setItem(k,JSON.stringify(next));loadPresets(k,sel,def);sel.value=next[0]?.value??'';return true;}return false;}
+function debounce(fn,ms=220){let t=null;return function(...args){clearTimeout(t);t=setTimeout(()=>fn.apply(this,args),ms);};}
 function getModule(){return isMetric?finiteNumber(moduleInput.value):(finiteNumber(dpInput.value)>0?25.4/Number(dpInput.value):null);}
 function getModuleDisplay(){const m=getModule();return m===null?'Module/DP not set':(isMetric?`m = ${m.toFixed(3)} mm`:`DP = ${dpInput.value}, module = ${m.toFixed(3)} mm`);}
 function getHoleCircles(mode='simple'){let ps,cs;if(mode==='angular'){ps=holePresetAngular;cs=customHolesAngular;}else if(mode==='diff'){ps=holePresetDiff;cs=customHolesDiff;}else{ps=holePresetSimple;cs=customHolesSimple;}const preset=ps?ps.value:'';const custom=cs?cs.value:'';const c=parseGearSet(preset,[]);for(const x of String(custom??'').split(',')){const n=Number(x.trim());if(Number.isInteger(n)&&n>0&&!c.includes(n))c.push(n);}return c.sort((a,b)=>a-b);}
@@ -649,7 +653,7 @@ function generateDiffCompoundDrawing(first,second,sign){const [a,b]=first.split(
 function generateMultiStageTrains(gearSet,numGears,requiredRatio,maxResults=30){
   if(!Number.isInteger(numGears)||numGears<2||numGears%2!==0||gearSet.length<numGears||!Number.isFinite(requiredRatio)||requiredRatio<=0)return[];
   const gears=[...gearSet];
-  const beamWidth=12000;
+  const beamWidth=2500;
   let states=[{used:0,ratio:1,pairs:[]}];
   for(let stage=0;stage<numGears/2;stage++){
     const next=[];
@@ -696,13 +700,22 @@ function updateLeadGearTrains(lead,leadscrewPitch,gearSetValue,gearCountValue,an
 }
 function updateDrawingFromAlternative(alt){if(!alt)return;topViewSvgDiv.innerHTML=generateLeadTopDrawing(alt);sideViewSvgDiv.innerHTML=generateLeadSideDrawing(alt);gearDrawingContainer.style.display='block';applyZoom('top');applyZoom('side');}
 
-function updateSprocketVisibility(){const isS=gearType.value==='sprocket';if(isS){modDpSwitch.style.display='none';metricBlock.style.display='none';imperialBlock.style.display='none';}else{modDpSwitch.style.display='flex';}}
+function updateSprocketVisibility(){const isS=gearType.value==='sprocket';if(isS){modDpSwitch.style.display='none';metricBlock.style.display='none';imperialBlock.style.display='none';}else{modDpSwitch.style.display='flex';metricBlock.style.display=isMetric?'block':'none';imperialBlock.style.display=isMetric?'none':'block';}}
 function updateRackInputVisibility(){const isR=gearType.value==='rack';rackPitchBlock.style.display=isR?'block':'none';if(isR){metricBlock.style.display='none';imperialBlock.style.display='none';modDpSwitch.style.display='none';}else updateSprocketVisibility();}
 function updateVisibility(){const t=gearType.value;spurExtra.style.display=t==='spur'?'block':'none';helicalDiv.style.display=t==='helical'?'block':'none';bevelDiv.style.display=(t==='bevel'||t==='spiralBevel')?'block':'none';spiralDiv.style.display=t==='spiralBevel'?'block':'none';wormDiv.style.display=t==='wormShaft'?'block':'none';wormWheelDiv.style.display=t==='wormWheel'?'block':'none';sprocketDiv.style.display=t==='sprocket'?'block':'none';rackExtra.style.display=t==='rack'?'block':'none';updateRackInputVisibility();manualLeadGroup.style.display=leadMode.value==='manual'?'flex':'none';spiralManualLeadGroup.style.display=spiralLeadMode.value==='manual'?'flex':'none';profileShiftGroup.style.display=throatFormula.value==='shift'?'flex':'none';computeDimensions(true);}
 function setMetric(a){isMetric=Boolean(a);metricBtn.classList.toggle('active-mode',isMetric);imperialBtn.classList.toggle('active-mode',!isMetric);if(gearType.value!=='rack'&&gearType.value!=='sprocket'){metricBlock.style.display=isMetric?'block':'none';imperialBlock.style.display=isMetric?'none':'block';}computeDimensions(true);}
 function updateMethodUI(){const m=document.getElementById('indexMethod').value;document.getElementById('directDiv').style.display=m==='direct'?'block':'none';document.getElementById('simpleDiv').style.display=m==='simple'?'block':'none';document.getElementById('diffDiv').style.display=m==='differential'?'block':'none';document.getElementById('angularDiv').style.display=m==='angular'?'block':'none';computeIndexing(true);}
 function syncTeeth(){if(teethInput.value){document.getElementById('simpleN').value=teethInput.value;document.getElementById('diffRequiredN').value=teethInput.value;}}
-function applyZoom(which){const wrapper=document.getElementById(which==='top'?'topViewWrapper':'sideViewWrapper'),inner=wrapper?.firstElementChild;if(!wrapper||!inner)return;const scale=which==='top'?topScale:sideScale;inner.style.transition='transform .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1)';inner.style.transform=`scale(${scale})`;inner.style.transformOrigin='top center';inner.style.width=`${100*scale}%`;inner.style.maxWidth='none';}
+function applyZoom(which){
+  const wrapper=document.getElementById(which==='top'?'topViewWrapper':'sideViewWrapper');
+  const inner=wrapper?.firstElementChild;
+  if(!wrapper||!inner)return;
+  const scale=which==='top'?topScale:sideScale;
+  inner.style.width=`${100*scale}%`;
+  inner.style.maxWidth='none';
+}
+
+const computeDimensionsDebounced=debounce(()=>computeDimensions(true),220);
 
 /* ============================================================
    DRAWING HELPERS
@@ -928,7 +941,7 @@ function computeDimensions(animate){
       const addAng=Math.atan(m/R)*180/Math.PI,tip=delta+addAng,back=shaft-delta,root=delta-Math.atan(2.4*Math.sin(delta*Math.PI/180)/N)*180/Math.PI,face=.3*R,Do=d1+2*m*Math.cos(delta*Math.PI/180),s=Math.PI*m/2;
       html=`<div class="param-grid">${z2!==null?`<div class="param-item"><span>Pinion pitch dia d₁</span><strong>${d1.toFixed(2)} mm</strong></div><div class="param-item"><span>Gear pitch dia d₂</span><strong>${d2.toFixed(2)} mm</strong></div><div class="param-item"><span>Pinion cone δ₁</span><strong>${delta.toFixed(2)}°</strong></div><div class="param-item"><span>Gear cone δ₂</span><strong>${delta2.toFixed(2)}°</strong></div>`:`<div class="param-item"><span>Pitch dia d</span><strong>${d1.toFixed(2)} mm</strong></div><div class="param-item"><span>Pitch cone δ</span><strong>${delta.toFixed(2)}°</strong></div>`}<div class="param-item"><span>Cone distance R</span><strong>${R.toFixed(2)} mm</strong></div><div class="param-item"><span>Tip cone angle</span><strong>${tip.toFixed(2)}°</strong></div><div class="param-item"><span>Back cone angle</span><strong>${back.toFixed(2)}°</strong></div><div class="param-item"><span>Root angle (approx.)</span><strong>${root.toFixed(2)}°</strong></div><div class="param-item"><span>Face width (approx.)</span><strong>${face.toFixed(2)} mm</strong></div><div class="param-item"><span>Outside dia (large end)</span><strong>${Do.toFixed(2)} mm</strong></div><div class="param-item"><span>Root diameter (approx.)</span><strong>${dr.toFixed(2)} mm</strong></div><div class="param-item"><span>Tooth thickness</span><strong>${s.toFixed(3)} mm</strong></div></div>`;
       note=buildDetailedNote('bevel',{N,m,d:d1,Do,dr,delta,root,faceWidth:face,h:2.25*m,s,R});
-      cutterMsg=buildDetailedCutter('bevel',{N,m,alpha:20,face});
+      cutterMsg=buildDetailedCutter('bevel',{N,m,alpha:20,face,h:2.25*m});
       drawP={N,m,d:d1,Do,dr,delta,faceWidth:face};
     }
     else if(type==='spiralBevel'){
@@ -1012,24 +1025,24 @@ document.getElementById('saveSpiralLeadPreset').addEventListener('click',()=>{co
 document.getElementById('removeSpiralLeadPreset').addEventListener('click',()=>{removeLastPreset('spiralLeadPresets',spiralLeadGearPreset,defaultSpiralLeadPresets);spiralLeadGearSet.value=spiralLeadGearPreset.value;computeDimensions(true);});
 spiralLeadMode.addEventListener('change',()=>{spiralManualLeadGroup.style.display=spiralLeadMode.value==='manual'?'flex':'none';computeDimensions(true);});
 document.getElementById('spiralLeadGearCount').addEventListener('change',()=>computeDimensions(true));
-document.getElementById('spiralLeadGearSet').addEventListener('input',()=>computeDimensions(true));
-document.getElementById('spiralManualLead').addEventListener('input',()=>computeDimensions(true));
-document.getElementById('spiralLeadscrewPitch').addEventListener('input',()=>computeDimensions(true));
+document.getElementById('spiralLeadGearSet').addEventListener('input',computeDimensionsDebounced);
+document.getElementById('spiralManualLead').addEventListener('input',computeDimensionsDebounced);
+document.getElementById('spiralLeadscrewPitch').addEventListener('input',computeDimensionsDebounced);
 gearType.addEventListener('change',()=>{updateVisibility();computeIndexing(true);});
 document.getElementById('computeDimensionsBtn').addEventListener('click',(e)=>{const btn=e.currentTarget;btn.classList.add('busy');setTimeout(()=>{computeDimensions(true);btn.classList.remove('busy');},220);});
 document.getElementById('computeIndexingBtn').addEventListener('click',(e)=>{const btn=e.currentTarget;btn.classList.add('busy');setTimeout(()=>{computeIndexing(true);btn.classList.remove('busy');},220);});
 document.getElementById('indexMethod').addEventListener('change',updateMethodUI);
-teethInput.addEventListener('input',()=>{syncTeeth();computeDimensions(true);});
-[moduleInput,dpInput,rackCircularPitch].forEach(el=>el.addEventListener('input',()=>computeDimensions(true)));
+teethInput.addEventListener('input',()=>{syncTeeth();computeDimensionsDebounced();});
+[moduleInput,dpInput,rackCircularPitch].forEach(el=>el.addEventListener('input',computeDimensionsDebounced));
 metricBtn.addEventListener('click',()=>setMetric(true));imperialBtn.addEventListener('click',()=>setMetric(false));
-['helixAngle','leadscrewPitch','shaftAngle','pitchCone','matingTeeth','spiralAngle','wormStarts','wormOD','wwStarts','wormPD','profileShift','chainPitch','rollerDia','spurMatingTeeth','helicalMatingTeeth','helicalPressureAngle','faceWidth','manualLead'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',()=>computeDimensions(true));});
+['helixAngle','leadscrewPitch','shaftAngle','pitchCone','matingTeeth','spiralAngle','wormStarts','wormOD','wwStarts','wormPD','profileShift','chainPitch','rollerDia','spurMatingTeeth','helicalMatingTeeth','helicalPressureAngle','faceWidth','manualLead'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',computeDimensionsDebounced);});
 document.getElementById('helixHand').addEventListener('change',()=>computeDimensions(true));
 document.getElementById('spiralHand').addEventListener('change',()=>computeDimensions(true));
 document.getElementById('wormLengthFormula').addEventListener('change',()=>computeDimensions(true));
 document.getElementById('throatFormula').addEventListener('change',()=>{profileShiftGroup.style.display=throatFormula.value==='shift'?'flex':'none';computeDimensions(true);});
 document.getElementById('leadMode').addEventListener('change',()=>{manualLeadGroup.style.display=leadMode.value==='manual'?'flex':'none';computeDimensions(true);});
 document.getElementById('leadGearCount').addEventListener('change',()=>computeDimensions(true));
-document.getElementById('leadGearSet').addEventListener('input',()=>computeDimensions(true));
+document.getElementById('leadGearSet').addEventListener('input',computeDimensionsDebounced);
 holePresetSimple.addEventListener('change',()=>{if(document.getElementById('indexMethod').value==='simple')computeIndexing(true);});
 customHolesSimple.addEventListener('input',()=>{if(document.getElementById('indexMethod').value==='simple')computeIndexing(true);});
 holePresetDiff.addEventListener('change',()=>{if(document.getElementById('indexMethod').value==='differential')computeIndexing(true);});
@@ -1042,6 +1055,8 @@ document.getElementById('diffRequiredN').addEventListener('input',()=>computeInd
 document.getElementById('diffApproxA').addEventListener('input',()=>computeIndexing(true));
 document.getElementById('angleDeg').addEventListener('input',()=>computeIndexing(true));
 document.getElementById('angleMin').addEventListener('input',()=>computeIndexing(true));
+/* NEW: alternative gear train selection updates the drawing */
+altGearSelect.addEventListener('change',()=>{const alt=currentAlternatives[Number(altGearSelect.value)];if(alt)updateDrawingFromAlternative(alt);});
 function setZoom(which,delta){if(which==='top')topScale=Math.max(.5,Math.min(4,topScale+delta));else sideScale=Math.max(.5,Math.min(4,sideScale+delta));applyZoom(which);}
 document.getElementById('zoomTopOut').onclick=()=>setZoom('top',-.2);document.getElementById('zoomTopReset').onclick=()=>{topScale=1;applyZoom('top');};document.getElementById('zoomTopIn').onclick=()=>setZoom('top',.2);
 document.getElementById('zoomSideOut').onclick=()=>setZoom('side',-.2);document.getElementById('zoomSideReset').onclick=()=>{sideScale=1;applyZoom('side');};document.getElementById('zoomSideIn').onclick=()=>setZoom('side',.2);
