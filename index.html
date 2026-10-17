@@ -324,10 +324,18 @@ hr.sep{margin:12px 0;border:none;border-top:1px solid #334155}
           </h2>
           <div class="row"><label>Method</label><select id="indexMethod">
             <option value="direct">Direct (24/N)</option>
-            <option value="simple">Simple (40/N)</option>
-            <option value="differential">Differential (A−N)·40/A</option>
+            <option value="simple">Simple (R/N)</option>
+            <option value="differential">Differential (A−N)·R/A</option>
             <option value="angular">Angular (degrees)</option></select></div>
-          <div class="row"><label>Head ratio</label><input type="number" id="headRatio" value="40" step="1"></div>
+          <div class="row"><label>Indexing head</label>
+            <select id="headType">
+              <option value="30">30 : 1 — 30 turns per rev</option>
+              <option value="40" selected>40 : 1 — 40 turns per rev</option>
+              <option value="60">60 : 1 — 60 turns per rev</option>
+              <option value="custom">Custom ratio…</option>
+            </select>
+          </div>
+          <div class="row" id="headRatioRow" style="display:none;"><label>Head ratio</label><input type="number" id="headRatio" value="40" step="1" min="1"></div>
           <div id="directDiv" class="small-note">Direct: 24 must be divisible by N. Crank = 24/N holes.</div>
           <div id="simpleDiv">
             <div class="row"><label>Divisions N</label><input type="number" id="simpleN" value="28"></div>
@@ -532,6 +540,14 @@ const holePresetAngular=$('holePresetAngular'),customHolesAngular=$('customHoles
 const holePresetDiff=$('holePresetDiff'),customHolesDiff=$('customHolesDiff');
 const throatFormula=$('throatFormula'),profileShiftGroup=$('profileShiftGroup');
 const teethRow=$('teethRow'),teethLabel=$('teethLabel'),moduleLabel=$('moduleLabel');
+const headTypeSel=$('headType'),headRatioRow=$('headRatioRow'),headRatioInput=$('headRatio');
+function getHeadRatio(){const v=Number(headRatioInput?headRatioInput.value:40);return (Number.isFinite(v)&&v>0)?v:40;}
+function syncHeadTypeUI(){
+  const v=String(headRatioInput.value).trim();
+  const preset=['30','40','60'].includes(v);
+  headTypeSel.value=preset?v:'custom';
+  headRatioRow.style.display=preset?'none':'flex';
+}
 let isMetric=true,topScale=1,sideScale=1,currentAlternatives=[];
 
 /* ============================================================
@@ -586,7 +602,7 @@ function buildDetailedNote(type,data){
   switch(type){
     case 'spur':{
       P.push(noteSection('Workpiece setup',ICONS.caliper,[{k:'Material:',v:'Mild steel EN8 / C45, aluminium 6061, or cast iron'},{k:'Blank:',v:`Turn to ⌀${data.Do.toFixed(2)} mm OD × ${(data.faceWidth||25).toFixed(0)} mm width`},{k:'Bore:',v:'Drill & ream to required bore; include keyway after milling'},{k:'Arbor:',v:'Mount on expanding mandrel or between centres; runout ≤ 0.02 mm'}]));
-      P.push(noteSection('Machine & indexing setup',ICONS.setup,[{k:'Dividing head:',v:`Rotate ${(40/data.N).toFixed(4)} turns per tooth (40:1 ratio).`},{k:'Table movement:',v:'Vertical only — feed cutter axially along the tooth gap'},{k:'Work offset:',v:'Set cutter center on blank centerline; touch-off on top of blank'}]));
+      P.push(noteSection('Machine & indexing setup',ICONS.setup,[{k:'Dividing head:',v:`Rotate ${(getHeadRatio()/data.N).toFixed(4)} turns per tooth (${getHeadRatio()}:1 head).`},{k:'Table movement:',v:'Vertical only — feed cutter axially along the tooth gap'},{k:'Work offset:',v:'Set cutter center on blank centerline; touch-off on top of blank'}]));
       P.push(noteSection('Cutting sequence',ICONS.gear,[`1. Set vertical depth = whole depth = <strong>${data.h.toFixed(2)} mm</strong> in multiple roughing passes`,`2. Rough with two side passes (~2/3 depth) then finish to full depth`,`3. Index to next tooth, repeat until all ${data.N} teeth are cut`,`4. Deburr with a fine file or chamfer cutter after each tooth`]));
       P.push(noteSection('Quality checks',ICONS.check,[{k:'Pitch diameter:',v:`Measure across pins ≈ ${data.d.toFixed(2)} mm`},{k:'Tooth thickness:',v:`Chordal thickness ≈ ${data.s.toFixed(3)} mm`},{k:'Runout:',v:'Check radial runout ≤ 0.03 mm on OD'}]));
       P.push(noteSection('Warnings',ICONS.alert,['Cutter must be on the gear centerline; side off-center gives thin teeth','Do not exceed 80% of the recommended feed per tooth; avoid chatter','Use coolant throughout to prevent tooth discoloration'],'warn-note'));
@@ -594,7 +610,7 @@ function buildDetailedNote(type,data){
     }
     case 'helical':{
       P.push(noteSection('Workpiece setup',ICONS.caliper,[{k:'Blank:',v:`Turn OD to ⌀${data.Do.toFixed(2)} mm × ${data.faceWidth.toFixed(1)} mm face`},{k:'Mounting:',v:'Between centres with dividing head; check runout ≤ 0.02 mm'},{k:'Table angle:',v:`Swivel table by β = ${data.beta}° in the ${$('helixHand').value.toLowerCase()}-hand direction`}]));
-      P.push(noteSection('Lead & indexing setup',ICONS.setup,[{k:'Indexing:',v:`Simple indexing — ${(40/data.N).toFixed(4)} turns per tooth`},{k:'Leadscrew ratio:',v:`Connect change gears so table advances L = ${data.lead.toFixed(2)} mm per revolution`},{k:'Change gear train:',v:'Use the computed alternative; select the lowest-error candidate'},{k:'Table direction:',v:'Match the helix hand — reverse the train if needed'}]));
+      P.push(noteSection('Lead & indexing setup',ICONS.setup,[{k:'Indexing:',v:`Simple indexing — ${(getHeadRatio()/data.N).toFixed(4)} turns per tooth`},{k:'Leadscrew ratio:',v:`Connect change gears so table advances L = ${data.lead.toFixed(2)} mm per revolution`},{k:'Change gear train:',v:'Use the computed alternative; select the lowest-error candidate'},{k:'Table direction:',v:'Match the helix hand — reverse the train if needed'}]));
       P.push(noteSection('Cutting sequence',ICONS.gear,[`1. Feed cutter along the helix path via the leadscrew-driven table`,`2. Depth per pass ≈ 1/3 of whole depth (${(data.h/3).toFixed(2)} mm)`,`3. Index to next tooth after completing each helix pass`,`4. Verify lead on a scrap piece before cutting the actual blank`]));
       P.push(noteSection('Quality checks',ICONS.check,[{k:'Lead L:',v:`${data.lead.toFixed(2)} mm`},{k:'Helix direction:',v:`${$('helixHand').value} hand`},{k:'Virtual teeth:',v:`z_v = ${data.zv.toFixed(2)}`},{k:'Overlap ratio:',v:`ε_β = ${data.epsBeta.toFixed(3)}; should be ≥ 1.0`}]));
       P.push(noteSection('Warnings',ICONS.alert,['Backlash in the change gear train must be taken up in one direction only','Do not reverse the table mid-cut — leadscrew backlash will destroy the tooth','Confirm the lead is correct before the first pass'],'warn-note'));
@@ -615,13 +631,13 @@ function buildDetailedNote(type,data){
     }
     case 'wormShaft':{
       P.push(noteSection('Workpiece setup',ICONS.caliper,[{k:'Blank:',v:`Turn between centres to ⌀${(data.d+2).toFixed(2)} mm × ${data.wormLength} mm worm length`},{k:'Mounting:',v:'Steady rest recommended for long worm shafts'},{k:'Table angle:',v:`Swivel table to lead angle γ = ${data.gamma.toFixed(2)}°`}]));
-      P.push(noteSection('Cutting setup',ICONS.setup,[{k:'Indexing:',v:`Simple indexing for ${data.starts} start(s) — ${(40/data.starts).toFixed(4)} turns per start`},{k:'Leadscrew:',v:`Table must advance L = ${data.lead.toFixed(2)} mm per spindle revolution`},{k:'Cutter:',v:'Single-point worm-thread tool, tip width ≈ 0.697 × m'}]));
+      P.push(noteSection('Cutting setup',ICONS.setup,[{k:'Indexing:',v:`Simple indexing for ${data.starts} start(s) — ${(getHeadRatio()/data.starts).toFixed(4)} turns per start`},{k:'Leadscrew:',v:`Table must advance L = ${data.lead.toFixed(2)} mm per spindle revolution`},{k:'Cutter:',v:'Single-point worm-thread tool, tip width ≈ 0.697 × m'}]));
       P.push(noteSection('Warnings',ICONS.alert,['Never reverse the table while the cutter is engaged','Worm flanks must be smooth; re-cut if chatter marks appear','Coolant flow must be directed at the cutting zone continuously'],'warn-note'));
       break;
     }
     case 'wormWheel':{
       P.push(noteSection('Workpiece setup',ICONS.caliper,[{k:'Blank:',v:`Turn OD to throat diameter D₃ = ${data.D3.toFixed(2)} mm; ${data.faceWidth.toFixed(1)} mm face`},{k:'Bore:',v:`Machine bore to ${data.center.toFixed(2)} mm center distance from worm axis`},{k:'Mounting:',v:'Stub arbor; throat axis aligned with worm axis'}]));
-      P.push(noteSection('Cutting setup',ICONS.setup,[{k:'Indexing:',v:`Simple indexing for ${data.N} teeth — ${(40/data.N).toFixed(4)} turns per tooth`},{k:'Cutter:',v:'Hob or throated-form cutter matched to worm profile'},{k:'Table swivel:',v:`γ = ${data.gamma.toFixed(2)}°`},{k:'Center distance:',v:`Maintain ${data.center.toFixed(2)} mm`}]));
+      P.push(noteSection('Cutting setup',ICONS.setup,[{k:'Indexing:',v:`Simple indexing for ${data.N} teeth — ${(getHeadRatio()/data.N).toFixed(4)} turns per tooth`},{k:'Cutter:',v:'Hob or throated-form cutter matched to worm profile'},{k:'Table swivel:',v:`γ = ${data.gamma.toFixed(2)}°`},{k:'Center distance:',v:`Maintain ${data.center.toFixed(2)} mm`}]));
       P.push(noteSection('Warnings',ICONS.alert,['Throat formula must match the mating worm standard exactly','Center distance error directly translates into backlash and noise','Cut a test part and verify the contact pattern before production'],'warn-note'));
       break;
     }
@@ -633,7 +649,7 @@ function buildDetailedNote(type,data){
     }
     case 'sprocket':{
       P.push(noteSection('Workpiece setup',ICONS.caliper,[{k:'Blank:',v:`Turn OD to ${data.Do.toFixed(2)} mm × thickness equal to roller width`},{k:'Bore:',v:'Machine bore and keyway as specified'},{k:'Mounting:',v:'Mount on expanding mandrel; runout ≤ 0.03 mm'}]));
-      P.push(noteSection('Cutting setup',ICONS.setup,[{k:'Indexing:',v:`Simple indexing — ${(40/data.N).toFixed(4)} turns per tooth`},{k:'Cutter:',v:`Sprocket-form cutter for pitch ${data.P.toFixed(2)} mm`},{k:'Depth:',v:'Cut to root diameter'},{k:'Feed:',v:'Radial feed into the pitch circle'}]));
+      P.push(noteSection('Cutting setup',ICONS.setup,[{k:'Indexing:',v:`Simple indexing — ${(getHeadRatio()/data.N).toFixed(4)} turns per tooth`},{k:'Cutter:',v:`Sprocket-form cutter for pitch ${data.P.toFixed(2)} mm`},{k:'Depth:',v:'Cut to root diameter'},{k:'Feed:',v:'Radial feed into the pitch circle'}]));
       P.push(noteSection('Warnings',ICONS.alert,['Sprocket geometry is chain-standard specific','Roller seat must be smooth','Verify fit on a short test chain before production'],'warn-note'));
       break;
     }
@@ -691,16 +707,16 @@ function computeDifferentialExact(ratio,N,A,gs){
 function computeIndexing(animate){
   try{
     const method=$('indexMethod').value;
-    const ratio=integerAtLeast($('headRatio').value,1,'Head ratio');
+    const ratio=integerAtLeast(getHeadRatio(),1,'Head ratio');
     const currentGear=gearType.value;
-    if(method==='direct'){const N=integerAtLeast($('simpleN').value,1,'Divisions');if(24%N!==0)throw new Error('N must divide 24.');indexingOutput.innerHTML=`<strong>Direct indexing</strong><br>Crank = <strong>${24/N} holes</strong>.`;if(animate)flashBox(indexingBox);return;}
+    if(method==='direct'){const N=integerAtLeast($('simpleN').value,1,'Divisions');if(24%N!==0)throw new Error('N must divide 24.');indexingOutput.innerHTML=`<strong>Direct indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = <strong>${24/N} holes</strong>.`;if(animate)flashBox(indexingBox);return;}
     if(method==='simple'){
       const N=integerAtLeast(currentGear==='wormShaft'?teethInput.value:$('simpleN').value,1,'Divisions');
       const turns=ratio/N,full=Math.floor(turns),rem=turns-full;
-      if(Math.abs(rem)<1e-12){indexingOutput.innerHTML=`<strong>Simple indexing</strong><br>Crank = <strong>${full} full turn(s)</strong>.`;if(animate)flashBox(indexingBox);return;}
+      if(Math.abs(rem)<1e-12){indexingOutput.innerHTML=`<strong>Simple indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = <strong>${full} full turn(s)</strong>.`;if(animate)flashBox(indexingBox);return;}
       const den=N,num=Math.round(rem*den),options=findHoleOptions(num,den,getHoleCircles('simple'),full);
       if(!options.length)throw new Error(`No hole circle for ${num}/${den}.`);
-      let html=`<strong>Simple indexing</strong><br>Crank = ${ratio}/${N} = ${turns.toFixed(6)} turns<br><table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody>`;
+      let html=`<strong>Simple indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = ${ratio}/${N} = ${turns.toFixed(6)} turns<br><table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody>`;
       for(const o of options)html+=`<tr><td>${o.circle}</td><td>${o.full}</td><td>${o.holes}</td></tr>`;
       indexingOutput.innerHTML=html+'</tbody></table>';if(animate)flashBox(indexingBox);return;
     }
@@ -709,11 +725,11 @@ function computeIndexing(animate){
       if(min<0||min>=60)throw new Error('Minutes 0–59.');
       const totalDeg=deg+min/60,degPerTurn=360/ratio,totalTurns=totalDeg/degPerTurn;
       const full=Math.floor(totalTurns),frac=totalTurns-full;
-      if(Math.abs(frac)<1e-10){indexingOutput.innerHTML=`<strong>Angular indexing</strong><br>Crank = <strong>${full} full turn(s)</strong>.`;if(animate)flashBox(indexingBox);return;}
+      if(Math.abs(frac)<1e-10){indexingOutput.innerHTML=`<strong>Angular indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = <strong>${full} full turn(s)</strong>.`;if(animate)flashBox(indexingBox);return;}
       let best=null;const circles=getHoleCircles('angular');
       for(let den=1;den<=500;den++){const num=Math.round(frac*den);if(Math.abs(num/den-frac)<1e-8){const opts=findHoleOptions(num,den,circles,full);if(opts.length){best={fraction:`${num}/${den}`,options:opts};break;}}}
       if(!best)throw new Error(`No hole circle for ${frac.toFixed(6)}.`);
-      let html=`<strong>Angular indexing</strong><br>Angle: ${totalDeg.toFixed(4)}°<br>Crank = ${full} full + ${best.fraction} turn<br><table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody>`;
+      let html=`<strong>Angular indexing</strong> <span class="badge">${ratio}:1 head</span><br>Angle: ${totalDeg.toFixed(4)}°<br>Crank = ${full} full + ${best.fraction} turn<br><table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody>`;
       for(const o of best.options)html+=`<tr><td>${o.circle}</td><td>${o.full}</td><td>${o.holes}</td></tr>`;
       indexingOutput.innerHTML=html+'</tbody></table>';if(animate)flashBox(indexingBox);return;
     }
@@ -727,7 +743,7 @@ function computeIndexing(animate){
       if(Math.abs(simpleFrac)<1e-12){simpleTableHtml=`<table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody><tr><td>—</td><td>${simpleFull}</td><td>0</td></tr></tbody></table>`;}
       else{const opts=findHoleOptions(Math.round(simpleFrac*A),A,getHoleCircles('diff'),simpleFull);if(!opts.length)throw new Error(`No hole circle for A=${A}.`);simpleTableHtml=`<table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody>`;for(const o of opts)simpleTableHtml+=`<tr><td>${o.circle}</td><td>${o.full}</td><td>${o.holes}</td></tr>`;simpleTableHtml+=`</tbody></table>`;}
       const diff=computeDifferentialExact(ratio,N,A,gs);
-      let html=`<strong>Differential indexing</strong><br>Approx A = ${A}<br>Step 1 — Simple indexing for A:<br>Crank = ${ratio}/${A} = ${simpleTurns.toFixed(6)} turns<br>${simpleTableHtml}<br>Step 2 — Correction ratio: |A−N|×${ratio}/A = ${diff.rawFraction||'—'}`;
+      let html=`<strong>Differential indexing</strong> <span class="badge">${ratio}:1 head</span><br>Approx A = ${A}<br>Step 1 — Simple indexing for A:<br>Crank = ${ratio}/${A} = ${simpleTurns.toFixed(6)} turns<br>${simpleTableHtml}<br>Step 2 — Correction ratio: |A−N|×${ratio}/A = ${diff.rawFraction||'—'}`;
       if(diff.exactMatch){
         if(diff.compound)html+=`<br><strong>Compound gears:</strong> ${diff.compoundGears.first} × ${diff.compoundGears.second}<br><span class="small-note">Direction: ${diff.sign==='positive'?'same':'opposite'}</span><div style="margin-top:12px;background:#fff;border-radius:12px;padding:12px">${generateDiffCompoundDrawing(diff.compoundGears.first,diff.compoundGears.second,diff.sign)}</div>`;
         else html+=`<br><strong>Change gears:</strong> ${diff.drive} / ${diff.driven}<div style="margin-top:12px;background:#fff;border-radius:12px;padding:12px">${generateDiffSimpleDrawing(diff.drive,diff.driven,diff.sign)}</div>`;
@@ -744,20 +760,31 @@ function generateDiffCompoundDrawing(first,second,sign){const [a,b]=first.split(
    ============================================================ */
 function generateMultiStageTrains(gearSet,numGears,requiredRatio,maxResults=30){
   if(!Number.isInteger(numGears)||numGears<2||numGears%2!==0||gearSet.length<numGears||!Number.isFinite(requiredRatio)||requiredRatio<=0)return[];
-  const gears=[...gearSet],beamWidth=2500;
+  const gears=[...gearSet], n=gears.length;
+  const beamWidth=n>16?400:700;
+  const idxPairs=[];
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)idxPairs.push(i,j);
+  const score=r=>Math.abs(Math.log(r/requiredRatio));
   let states=[{used:0,ratio:1,pairs:[]}];
   for(let stage=0;stage<numGears/2;stage++){
     const next=[];
-    for(const st of states){for(let i=0;i<gears.length;i++)if(!(st.used&(1<<i))){for(let j=i+1;j<gears.length;j++)if(!(st.used&(1<<j))){const a=gears[i],b=gears[j];
-      next.push({used:st.used|(1<<i)|(1<<j),ratio:st.ratio*a/b,pairs:st.pairs.concat([{driver:a,driven:b}])});
-      next.push({used:st.used|(1<<i)|(1<<j),ratio:st.ratio*b/a,pairs:st.pairs.concat([{driver:b,driven:a}])});
-    }}}
-    next.sort((x,y)=>Math.abs(Math.log(x.ratio/requiredRatio))-Math.abs(Math.log(y.ratio/requiredRatio)));
+    for(const st of states){
+      const used=st.used;
+      for(let p=0;p<idxPairs.length;p+=2){
+        const i=idxPairs[p], j=idxPairs[p+1];
+        if((used&(1<<i))||(used&(1<<j)))continue;
+        const a=gears[i], b=gears[j], mask=used|(1<<i)|(1<<j);
+        const r1=st.ratio*a/b, r2=st.ratio*b/a;
+        next.push({used:mask,ratio:r1,score:score(r1),pairs:st.pairs.concat([{driver:a,driven:b}])});
+        next.push({used:mask,ratio:r2,score:score(r2),pairs:st.pairs.concat([{driver:b,driven:a}])});
+      }
+    }
+    if(!next.length){states=[];break;}
+    next.sort((x,y)=>x.score-y.score);
     states=next.slice(0,beamWidth);
-    if(!states.length)break;
   }
   const out=states.map(s=>({...s,error:Math.abs(s.ratio-requiredRatio)})).sort((a,b)=>a.error-b.error);
-  const seen=new Set(),unique=[];
+  const seen=new Set(), unique=[];
   for(const x of out){const key=x.pairs.map(p=>`${p.driver}/${p.driven}`).join('×');if(!seen.has(key)){seen.add(key);unique.push(x);}if(unique.length>=maxResults)break;}
   return unique;
 }
@@ -797,16 +824,11 @@ function generateArrangementSvg(pairs){
   const cx0=60, cY=H/2;
   let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;font-family:'Inter',sans-serif;">`;
 
-  // Shaft vertical dashed lines
   for(let i=0;i<nSh;i++){
     const x=cx0+i*spc;
     svg+=`<line x1="${x}" y1="34" x2="${x}" y2="${H-34}" stroke="#64748b" stroke-width="2" stroke-dasharray="6,5" opacity="0.55"/>`;
   }
 
-  // Assign two gears per intermediate shaft, alternating levels.
-  // level 0 => below centreline (driven from previous pair)
-  // level 1 => above centreline (driver for next pair)
-  // This keeps each pair's driver & driven at the SAME level so they mesh.
   const shafts=[];
   for(let i=0;i<nSh;i++){
     const g=[];
@@ -815,7 +837,6 @@ function generateArrangementSvg(pairs){
     shafts.push(g);
   }
 
-  // Draw gears
   const k=5.5;
   shafts.forEach((g,i)=>{
     const x=cx0+i*spc;
@@ -841,7 +862,6 @@ function generateArrangementSvg(pairs){
     });
   });
 
-  // Small key indicator on multi-gear shafts (shows rigid coupling)
   shafts.forEach((g,i)=>{
     if(g.length===2){
       const x=cx0+i*spc;
@@ -852,7 +872,6 @@ function generateArrangementSvg(pairs){
     }
   });
 
-  // Mesh arrows: driver of pair i <-> driven of pair i (same y)
   for(let i=0;i<nS;i++){
     const dp=shafts[i].find(q=>q.role==='driver');
     const rp=shafts[i+1].find(q=>q.role==='driven');
@@ -865,14 +884,12 @@ function generateArrangementSvg(pairs){
   }
   svg+=`<defs><marker id="mh" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><polygon points="0 0,10 5,0 10" fill="#e67e22"/></marker></defs>`;
 
-  // Shaft labels
   for(let i=0;i<nSh;i++){
     const x=cx0+i*spc;
     const label = i===0 ? 'Spindle' : (i===nSh-1 ? 'Worm' : `Int ${i}`);
     svg+=`<text x="${x}" y="${H-12}" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="700">${label}</text>`;
   }
 
-  // Overall ratio
   const totalRatio=pairs.reduce((a,p)=>a*(p.driver/p.driven),1);
   svg+=`<text x="${W/2}" y="20" text-anchor="middle" fill="#7dd3fc" font-size="12" font-weight="700">Overall ratio = ${totalRatio.toFixed(6)}</text>`;
 
@@ -887,7 +904,7 @@ function updateLeadGearTrains(lead,leadscrewPitch,gearSetValue,gearCountValue,an
     const gs=parseGearSet(gsSource,parseGearSet('25,25,30,35,40,50,55,60,70,80,90,100',[]),false);
     const nGSource=gearCountValue!==undefined?gearCountValue:$('leadGearCount').value;
     const nG=integerAtLeast(nGSource,2,'Number of gears');
-    const req=lead/(leadscrewPitch*40);
+    const req=lead/(leadscrewPitch*getHeadRatio());
     const alts=generateMultiStageTrains(gs,nG,req,30);
     currentAlternatives=alts;
     if(!alts.length){
@@ -1031,9 +1048,16 @@ function generateGearTypeDrawing(type,p){
 /* ============================================================
    9. COMPUTE DIMENSIONS
    ============================================================ */
-function computeDimensions(animate){
+let __lastComputeSig='';
+function computeDimensions(animate,force){
   const type=gearType.value;
   try{
+    const sig=JSON.stringify(collectProject());
+    if(!force&&sig===__lastComputeSig&&window.__gearViewer){
+      if(animate)flashBox(dimensionsBox);
+      return;
+    }
+    __lastComputeSig=sig;
     const common=validateCommon(type);
     let N=common.N,m=common.m,rackP=null,html='',note='',cutterMsg='',drawP={},viewerParams=null;
     if(type==='rack'){rackP=positiveNumber(rackCircularPitch.value,'Rack circular pitch');m=rackP/Math.PI;N=integerAtLeast(teethInput.value,1,'Rack teeth');}
@@ -1197,7 +1221,7 @@ class GearViewer{
     this.scene.background=new THREE.Color(0x0f172a);
     this.camera=new THREE.PerspectiveCamera(45,1,0.1,10000);
     this.camera.position.set(120,120,180);
-    this.renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+    this.renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
     this.parent.appendChild(this.renderer.domElement);
     this.controls=new OrbitControls(this.camera,this.renderer.domElement);
@@ -1211,15 +1235,27 @@ class GearViewer{
     this.sectionOn=false;
     this.annotationGroup=new THREE.Group();this.scene.add(this.annotationGroup);
     this.dimsOn=false;this.wireframe=false;this.transparent=false;this.autoRotate=false;
+    this._needsRender=true;
+    this.controls.addEventListener('change',()=>{this._needsRender=true;});
     const ro=new ResizeObserver(()=>this.resize());ro.observe(this.parent);
-    const tick=()=>{this.controls.update();this.renderer.render(this.scene,this.camera);requestAnimationFrame(tick);};tick();
+    const tick=()=>{
+      requestAnimationFrame(tick);
+      if(document.hidden)return;
+      if(!this.parent.clientWidth||!this.parent.clientHeight)return;
+      const moved=this.controls.update();
+      if(moved||this._needsRender){this.renderer.render(this.scene,this.camera);this._needsRender=false;}
+    };
+    tick();
   }
-  resize(){const w=this.parent.clientWidth,h=this.parent.clientHeight;this.renderer.setSize(w,h,false);this.camera.aspect=w/h;this.camera.updateProjectionMatrix();}
+  resize(){const w=this.parent.clientWidth,h=this.parent.clientHeight;if(!w||!h)return;this.renderer.setSize(w,h,false);this.camera.aspect=w/h;this.camera.updateProjectionMatrix();this._needsRender=true;}
   clear(){
     while(this.meshGroup.children.length){const c=this.meshGroup.children.pop();if(c.geometry)c.geometry.dispose();if(c.material){if(Array.isArray(c.material))c.material.forEach(m=>m.dispose());else c.material.dispose();}}
     while(this.annotationGroup.children.length){const c=this.annotationGroup.children.pop();if(c.geometry)c.geometry.dispose();if(c.material){if(c.material.map)c.material.map.dispose();c.material.dispose();}}
   }
   setGear(params){
+    const sig=JSON.stringify(params);
+    if(sig===this._lastSig&&this.meshGroup.children.length){this._needsRender=true;return;}
+    this._lastSig=sig;
     this.clear();
     const geo=this.buildGeometry(params);
     if(!geo)return;
@@ -1231,7 +1267,9 @@ class GearViewer{
     this.controls.target.set(0,0,0);
     this.camera.near=r*0.01;this.camera.far=r*50;this.camera.updateProjectionMatrix();
     this.controls.minDistance=r*0.5;this.controls.maxDistance=r*12;
-    if(this.dimsOn)this.addDims(params,geo);
+    this.addDims(params,geo);
+    this.annotationGroup.visible=this.dimsOn;
+    this._needsRender=true;
     this.resize();
   }
   buildGeometry(p){
@@ -1296,7 +1334,7 @@ class GearViewer{
     const N=p.N, rOuter=p.Do/2, rRoot=Math.max(p.df/2, rOuter*0.55);
     const width=p.faceWidth, rPitch=p.d/2, beta=p.beta, hand=p.hand;
     const shape=this.gearShape(N, rRoot, rOuter);
-    const geo=new THREE.ExtrudeGeometry(shape,{depth:width,bevelEnabled:false,curveSegments:2,steps:24});
+    const geo=new THREE.ExtrudeGeometry(shape,{depth:width,bevelEnabled:false,curveSegments:2,steps:16});
     geo.translate(0,0,-width/2);
     const pos=geo.attributes.position;
     const twistRate=Math.tan(beta)*hand/rPitch;
@@ -1316,7 +1354,7 @@ class GearViewer{
     const N=p.N, rOuter=p.Do/2, rRoot=Math.max(p.df/2, rOuter*0.55);
     const width=p.faceWidth, coneA=p.coneAngle||Math.PI/6;
     const shape=this.gearShape(N, rRoot, rOuter);
-    const geo=new THREE.ExtrudeGeometry(shape,{depth:width,bevelEnabled:false,curveSegments:2,steps:8});
+    const geo=new THREE.ExtrudeGeometry(shape,{depth:width,bevelEnabled:false,curveSegments:2,steps:6});
     geo.translate(0,0,-width/2);
     const pos=geo.attributes.position;
     const shrink=Math.min(0.85, Math.tan(coneA)*(width)/rOuter);
@@ -1352,8 +1390,8 @@ class GearViewer{
     const geos=[core];
     const pitch=lead/starts;
     const turns=len/pitch;
-    const ptsPerTurn=32;
-    const segs=Math.max(80, Math.floor(turns*ptsPerTurn));
+    const ptsPerTurn=20;
+    const segs=Math.min(420, Math.max(60, Math.floor(turns*ptsPerTurn)));
     const tubeR=Math.max(threadDepth*0.55, p.pitch*0.35);
     for(let s=0;s<starts;s++){
       const offset=(s/starts)*Math.PI*2;
@@ -1365,7 +1403,7 @@ class GearViewer{
         pts.push(new THREE.Vector3(r*Math.cos(ang), r*Math.sin(ang), z));
       }
       const curve=new THREE.CatmullRomCurve3(pts);
-      const tube=new THREE.TubeGeometry(curve,segs,tubeR,8,false);
+      const tube=new THREE.TubeGeometry(curve,segs,tubeR,6,false);
       geos.push(tube);
     }
     const merged=this.mergeGeometries(geos);
@@ -1377,7 +1415,7 @@ class GearViewer{
     const width=p.faceWidth;
     const Rthroat=p.throatRadius||(rOuter*1.2);
     const shape=this.gearShape(N, rRoot, rOuter);
-    const geo=new THREE.ExtrudeGeometry(shape,{depth:width,bevelEnabled:false,curveSegments:2,steps:8});
+    const geo=new THREE.ExtrudeGeometry(shape,{depth:width,bevelEnabled:false,curveSegments:2,steps:6});
     geo.translate(0,0,-width/2);
     const pos=geo.attributes.position;
     for(let i=0;i<pos.count;i++){
@@ -1493,12 +1531,12 @@ class GearViewer{
     spr.position.copy(pos);spr.scale.set(40,10,1);
     this.annotationGroup.add(spr);
   }
-  setAutoRotate(v){this.autoRotate=v;this.controls.autoRotate=v;}
-  setWireframe(v){this.wireframe=v;this.meshGroup.children.forEach(m=>{if(m.material){if(Array.isArray(m.material))m.material.forEach(x=>x.wireframe=v);else m.material.wireframe=v;}});}
-  setTransparent(v){this.transparent=v;this.meshGroup.children.forEach(m=>{if(m.material){const s=mat=>{mat.transparent=v;mat.opacity=v?0.45:1;mat.needsUpdate=true;};if(Array.isArray(m.material))m.material.forEach(s);else s(m.material);}});}
-  setSection(v){this.sectionOn=v;this.meshGroup.children.forEach(m=>{if(m.material){const s=mat=>{mat.clippingPlanes=v?[this.clipPlane]:[];mat.clipShadows=true;mat.needsUpdate=true;};if(Array.isArray(m.material))m.material.forEach(s);else s(m.material);}});}
-  setDims(v){this.dimsOn=v;this.annotationGroup.visible=v;}
-  resetView(){const geo=this.meshGroup.children[0]?.geometry;if(!geo)return;geo.computeBoundingSphere();const r=geo.boundingSphere.radius;this.camera.position.set(r*1.2,r*1.1,r*1.6);this.controls.target.set(0,0,0);}
+  setAutoRotate(v){this.autoRotate=v;this.controls.autoRotate=v;this._needsRender=true;}
+  setWireframe(v){this.wireframe=v;this.meshGroup.children.forEach(m=>{if(m.material){if(Array.isArray(m.material))m.material.forEach(x=>x.wireframe=v);else m.material.wireframe=v;}});this._needsRender=true;}
+  setTransparent(v){this.transparent=v;this.meshGroup.children.forEach(m=>{if(m.material){const s=mat=>{mat.transparent=v;mat.opacity=v?0.45:1;mat.needsUpdate=true;};if(Array.isArray(m.material))m.material.forEach(s);else s(m.material);}});this._needsRender=true;}
+  setSection(v){this.sectionOn=v;this.meshGroup.children.forEach(m=>{if(m.material){const s=mat=>{mat.clippingPlanes=v?[this.clipPlane]:[];mat.clipShadows=true;mat.needsUpdate=true;};if(Array.isArray(m.material))m.material.forEach(s);else s(m.material);}});this._needsRender=true;}
+  setDims(v){this.dimsOn=v;this.annotationGroup.visible=v;this._needsRender=true;}
+  resetView(){const geo=this.meshGroup.children[0]?.geometry;if(!geo)return;geo.computeBoundingSphere();const r=geo.boundingSphere.radius;this.camera.position.set(r*1.2,r*1.1,r*1.6);this.controls.target.set(0,0,0);this._needsRender=true;}
   exportSTL(){const e=new STLExporter();const s=e.parse(this.meshGroup,{binary:false});this.download(new Blob([s],{type:'model/stl'}),'gear.stl');}
   exportGLB(){const e=new GLTFExporter();e.parse(this.meshGroup,(r)=>{const b=r instanceof ArrayBuffer?new Blob([r],{type:'model/gltf-binary'}):new Blob([JSON.stringify(r)],{type:'model/gltf+json'});this.download(b,r instanceof ArrayBuffer?'gear.glb':'gear.gltf');},(err)=>toast('GLB export failed: '+err,'error'),{binary:true});}
   download(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast(`Downloaded ${name}`,'success');}
@@ -1537,7 +1575,7 @@ function setTheme(mode){document.documentElement.dataset.theme=mode;localStorage
 $('themeBtn').addEventListener('click',()=>{const c=document.documentElement.dataset.theme;setTheme(c==='dark'?'light':'dark');});
 
 function collectProject(){
-  const ids=['gearType','teeth','module','dp','rackCircularPitch','helixAngle','helixHand','faceWidth','helicalPressureAngle','leadscrewPitch','manualLead','shaftAngle','pitchCone','spiralAngle','spiralHand','spiralLeadscrewPitch','spiralManualLead','wormStarts','wormOD','wormLengthFormula','wwStarts','wormPD','profileShift','throatFormula','chainPitch','rollerDia','spurMatingTeeth','helicalMatingTeeth','leadGearSet','leadGearCount','spiralLeadGearSet','spiralLeadGearCount','indexMethod','headRatio','simpleN','customHolesSimple','diffRequiredN','diffApproxA','customHolesDiff','diffGearSet','angleDeg','angleMin','customHolesAngular','leadMode','spiralLeadMode'];
+  const ids=['gearType','teeth','module','dp','rackCircularPitch','helixAngle','helixHand','faceWidth','helicalPressureAngle','leadscrewPitch','manualLead','shaftAngle','pitchCone','spiralAngle','spiralHand','spiralLeadscrewPitch','spiralManualLead','wormStarts','wormOD','wormLengthFormula','wwStarts','wormPD','profileShift','throatFormula','chainPitch','rollerDia','spurMatingTeeth','helicalMatingTeeth','leadGearSet','leadGearCount','spiralLeadGearSet','spiralLeadGearCount','indexMethod','headType','headRatio','simpleN','customHolesSimple','diffRequiredN','diffApproxA','customHolesDiff','diffGearSet','angleDeg','angleMin','customHolesAngular','leadMode','spiralLeadMode'];
   const obj={_v:1};for(const id of ids){const el=$(id);if(el)obj[id]=el.value;}
   obj._isMetric=isMetric;obj._theme=document.documentElement.dataset.theme;return obj;
 }
@@ -1546,7 +1584,7 @@ function applyProject(obj){
   for(const [k,v] of Object.entries(obj)){if(k.startsWith('_'))continue;const el=$(k);if(el)el.value=v;}
   if(typeof obj._isMetric==='boolean'){isMetric=obj._isMetric;metricBtn.classList.toggle('active',isMetric);imperialBtn.classList.toggle('active',!isMetric);}
   if(obj._theme)setTheme(obj._theme);
-  updateVisibility();updateMethodUI();syncTeeth();toast('Project loaded','success');
+  syncHeadTypeUI();updateVisibility();updateMethodUI();syncTeeth();toast('Project loaded','success');
 }
 $('saveProjectBtn').addEventListener('click',()=>{const d=JSON.stringify(collectProject(),null,2);const b=new Blob([d],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`gear-project-${Date.now()}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);toast('Project downloaded','success');});
 $('loadProjectBtn').addEventListener('click',()=>{const i=document.createElement('input');i.type='file';i.accept='.json';i.addEventListener('change',()=>{const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{applyProject(JSON.parse(r.result));}catch(e){toast('Invalid project file','error');}};r.readAsText(f);});i.click();});
@@ -1575,9 +1613,9 @@ $('removeLeadPreset').addEventListener('click',()=>{removeLastPreset('leadPreset
 $('saveSpiralLeadPreset').addEventListener('click',()=>{const v=spiralLeadGearSet.value.trim();if(v)savePreset('spiralLeadPresets',spiralLeadGearPreset,v,'📌 Custom',window.__defaultSpiralPresets);computeDimensions(true);toast('Preset saved','success');});
 $('removeSpiralLeadPreset').addEventListener('click',()=>{removeLastPreset('spiralLeadPresets',spiralLeadGearPreset,window.__defaultSpiralPresets);spiralLeadGearSet.value=spiralLeadGearPreset.value;computeDimensions(true);});
 gearType.addEventListener('change',()=>{updateVisibility();updateInputLabels();computeIndexing(true);});
-$('computeDimensionsBtn').addEventListener('click',()=>computeDimensions(true));
+$('computeDimensionsBtn').addEventListener('click',()=>computeDimensions(true,true));
 $('computeIndexingBtn').addEventListener('click',()=>computeIndexing(true));
-$('mobileCompute').addEventListener('click',()=>{computeDimensions(true);computeIndexing(true);toast('Computed','success');});
+$('mobileCompute').addEventListener('click',()=>{computeDimensions(true,true);computeIndexing(true);toast('Computed','success');});
 $('printBtn').addEventListener('click',()=>{window.print();});
 $('indexMethod').addEventListener('change',updateMethodUI);
 teethInput.addEventListener('input',()=>{syncTeeth();computeDimensionsDebounced();});
@@ -1603,14 +1641,31 @@ holePresetDiff.addEventListener('change',()=>{if($('indexMethod').value==='diffe
 customHolesDiff.addEventListener('input',()=>{if($('indexMethod').value==='differential')computeIndexing(true);});
 holePresetAngular.addEventListener('change',()=>{if($('indexMethod').value==='angular')computeIndexing(true);});
 customHolesAngular.addEventListener('input',()=>{if($('indexMethod').value==='angular')computeIndexing(true);});
-$('headRatio').addEventListener('input',()=>computeIndexing(true));
+
+/* Indexing head 30 / 40 / 60 / custom */
+headTypeSel.addEventListener('change',()=>{
+  if(headTypeSel.value==='custom'){
+    headRatioRow.style.display='flex';
+    headRatioInput.focus();
+  } else {
+    headRatioInput.value=headTypeSel.value;
+    headRatioRow.style.display='none';
+    computeDimensions(true);
+    computeIndexing(true);
+  }
+});
+headRatioInput.addEventListener('input',()=>{
+  syncHeadTypeUI();
+  computeDimensionsDebounced();
+  computeIndexing(true);
+});
 $('simpleN').addEventListener('input',()=>computeIndexing(true));
 $('diffRequiredN').addEventListener('input',()=>computeIndexing(true));
 $('diffApproxA').addEventListener('input',()=>computeIndexing(true));
 $('angleDeg').addEventListener('input',()=>computeIndexing(true));
 $('angleMin').addEventListener('input',()=>computeIndexing(true));
 
-$('submitSecret').addEventListener('click',()=>{if($('secretInput').value===SECRET){sessionStorage.setItem('workshop_access',SECRET);checkAccess();initViewer();updateVisibility();updateMethodUI();syncTeeth();toast('Welcome','success');}else toast('Wrong secret number','error');});
+$('submitSecret').addEventListener('click',()=>{if($('secretInput').value===SECRET){sessionStorage.setItem('workshop_access',SECRET);checkAccess();initViewer();updateVisibility();updateMethodUI();syncTeeth();syncHeadTypeUI();toast('Welcome','success');}else toast('Wrong secret number','error');});
 $('secretInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('submitSecret').click();});
 
 window.__defaultLeadPresets=[{value:"25,25,30,35,40,50,55,60,70,80,90,100",label:"Standard set (25‑100)"},{value:"24,24,28,32,40,44,48,56,64,72,86,100",label:"Alternative set (24‑100)"},{value:"20,20,25,30,35,40,45,50,55,60,70,80,90,100,110,120",label:"Extended set (20‑120)"},{value:"10,20,30,40,50,60,70,80,90,100,110,120",label:"10‑120 step 10"}];
@@ -1622,6 +1677,8 @@ loadPresets('spiralLeadPresets',spiralLeadGearPreset,window.__defaultSpiralPrese
 leadGearPreset.value=window.__defaultLeadPresets[0].value;leadGearSet.value=leadGearPreset.value;
 spiralLeadGearPreset.value=window.__defaultSpiralPresets[0].value;spiralLeadGearSet.value=spiralLeadGearPreset.value;
 diffGearPreset.value=window.__defaultDiffPresets[0].value;diffGearSet.value=diffGearPreset.value;
+
+syncHeadTypeUI();
 
 if(checkAccess()){initViewer();updateVisibility();updateMethodUI();syncTeeth();}
 
