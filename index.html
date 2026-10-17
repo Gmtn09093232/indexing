@@ -186,8 +186,8 @@ hr.sep{margin:12px 0;border:none;border-top:1px solid #334155}
           <svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
         </span>
         <div>
-          <h1>Gear Manufacturing Workshop</h1>
-          <div class="sub">Milling Machine · Indexing · 3D</div>
+          <h1>Gear Manufacturing</h1>
+          <div class="sub">By Gizie Melkamu</div>
         </div>
       </div>
       <div class="header-actions">
@@ -491,7 +491,7 @@ import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 /* ============================================================
    1. HELPERS
    ============================================================ */
-const SECRET="0120";
+const SECRET="906";
 function checkAccess(){const ok=sessionStorage.getItem('workshop_access')===SECRET;document.getElementById('lock').classList.toggle('show',!ok);document.getElementById('workshop').classList.toggle('show',ok);return ok;}
 function gcd(a,b){a=Math.abs(Math.trunc(a));b=Math.abs(Math.trunc(b));while(b){const t=b;b=a%b;a=t;}return a||1;}
 function finiteNumber(v){const n=Number(v);return Number.isFinite(n)?n:null;}
