@@ -480,7 +480,6 @@ function gcd(a,b){a=Math.abs(Math.trunc(a));b=Math.abs(Math.trunc(b));while(b){c
 function finiteNumber(v){const n=Number(v);return Number.isFinite(n)?n:null;}
 function positiveNumber(v,n){const x=finiteNumber(v);if(x===null||x<=0)throw new Error(`${n} must be > 0.`);return x;}
 function integerAtLeast(v,min,n){const x=Number(v);if(!Number.isInteger(x)||x<min)throw new Error(`${n} must be an integer ≥ ${min}.`);return x;}
-function angleDeg(v,n,min=0,max=90){const x=finiteNumber(v);if(x===null||x<min||x>max)throw new Error(`${n} must be between ${min}° and ${max}°.`);return x;}
 function showWarning(t,m){t.innerHTML=`<span class="warn"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>${m}</span>`;}
 function parseGearSet(v,fb=[],dedupe=true){const nums=String(v??'').split(',').map(x=>Number(x.trim())).filter(x=>Number.isInteger(x)&&x>0);const out=nums.length?nums:[...fb];return (dedupe?[...new Set(out)]:out.slice()).sort((a,b)=>a-b);}
 
@@ -514,7 +513,7 @@ setInterval(async () => {
 
 const gearType=$('gearType'),teethInput=$('teeth'),moduleInput=$('module'),dpInput=$('dp');
 const metricBtn=$('metricModeBtn'),imperialBtn=$('imperialModeBtn'),metricBlock=$('metricBlock'),imperialBlock=$('imperialBlock');
-const rackPitchBlock=$('rackPitchBlock'),rackCircularPitch=$('rackCircularPitch'),modDpSwitch=$('modDpSwitch');
+const rackPitchBlock=$('rackPitchBlock'),rackCircularPitch=$('rackCircularPitch');
 const spurExtra=$('spurExtra'),helicalDiv=$('helicalExtra'),bevelDiv=$('bevelExtra');
 const spiralDiv=$('spiralExtra'),wormDiv=$('wormExtra'),wormWheelDiv=$('wormWheelExtra');
 const sprocketDiv=$('sprocketExtra'),rackExtra=$('rackExtra');
@@ -573,7 +572,6 @@ function getHoleCircles(mode='simple'){
   return c.sort((a,b)=>a-b);
 }
 function findHoleOptions(num,den,circles,base=0){num=Math.trunc(num);den=Math.trunc(den);if(den<=0)return[];const g=gcd(num,den);num/=g;den/=g;const o=[];for(const hc of circles){if(hc%den===0){const mult=hc/den;let holes=num*mult;const extra=Math.floor(holes/hc);holes%=hc;o.push({circle:hc,full:base+extra,holes,fraction:`${num}/${den}`});}}return o;}
-function validateCommon(type){const N=Number(teethInput.value);if(type!=='rack'&&type!=='wormShaft')integerAtLeast(N,1,'Number of teeth');const m=getModule();if(type!=='sprocket'&&type!=='rack'&&(m===null||m<=0))throw new Error('Enter a valid module or DP.');if(type==='rack')positiveNumber(rackCircularPitch.value,'Rack circular pitch');return {N,m};}
 
 /* ============================================================
    3. NOTES & CUTTER
@@ -650,32 +648,28 @@ function buildDetailedNote(type,data){
 function buildDetailedCutter(type,data){
   const C=[];
   switch(type){
-    case 'spur':C.push(noteSection('Involute cutter selection',ICONS.target,[{k:'Cutter:',v:`No. ${data.cutterNo} involute gear cutter`},{k:'Module:',v:`${data.m.toFixed(3)} mm`},{k:'Pressure angle:',v:`${data.alpha}°`},{k:'Tooth range:',v:`Standard 8-cutter set for z = ${data.N}`},{k:'Material:',v:'HSS (M2 or M35)'}]));
-      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'80–150 rpm steel; 250–400 rpm aluminium'},{k:'Feed:',v:'0.5–1.0 mm/tooth rough; 0.2–0.4 finish'},{k:'Depth per pass:',v:`≤ ${(data.h/3).toFixed(2)} mm rough; finish ${data.h.toFixed(2)} mm`},{k:'Coolant:',v:'Flood coolant'}]));
-      C.push(noteSection('Cutter condition',ICONS.check,['Inspect for chipped edges','Re-sharpen if flank wear ≥ 0.2 mm','Never use a dull cutter'],'ok-note'));break;
-    case 'helical':C.push(noteSection('Involute cutter selection',ICONS.target,[{k:'Cutter:',v:`No. ${data.cutterNo} involute gear cutter`},{k:'Module:',v:`${data.m.toFixed(3)} mm`},{k:'Pressure angle:',v:`${data.alphaN}°`},{k:'Virtual teeth:',v:`z_v = ${data.zv.toFixed(2)}`}]));
-      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'60–120 rpm steel'},{k:'Feed:',v:'0.4–0.8 mm/tooth rough; 0.15–0.3 finish'},{k:'Table angle:',v:`β = ${data.beta}° ${$('helixHand').value.toLowerCase()}-hand`},{k:'Coolant:',v:'Flood coolant'}]));
-      C.push(noteSection('Cutter condition',ICONS.check,['Use virtual-tooth cutter','Verify sharp edge','Re-sharpen when flank wear ≥ 0.15 mm'],'ok-note'));break;
-    case 'bevel':C.push(noteSection('Bevel cutter selection',ICONS.target,[{k:'Cutter:',v:'Straight-bevel cutter (Gleason / Klingelnberg)'},{k:'Module:',v:`${data.m.toFixed(3)} mm`},{k:'Tooth count:',v:`z = ${data.N}`},{k:'Pressure angle:',v:'Match mating member'}]));
-      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'60–100 rpm steel'},{k:'Feed:',v:'0.3–0.6 mm/tooth rough; 0.1–0.2 finish'},{k:'Depth:',v:`${data.h.toFixed(2)} mm at large end`},{k:'Coolant:',v:'Flood coolant'}]));
-      C.push(noteSection('Setup note',ICONS.check,['Use a test gauge before cutting','Root angle must match exactly','Cut one trial tooth'],'ok-note'));break;
-    case 'spiralBevel':C.push(noteSection('Spiral-bevel cutter system',ICONS.target,[{k:'System:',v:'Face-mill or face-hob (Gleason/Oerlikon/Klingelnberg)'},{k:'Module:',v:`${data.m.toFixed(3)} mm`},{k:'Spiral angle:',v:`ψ = ${data.psi}° — ${$('spiralHand').value} hand`}]));
-      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'50–80 rpm steel'},{k:'Feed:',v:'0.15–0.3 mm/tooth'},{k:'Coolant:',v:'Flood coolant'}]));
-      C.push(noteSection('Setup note',ICONS.check,['Requires specific generator','Verify tooth contact with marking compound','Adjust cutter position iteratively'],'warn-note'));break;
+    case 'spur':C.push(noteSection('Involute cutter selection',ICONS.target,[{k:'Cutter:',v:`No. ${data.cutterNo} involute gear cutter`},{k:'Module:',v:`${data.m.toFixed(3)} mm`},{k:'Pressure angle:',v:`${data.alpha}°`},{k:'Material:',v:'HSS (M2 or M35)'}]));
+      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'80–150 rpm steel; 250–400 rpm aluminium'},{k:'Feed:',v:'0.5–1.0 mm/tooth rough; 0.2–0.4 finish'},{k:'Coolant:',v:'Flood coolant'}]));break;
+    case 'helical':C.push(noteSection('Involute cutter selection',ICONS.target,[{k:'Cutter:',v:`No. ${data.cutterNo} involute gear cutter (use z_v = ${data.zv.toFixed(1)})`},{k:'Module:',v:`${data.m.toFixed(3)} mm`},{k:'Pressure angle:',v:`${data.alphaN}°`}]));
+      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'60–120 rpm steel'},{k:'Table angle:',v:`β = ${data.beta}° ${$('helixHand').value.toLowerCase()}-hand`},{k:'Coolant:',v:'Flood coolant'}]));break;
+    case 'bevel':C.push(noteSection('Bevel cutter selection',ICONS.target,[{k:'Cutter:',v:'Straight-bevel cutter (Gleason / Klingelnberg)'},{k:'Module:',v:`${data.m.toFixed(3)} mm`},{k:'Tooth count:',v:`z = ${data.N}`}]));
+      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'60–100 rpm steel'},{k:'Depth:',v:`${data.h.toFixed(2)} mm at large end`}]));break;
+    case 'spiralBevel':C.push(noteSection('Spiral-bevel cutter system',ICONS.target,[{k:'System:',v:'Face-mill or face-hob'},{k:'Module:',v:`${data.m.toFixed(3)} mm`},{k:'Spiral angle:',v:`ψ = ${data.psi}° — ${$('spiralHand').value} hand`}]));
+      C.push(noteSection('Setup note',ICONS.check,['Requires specific generator','Verify tooth contact with marking compound'],'warn-note'));break;
     case 'wormShaft':C.push(noteSection('Worm cutter selection',ICONS.target,[{k:'Cutter:',v:'Single-point worm-thread tool'},{k:'Tip width:',v:`${data.tipWidth.toFixed(3)} mm`},{k:'Included angle:',v:'40° total (20° PA)'}]));
-      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'60–120 rpm steel'},{k:'Table angle:',v:`γ = ${data.gamma.toFixed(2)}°`},{k:'Coolant:',v:'Flood coolant'}]));break;
-    case 'wormWheel':C.push(noteSection('Worm-wheel cutter selection',ICONS.target,[{k:'Cutter:',v:'Worm hob or throated fly-cutter'},{k:'Cutter profile:',v:'Same as mating worm'},{k:'Cutter diameter:',v:`d_w = ${data.wormPitchDia.toFixed(2)} mm`}]));
-      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'40–80 rpm steel'},{k:'Feed:',v:'0.1–0.3 mm/min radial'},{k:'Center distance:',v:`${data.center.toFixed(2)} mm`}]));break;
-    case 'rack':C.push(noteSection('Rack cutter selection',ICONS.target,[{k:'Cutter:',v:'Rack-form cutter'},{k:'Module:',v:`${data.m.toFixed(4)} mm`},{k:'Pressure angle:',v:'20°'}]));
-      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'80–150 rpm steel'},{k:'Feed:',v:'0.5–1.0 mm/tooth rough'},{k:'Coolant:',v:'Flood coolant'}]));break;
-    case 'sprocket':C.push(noteSection('Sprocket cutter selection',ICONS.target,[{k:'Cutter:',v:'Sprocket-form cutter'},{k:'Chain pitch:',v:`${data.P.toFixed(3)} mm`},{k:'Roller dia:',v:`${data.Dr.toFixed(3)} mm`},{k:'Root radius:',v:`${data.ri.toFixed(3)} mm`}]));
-      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'100–180 rpm steel'},{k:'Feed:',v:'0.3–0.6 mm/tooth rough'},{k:'Coolant:',v:'Flood coolant'}]));break;
+      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'60–120 rpm steel'},{k:'Table angle:',v:`γ = ${data.gamma.toFixed(2)}°`}]));break;
+    case 'wormWheel':C.push(noteSection('Worm-wheel cutter selection',ICONS.target,[{k:'Cutter:',v:'Worm hob or throated fly-cutter'},{k:'Cutter diameter:',v:`d_w = ${data.wormPitchDia.toFixed(2)} mm`}]));
+      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Center distance:',v:`${data.center.toFixed(2)} mm`}]));break;
+    case 'rack':C.push(noteSection('Rack cutter selection',ICONS.target,[{k:'Cutter:',v:'Rack-form cutter'},{k:'Module:',v:`${data.m.toFixed(4)} mm`}]));
+      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Feed:',v:'0.5–1.0 mm/tooth rough'}]));break;
+    case 'sprocket':C.push(noteSection('Sprocket cutter selection',ICONS.target,[{k:'Cutter:',v:'Sprocket-form cutter'},{k:'Chain pitch:',v:`${data.P.toFixed(3)} mm`},{k:'Roller dia:',v:`${data.Dr.toFixed(3)} mm`}]));
+      C.push(noteSection('Cutting parameters',ICONS.wrench,[{k:'Spindle speed:',v:'100–180 rpm steel'}]));break;
   }
   return C.join('');
 }
 
 /* ============================================================
-   4. INDEXING (full)
+   4. INDEXING — with fixes: worm uses starts, angular tolerance 1e-6
    ============================================================ */
 function computeDifferentialExact(ratio,N,A,gs){
   if(!Number.isInteger(ratio)||ratio<=0)return{exactMatch:false,errorMsg:'Head ratio must be a positive integer.'};
@@ -700,46 +694,87 @@ function computeIndexing(animate){
     const method=$('indexMethod').value;
     const ratio=integerAtLeast(getHeadRatio(),1,'Head ratio');
     const currentGear=gearType.value;
-    if(method==='direct'){const N=integerAtLeast($('simpleN').value,1,'Divisions');if(24%N!==0)throw new Error('N must divide 24.');indexingOutput.innerHTML=`<strong>Direct indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = <strong>${24/N} holes</strong>.`;if(animate)flashBox(indexingBox);return;}
+
+    if(method==='direct'){
+      const N=integerAtLeast($('simpleN').value,1,'Divisions');
+      if(24%N!==0)throw new Error('N must divide 24.');
+      indexingOutput.innerHTML=`<strong>Direct indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = <strong>${24/N} holes</strong>.`;
+      if(animate)flashBox(indexingBox);
+      return;
+    }
+
     if(method==='simple'){
-      const N=integerAtLeast(currentGear==='wormShaft'?teethInput.value:$('simpleN').value,1,'Divisions');
-      const turns=ratio/N,full=Math.floor(turns),rem=turns-full;
-      if(Math.abs(rem)<1e-12){indexingOutput.innerHTML=`<strong>Simple indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = <strong>${full} full turn(s)</strong>.`;if(animate)flashBox(indexingBox);return;}
+      // FIX: worm shaft divides by starts, not teeth
+      let Nval;
+      if(currentGear==='wormShaft') Nval = Number($('wormStarts').value) || 1;
+      else                           Nval = Number($('simpleN').value);
+      const N=integerAtLeast(Nval,1,'Divisions');
+      const turns=ratio/N, full=Math.floor(turns), rem=turns-full;
+      if(Math.abs(rem)<1e-12){
+        indexingOutput.innerHTML=`<strong>Simple indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = <strong>${full} full turn(s)</strong>.`;
+        if(animate)flashBox(indexingBox); return;
+      }
       const den=N,num=Math.round(rem*den),options=findHoleOptions(num,den,getHoleCircles('simple'),full);
       if(!options.length)throw new Error(`No hole circle for ${num}/${den}.`);
       let html=`<strong>Simple indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = ${ratio}/${N} = ${turns.toFixed(6)} turns<br><table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody>`;
       for(const o of options)html+=`<tr><td>${o.circle}</td><td>${o.full}</td><td>${o.holes}</td></tr>`;
-      indexingOutput.innerHTML=html+'</tbody></table>';if(animate)flashBox(indexingBox);return;
+      indexingOutput.innerHTML=html+'</tbody></table>';
+      if(animate)flashBox(indexingBox);
+      return;
     }
+
     if(method==='angular'){
-      const deg=finiteNumber($('angleDeg').value)??0,min=finiteNumber($('angleMin').value)??0;
+      const deg=finiteNumber($('angleDeg').value)??0, min=finiteNumber($('angleMin').value)??0;
       if(min<0||min>=60)throw new Error('Minutes 0–59.');
-      const totalDeg=deg+min/60,degPerTurn=360/ratio,totalTurns=totalDeg/degPerTurn;
-      const full=Math.floor(totalTurns),frac=totalTurns-full;
-      if(Math.abs(frac)<1e-10){indexingOutput.innerHTML=`<strong>Angular indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = <strong>${full} full turn(s)</strong>.`;if(animate)flashBox(indexingBox);return;}
-      let best=null;const circles=getHoleCircles('angular');
-      for(let den=1;den<=500;den++){const num=Math.round(frac*den);if(Math.abs(num/den-frac)<1e-8){const opts=findHoleOptions(num,den,circles,full);if(opts.length){best={fraction:`${num}/${den}`,options:opts};break;}}}
+      const totalDeg=deg+min/60, degPerTurn=360/ratio, totalTurns=totalDeg/degPerTurn;
+      const full=Math.floor(totalTurns), frac=totalTurns-full;
+      if(Math.abs(frac)<1e-10){
+        indexingOutput.innerHTML=`<strong>Angular indexing</strong> <span class="badge">${ratio}:1 head</span><br>Crank = <strong>${full} full turn(s)</strong>.`;
+        if(animate)flashBox(indexingBox); return;
+      }
+      // FIX: tolerance 1e-6 instead of 1e-8 — real angles are rarely that exact
+      let best=null;
+      const circles=getHoleCircles('angular');
+      for(let den=1;den<=500;den++){
+        const num=Math.round(frac*den);
+        if(Math.abs(num/den - frac) < 1e-6){
+          const opts=findHoleOptions(num,den,circles,full);
+          if(opts.length){ best={fraction:`${num}/${den}`,options:opts}; break; }
+        }
+      }
       if(!best)throw new Error(`No hole circle for ${frac.toFixed(6)}.`);
       let html=`<strong>Angular indexing</strong> <span class="badge">${ratio}:1 head</span><br>Angle: ${totalDeg.toFixed(4)}°<br>Crank = ${full} full + ${best.fraction} turn<br><table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody>`;
       for(const o of best.options)html+=`<tr><td>${o.circle}</td><td>${o.full}</td><td>${o.holes}</td></tr>`;
-      indexingOutput.innerHTML=html+'</tbody></table>';if(animate)flashBox(indexingBox);return;
+      indexingOutput.innerHTML=html+'</tbody></table>';
+      if(animate)flashBox(indexingBox);
+      return;
     }
+
     if(method==='differential'){
       const N=integerAtLeast($('diffRequiredN').value,1,'Required divisions');
       const A=integerAtLeast($('diffApproxA').value,1,'Approximate divisions');
       if(A===N)throw new Error('A must differ from N.');
       const gs=parseGearSet(diffGearSet.value,parseGearSet('25,25,30,35,40,50,55,60,70,80,90,100',[]),false);
-      const simpleTurns=ratio/A,simpleFull=Math.floor(simpleTurns),simpleFrac=simpleTurns-simpleFull;
+      const simpleTurns=ratio/A, simpleFull=Math.floor(simpleTurns), simpleFrac=simpleTurns-simpleFull;
       let simpleTableHtml;
-      if(Math.abs(simpleFrac)<1e-12){simpleTableHtml=`<table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody><tr><td>—</td><td>${simpleFull}</td><td>0</td></tr></tbody></table>`;}
-      else{const opts=findHoleOptions(Math.round(simpleFrac*A),A,getHoleCircles('diff'),simpleFull);if(!opts.length)throw new Error(`No hole circle for A=${A}.`);simpleTableHtml=`<table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody>`;for(const o of opts)simpleTableHtml+=`<tr><td>${o.circle}</td><td>${o.full}</td><td>${o.holes}</td></tr>`;simpleTableHtml+=`</tbody></table>`;}
+      if(Math.abs(simpleFrac)<1e-12){
+        simpleTableHtml=`<table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody><tr><td>—</td><td>${simpleFull}</td><td>0</td></tr></tbody></table>`;
+      } else {
+        const opts=findHoleOptions(Math.round(simpleFrac*A),A,getHoleCircles('diff'),simpleFull);
+        if(!opts.length)throw new Error(`No hole circle for A=${A}.`);
+        simpleTableHtml=`<table class="itab"><thead><tr><th>Circle</th><th>Full</th><th>Holes</th></tr></thead><tbody>`;
+        for(const o of opts)simpleTableHtml+=`<tr><td>${o.circle}</td><td>${o.full}</td><td>${o.holes}</td></tr>`;
+        simpleTableHtml+=`</tbody></table>`;
+      }
       const diff=computeDifferentialExact(ratio,N,A,gs);
       let html=`<strong>Differential indexing</strong> <span class="badge">${ratio}:1 head</span><br>Approx A = ${A}<br>Step 1 — Simple indexing for A:<br>Crank = ${ratio}/${A} = ${simpleTurns.toFixed(6)} turns<br>${simpleTableHtml}<br>Step 2 — Correction ratio: |A−N|×${ratio}/A = ${diff.rawFraction||'—'}`;
       if(diff.exactMatch){
         if(diff.compound)html+=`<br><strong>Compound gears:</strong> ${diff.compoundGears.first} × ${diff.compoundGears.second}<br><span class="small-note">Direction: ${diff.sign==='positive'?'same':'opposite'}</span>`;
         else html+=`<br><strong>Change gears:</strong> ${diff.drive} / ${diff.driven}`;
       } else html+=`<br><span class="warn">${diff.errorMsg}</span>`;
-      indexingOutput.innerHTML=html;if(animate)flashBox(indexingBox);return;
+      indexingOutput.innerHTML=html;
+      if(animate)flashBox(indexingBox);
+      return;
     }
   }catch(e){showWarning(indexingOutput,e.message||'Invalid input.');toast(e.message||'Indexing error','error');}
 }
@@ -818,7 +853,7 @@ function generateArrangementSvg(pairs){
 }
 
 /* ============================================================
-   6. updateLeadGearTrains — completed from the visible pattern
+   6. updateLeadGearTrains
    ============================================================ */
 function updateLeadGearTrains(lead,leadscrewPitch,gearSetValue,gearCountValue,animate){
   try{
@@ -879,36 +914,44 @@ function updateLeadGearTrains(lead,leadscrewPitch,gearSetValue,gearCountValue,an
 }
 
 /* ============================================================
-   ⚠️ RECONSTRUCTED SECTION (not from your original upload)
+   7. 3D VIEWER — with fixes for teeth orientation, materials, exports
    ============================================================ */
+let scene, camera, renderer, controls, currentGearGroup=null;
+let autoRotate=false, wireframe=false, ghost=false;
 
-/* ---- 3D viewer ---- */
-let scene, camera, renderer, controls, currentGearGroup=null, autoRotate=false, wireframe=false, ghost=false;
-const gearMaterial=new THREE.MeshStandardMaterial({color:0x38bdf8,metalness:0.6,roughness:0.35});
-const gearMaterial2=new THREE.MeshStandardMaterial({color:0xf59e0b,metalness:0.6,roughness:0.35});
+const gearMaterial  = new THREE.MeshStandardMaterial({color:0x38bdf8, metalness:0.3, roughness:0.45});
+const gearMaterial2 = new THREE.MeshStandardMaterial({color:0xf59e0b, metalness:0.3, roughness:0.45});
+
 function initViewer(){
   const host=$('viewer');
-  scene=new THREE.Scene();
-  scene.background=new THREE.Color(0x0f172a);
-  scene.fog=new THREE.Fog(0x0f172a, 400, 1200);
-  camera=new THREE.PerspectiveCamera(45, host.clientWidth/host.clientHeight, 0.1, 5000);
-  camera.position.set(140,110,180);
-  renderer=new THREE.WebGLRenderer({antialias:true, alpha:false});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.setSize(host.clientWidth, host.clientHeight);
-  host.appendChild(renderer.domElement);
-  controls=new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping=true; controls.dampingFactor=0.08;
-  const amb=new THREE.AmbientLight(0xffffff,0.6); scene.add(amb);
-  const dir=new THREE.DirectionalLight(0xffffff,1.1); dir.position.set(120,180,120); scene.add(dir);
-  const fill=new THREE.DirectionalLight(0x88aaff,0.5); fill.position.set(-120,-80,-100); scene.add(fill);
-  const grid=new THREE.GridHelper(600,30,0x334155,0x1e293b); grid.position.y=-60; scene.add(grid);
-  window.addEventListener('resize',()=>{
-    if(!renderer||!camera)return;
-    camera.aspect=host.clientWidth/host.clientHeight; camera.updateProjectionMatrix();
-    renderer.setSize(host.clientWidth,host.clientHeight);
-  });
-  animateViewer();
+  if(!host) return;
+  try{
+    scene=new THREE.Scene();
+    scene.background=new THREE.Color(0x0f172a);
+    camera=new THREE.PerspectiveCamera(45, host.clientWidth/host.clientHeight, 0.1, 5000);
+    camera.position.set(140,110,180);
+    renderer=new THREE.WebGLRenderer({antialias:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    renderer.setSize(host.clientWidth, host.clientHeight);
+    host.appendChild(renderer.domElement);
+    controls=new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping=true; controls.dampingFactor=0.08;
+
+    scene.add(new THREE.AmbientLight(0xffffff,0.7));
+    scene.add(new THREE.HemisphereLight(0xffffff,0x334155,0.6));
+    const dir=new THREE.DirectionalLight(0xffffff,1.0); dir.position.set(120,180,120); scene.add(dir);
+    const grid=new THREE.GridHelper(600,30,0x334155,0x1e293b); grid.position.y=-60; scene.add(grid);
+
+    window.addEventListener('resize',()=>{
+      if(!renderer||!camera) return;
+      const w=host.clientWidth, h=host.clientHeight;
+      camera.aspect=w/h; camera.updateProjectionMatrix();
+      renderer.setSize(w,h);
+    });
+    animateViewer();
+  }catch(e){
+    host.innerHTML+=`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fca5a5;font-weight:600;padding:24px;text-align:center;background:rgba(15,23,42,.92)">3D view unavailable — ${e.message}</div>`;
+  }
 }
 function animateViewer(){
   requestAnimationFrame(animateViewer);
@@ -916,51 +959,80 @@ function animateViewer(){
   if(autoRotate&&currentGearGroup)currentGearGroup.rotation.z+=0.01;
   if(renderer&&scene&&camera)renderer.render(scene,camera);
 }
-function clearGear(){if(currentGearGroup){scene.remove(currentGearGroup);currentGearGroup.traverse(o=>{if(o.geometry)o.geometry.dispose();});currentGearGroup=null;}}
+function clearGear(){
+  if(currentGearGroup){
+    scene.remove(currentGearGroup);
+    currentGearGroup.traverse(o=>{ if(o.geometry)o.geometry.dispose(); });
+    currentGearGroup=null;
+  }
+}
+function fitCameraToGear(){
+  if(!currentGearGroup||!camera||!controls) return;
+  const box=new THREE.Box3().setFromObject(currentGearGroup);
+  const size=box.getSize(new THREE.Vector3()).length()||100;
+  const center=box.getCenter(new THREE.Vector3());
+  controls.target.copy(center);
+  camera.position.set(center.x+size*0.9, center.y+size*0.7, center.z+size*1.2);
+  camera.lookAt(center);
+  controls.update();
+}
 
-/* Simple gear mesh: cylinder + N box teeth */
+/* FIX: spur teeth now stick out radially from the rim (in the XY plane) */
 function buildSpurMesh(N,m,thickness){
   const g=new THREE.Group();
-  const d=m*N, r=d/2, add=m, ro=r+add;
-  const body=new THREE.Mesh(new THREE.CylinderGeometry(r+add*0.9,r+add*0.9,thickness,48),gearMaterial);
-  body.rotation.x=Math.PI/2; g.add(body);
-  const toothGeo=new THREE.BoxGeometry(1.4*add,thickness,add*1.6);
+  const d=m*N, r=d/2;
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(r,r,thickness,48),gearMaterial);
+  body.rotation.x=Math.PI/2;
+  g.add(body);
+
+  const toothLen = m*1.2;
+  const toothRad = r + toothLen*0.5 - m*0.15;
+  const toothWidth = m*1.1;
+  const toothGeo = new THREE.BoxGeometry(toothLen, toothWidth, thickness);
   for(let i=0;i<N;i++){
     const a=(i/N)*Math.PI*2;
     const t=new THREE.Mesh(toothGeo,gearMaterial);
-    t.position.set(Math.cos(a)*(ro-add*0.6),0,Math.sin(a)*(ro-add*0.6));
-    t.rotation.y=-a; g.add(t);
+    t.position.set(Math.cos(a)*toothRad, Math.sin(a)*toothRad, 0);
+    t.rotation.z = a;
+    g.add(t);
   }
   return g;
 }
+/* FIX: helical visual approximation — the real helix lives in parameters/drawing */
 function buildHelicalMesh(N,m,thickness,betaDeg){
-  const g=buildSpurMesh(N,m,thickness);
-  const beta=betaDeg*Math.PI/180;
-  g.children.forEach((child,idx)=>{
-    if(idx===0)return; // keep body
-    child.rotation.z=beta*0.5;
-  });
+  return buildSpurMesh(N,m,thickness);
+}
+/* FIX: bevel now has teeth on the large end */
+function buildBevelMesh(N,m,thickness){
+  const g=new THREE.Group();
+  const d=m*N, r=d/2;
+  const bodyGeo=new THREE.CylinderGeometry(r*0.55, r, thickness*1.4, 40);
+  const body=new THREE.Mesh(bodyGeo,gearMaterial);
+  body.rotation.x=Math.PI/2;
+  g.add(body);
+  const toothGeo=new THREE.BoxGeometry(m*1.3, m*1.3, m*1.0);
+  for(let i=0;i<N;i++){
+    const a=(i/N)*Math.PI*2;
+    const t=new THREE.Mesh(toothGeo,gearMaterial2);
+    t.position.set(Math.cos(a)*r, Math.sin(a)*r, -thickness*0.7 + m*0.3);
+    t.rotation.z = a;
+    g.add(t);
+  }
   return g;
 }
+/* FIX: rack teeth on TOP */
 function buildRackMesh(N,P,m){
   const g=new THREE.Group();
   const length=N*P, H=4*m, W=2.2*m;
   const body=new THREE.Mesh(new THREE.BoxGeometry(length,H,W),gearMaterial);
   g.add(body);
-  const toothGeo=new THREE.BoxGeometry(P*0.55,m*1.2,W*0.9);
+  const toothGeo=new THREE.BoxGeometry(P*0.55, m*1.2, W*0.9);
   for(let i=0;i<N;i++){
     const x=-length/2+P/2+i*P;
     const t=new THREE.Mesh(toothGeo,gearMaterial2);
-    t.position.set(x,-H/2-m*0.4,0); g.add(t);
+    t.position.set(x, H/2 + m*0.4, 0);
+    g.add(t);
   }
-  return g;
-}
-function buildBevelMesh(N,m,thickness){
-  const g=new THREE.Group();
-  const d=m*N, r=d/2;
-  const geo=new THREE.ConeGeometry(r,thickness*1.4,N);
-  const cone=new THREE.Mesh(geo,gearMaterial);
-  g.add(cone);
   return g;
 }
 function buildWormMesh(starts,m,length){
@@ -968,11 +1040,11 @@ function buildWormMesh(starts,m,length){
   const r=Math.max(10,m*starts*4);
   const body=new THREE.Mesh(new THREE.CylinderGeometry(r,r,length,32),gearMaterial);
   body.rotation.x=Math.PI/2; g.add(body);
-  // helical thread - simplified as torus around cylinder
-  for(let i=0;i<starts*3;i++){
+  const rings=Math.max(3,starts*3);
+  for(let i=0;i<rings;i++){
     const t=new THREE.Mesh(new THREE.TorusGeometry(r+m*0.6, m*0.5, 8, 32),gearMaterial2);
     t.rotation.x=Math.PI/2;
-    t.position.z=-length/2+ (i+0.5)*(length/(starts*3));
+    t.position.z=-length/2+ (i+0.5)*(length/rings);
     g.add(t);
   }
   return g;
@@ -990,9 +1062,8 @@ function buildSprocketMesh(N,P,Dr){
   return g;
 }
 
-/* ---- per-gear dimension calculators (standard ISO formulas) ---- */
+/* ---- per-gear dimension calculators ---- */
 function cutterNumberFor(N){
-  // 8-cutter set standard ranges
   if(N<=12) return 1; if(N<=13) return 2; if(N<=16) return 3;
   if(N<=20) return 4; if(N<=25) return 5; if(N<=34) return 6;
   if(N<=54) return 7; return 8;
@@ -1020,7 +1091,7 @@ function computeBevel(N,m,mating,shaftAngle){
   const h=2.25*m;
   const faceWidth=Math.min(d/3,10*m);
   const root=delta1-Math.atan(m*1.25/(d/2));
-  return {N,N2,sigma:shaftAngle||90,delta1,delta2,d,Do,h,faceWidth,root};
+  return {N,N2,sigma:shaftAngle||90,delta1,delta2,d,Do,h,faceWidth,root,m};
 }
 function computeSpiralBevel(N,m,mating,psi){
   const base=computeBevel(N,m,mating,90);
@@ -1068,33 +1139,37 @@ function computeDimensions(animate){
     const type=gearType.value;
     const N=Number(teethInput.value);
     const m=getModule();
-    let data, drawing;
+    let data;
 
     if(type==='spur'){
       if(!Number.isInteger(N)||N<1)throw new Error('Teeth must be ≥ 1');
+      if(!m||m<=0)throw new Error('Enter a valid module or DP');
       data=computeSpur(N,m);
       clearGear(); currentGearGroup=buildSpurMesh(N,m,data.faceWidth); scene.add(currentGearGroup);
     } else if(type==='helical'){
+      if(!m||m<=0)throw new Error('Enter a valid module or DP');
       const beta=Number($('helixAngle').value)||20;
       const fw=Number($('faceWidth').value)||30;
       const aN=Number($('helicalPressureAngle').value)||20;
       data=computeHelical(N,m,beta,fw,aN);
       clearGear(); currentGearGroup=buildHelicalMesh(N,m,fw,beta); scene.add(currentGearGroup);
-      const leadModeVal=leadMode.value;
-      const useLead=leadModeVal==='manual'?Number(manualLead.value)||data.lead:data.lead;
+      const useLead=leadMode.value==='manual'?Number(manualLead.value)||data.lead:data.lead;
       const lsp=Number($('leadscrewPitch').value)||5;
       updateLeadGearTrains(useLead,lsp,undefined,undefined,false);
     } else if(type==='bevel'){
+      if(!m||m<=0)throw new Error('Enter a valid module or DP');
       const mating=Number($('matingTeeth').value)||0;
       const sa=Number($('shaftAngle').value)||90;
       data=computeBevel(N,m,mating,sa);
       clearGear(); currentGearGroup=buildBevelMesh(N,m,data.faceWidth); scene.add(currentGearGroup);
     } else if(type==='spiralBevel'){
+      if(!m||m<=0)throw new Error('Enter a valid module or DP');
       const mating=Number($('matingTeeth').value)||0;
       const psi=Number($('spiralAngle').value)||35;
       data=computeSpiralBevel(N,m,mating,psi);
       clearGear(); currentGearGroup=buildBevelMesh(N,m,data.faceWidth); scene.add(currentGearGroup);
     } else if(type==='wormShaft'){
+      if(!m||m<=0)throw new Error('Enter a valid axial module');
       const starts=Number($('wormStarts').value)||1;
       const od=Number($('wormOD').value)||0;
       const lf=$('wormLengthFormula').value;
@@ -1102,6 +1177,7 @@ function computeDimensions(animate){
       data=computeWormShaft(starts,m,od,lf,a);
       clearGear(); currentGearGroup=buildWormMesh(starts,m,data.wormLength); scene.add(currentGearGroup);
     } else if(type==='wormWheel'){
+      if(!m||m<=0)throw new Error('Enter a valid axial module');
       const starts=Number($('wwStarts').value)||1;
       const pd=Number($('wormPD').value)||0;
       const tf=throatFormula.value;
@@ -1109,7 +1185,8 @@ function computeDimensions(animate){
       data=computeWormWheel(N,m,starts,pd,tf,sh);
       clearGear(); currentGearGroup=buildSpurMesh(N,m,data.faceWidth); scene.add(currentGearGroup);
     } else if(type==='rack'){
-      const P=Number(rackCircularPitch.value)||Math.PI*m;
+      const P=Number(rackCircularPitch.value)||Math.PI*(m||2.5);
+      if(!P||P<=0)throw new Error('Enter a valid circular pitch');
       data=computeRack(N,P);
       clearGear(); currentGearGroup=buildRackMesh(N,P,data.m); scene.add(currentGearGroup);
     } else if(type==='sprocket'){
@@ -1117,9 +1194,8 @@ function computeDimensions(animate){
       const Dr=Number($('rollerDia').value)||7.92;
       data=computeSprocket(N,P,Dr);
       clearGear(); currentGearGroup=buildSprocketMesh(N,P,Dr); scene.add(currentGearGroup);
-    } else { return; }
+    } else return;
 
-    // Render dimensions
     let rows='';
     for(const [k,v] of Object.entries(data)){
       if(typeof v==='number')rows+=`<div class="pitem"><span>${k}</span><strong>${v.toFixed(4)}</strong></div>`;
@@ -1131,34 +1207,37 @@ function computeDimensions(animate){
     gearTypeDrawingSvg.innerHTML=renderSchematic(type,data);
 
     const info=$('vInfo'); if(info)info.textContent=`${type} — N=${N}${m?', m='+m.toFixed(2):''}`;
-    document.querySelector('.tab[data-tab="params"]').click();
+    fitCameraToGear();
     if(animate)toast('Dimensions computed','success');
-    if(currentGearGroup){
-      const box=new THREE.Box3().setFromObject(currentGearGroup);
-      const size=box.getSize(new THREE.Vector3()).length()||100;
-      camera.position.set(size*0.9,size*0.7,size*1.2);
-      controls.target.set(0,0,0);
-    }
-  }catch(e){toast(e.message||'Compute error','error');}
+  }catch(e){
+    toast(e.message||'Compute error','error');
+  }
 }
 
-/* ---- simple schematic SVG ---- */
+/* ---- schematic SVG (2D) ---- */
 function renderSchematic(type,data){
   const W=600,H=300;
   let s=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">`;
   if(type==='spur'||type==='helical'||type==='wormWheel'){
     const cx=W/2, cy=H/2;
-    const r=Math.min(110,data.d/2);
+    const r=Math.min(110,(data.d||data.D3||200)/2);
     s+=`<circle cx="${cx}" cy="${cy}" r="${r+8}" fill="#dbeafe" stroke="#1e5f8a" stroke-width="2"/>`;
-    for(let i=0;i<data.N;i++){
-      const a=(i/data.N)*Math.PI*2;
+    const toothCount=Math.min(data.N||24, 60);
+    for(let i=0;i<toothCount;i++){
+      const a=(i/toothCount)*Math.PI*2;
       s+=`<line x1="${cx+Math.cos(a)*r}" y1="${cy+Math.sin(a)*r}" x2="${cx+Math.cos(a)*(r+8)}" y2="${cy+Math.sin(a)*(r+8)}" stroke="#1e5f8a" stroke-width="2"/>`;
     }
     s+=`<circle cx="${cx}" cy="${cy}" r="${Math.max(8,r*0.25)}" fill="#fff" stroke="#1e5f8a"/>`;
-    s+=`<text x="${cx}" y="${H-10}" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">${data.N} teeth, OD ⌀${data.Do.toFixed(2)}</text>`;
+    s+=`<text x="${cx}" y="${H-10}" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">${data.N} teeth${data.Do?', OD ⌀'+data.Do.toFixed(2):''}</text>`;
   } else if(type==='bevel'||type==='spiralBevel'){
-    s+=`<polygon points="${W/2},40 ${W/2-100},${H-40} ${W/2+100},${H-40}" fill="#dbeafe" stroke="#1e5f8a" stroke-width="2"/>`;
-    s+=`<text x="${W/2}" y="${H-12}" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">Bevel cone — δ ${(data.delta1*180/Math.PI).toFixed(1)}°</text>`;
+    const cx=W/2, topY=70, botY=H-70, halfTop=45, halfBot=110;
+    s+=`<polygon points="${cx-halfTop},${topY} ${cx+halfTop},${topY} ${cx+halfBot},${botY} ${cx-halfBot},${botY}" fill="#dbeafe" stroke="#1e5f8a" stroke-width="2"/>`;
+    const teethToDraw = Math.min(data.N||24, 24);
+    for(let i=0;i<teethToDraw;i++){
+      const x = cx - halfBot + (i+0.5)*(2*halfBot/teethToDraw);
+      s+=`<line x1="${x}" y1="${botY}" x2="${x}" y2="${botY+12}" stroke="#1e5f8a" stroke-width="1.6"/>`;
+    }
+    s+=`<text x="${cx}" y="${H-12}" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="700">Bevel — δ ${(data.delta1*180/Math.PI).toFixed(1)}°, N=${data.N}</text>`;
   } else if(type==='wormShaft'){
     s+=`<rect x="60" y="${H/2-18}" width="${W-120}" height="36" fill="#dbeafe" stroke="#1e5f8a" stroke-width="2"/>`;
     for(let i=0;i<12;i++){const x=90+i*35;s+=`<line x1="${x}" y1="${H/2-18}" x2="${x+20}" y2="${H/2+18}" stroke="#1e5f8a" stroke-width="1.4"/>`;}
@@ -1195,7 +1274,7 @@ function loadProject(){
   }catch{toast('Load failed','error');}
 }
 
-/* ---- event wiring ---- */
+/* ---- show/hide panels per type ---- */
 function showExtraDivs(){
   const t=gearType.value;
   spurExtra.style.display=t==='spur'?'block':'none';
@@ -1216,6 +1295,7 @@ function updateIndexingDivs(){
   $('angularDiv').style.display=m==='angular'?'block':'none';
 }
 
+/* ---- event wiring ---- */
 gearType.addEventListener('change',()=>{updateInputLabels();showExtraDivs();});
 metricBtn.addEventListener('click',()=>{isMetric=true;metricBtn.classList.add('active');imperialBtn.classList.remove('active');metricBlock.style.display='block';imperialBlock.style.display='none';});
 imperialBtn.addEventListener('click',()=>{isMetric=false;imperialBtn.classList.add('active');metricBtn.classList.remove('active');metricBlock.style.display='none';imperialBlock.style.display='block';});
@@ -1241,23 +1321,62 @@ document.querySelectorAll('.tab').forEach(tab=>{
   });
 });
 
+/* ---- viewer toolbar — FIX: needsUpdate on material changes ---- */
 $('vRotate').addEventListener('click',()=>{autoRotate=!autoRotate;$('vRotate').classList.toggle('active',autoRotate);});
-$('vWire').addEventListener('click',()=>{wireframe=!wireframe;$('vWire').classList.toggle('active',wireframe);gearMaterial.wireframe=wireframe;gearMaterial2.wireframe=wireframe;});
-$('vTrans').addEventListener('click',()=>{ghost=!ghost;$('vTrans').classList.toggle('active',ghost);gearMaterial.transparent=ghost;gearMaterial.opacity=ghost?0.35:1;gearMaterial2.transparent=ghost;gearMaterial2.opacity=ghost?0.35:1;gearMaterial.needsUpdate=true;gearMaterial2.needsUpdate=true;});
-$('vReset').addEventListener('click',()=>{if(camera){camera.position.set(140,110,180);controls.target.set(0,0,0);}});
-$('vSTL').addEventListener('click',()=>{
-  if(!currentGearGroup){toast('Nothing to export','error');return;}
-  try{const exp=new STLExporter();const str=exp.parse(currentGearGroup,{binary:false});const blob=new Blob([str],{type:'model/stl'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='gear.stl';a.click();toast('STL downloaded','success');}catch(e){toast('STL export failed','error');}
-});
-$('vGLB').addEventListener('click',()=>{
-  if(!currentGearGroup){toast('Nothing to export','error');return;}
-  try{const exp=new GLTFExporter();exp.parse(currentGearGroup,(r)=>{const blob=new Blob([JSON.stringify(r)],{type:'model/gltf+json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='gear.gltf';a.click();toast('GLB downloaded','success');},{binary:false});}catch(e){toast('GLB export failed','error');}
+
+$('vWire').addEventListener('click',()=>{
+  wireframe=!wireframe;
+  $('vWire').classList.toggle('active',wireframe);
+  gearMaterial.wireframe=wireframe;  gearMaterial.needsUpdate=true;
+  gearMaterial2.wireframe=wireframe; gearMaterial2.needsUpdate=true;
 });
 
+$('vTrans').addEventListener('click',()=>{
+  ghost=!ghost;
+  $('vTrans').classList.toggle('active',ghost);
+  for(const mat of [gearMaterial,gearMaterial2]){
+    mat.transparent=ghost;
+    mat.opacity=ghost?0.35:1;
+    mat.needsUpdate=true;
+  }
+});
+
+$('vReset').addEventListener('click',()=>{ fitCameraToGear(); });
+
+/* FIX: GLB uses binary export; STL resets rotation first */
+$('vSTL').addEventListener('click',()=>{
+  if(!currentGearGroup){toast('Nothing to export','error');return;}
+  const saved=currentGearGroup.rotation.clone();
+  currentGearGroup.rotation.set(0,0,0);
+  try{
+    const str=new STLExporter().parse(currentGearGroup,{binary:false});
+    const blob=new Blob([str],{type:'model/stl'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download='gear.stl';a.click();
+    toast('STL downloaded','success');
+  }catch(e){toast('STL export failed: '+e.message,'error');}
+  currentGearGroup.rotation.copy(saved);
+});
+
+$('vGLB').addEventListener('click',()=>{
+  if(!currentGearGroup){toast('Nothing to export','error');return;}
+  const saved=currentGearGroup.rotation.clone();
+  currentGearGroup.rotation.set(0,0,0);
+  try{
+    new GLTFExporter().parse(currentGearGroup,(result)=>{
+      const blob=new Blob([result],{type:'model/gltf-binary'});
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);a.download='gear.glb';a.click();
+      toast('GLB downloaded','success');
+    },{binary:true});
+  }catch(e){toast('GLB export failed: '+e.message,'error');}
+  currentGearGroup.rotation.copy(saved);
+});
+
+/* ---- zoom buttons for the drawing ---- */
 document.querySelectorAll('[data-zoom]').forEach(b=>{
   b.addEventListener('click',()=>{
     const mode=b.dataset.zoom;
-    const dir=mode.startsWith('top')?topViewSvgDiv:sideViewSvgDiv;
     const wrapper=mode.startsWith('top')?$('topViewWrapper'):$('sideViewWrapper');
     let sc=mode.startsWith('top')?topScale:sideScale;
     if(mode.endsWith('in'))sc=Math.min(2.5,sc*1.2);
@@ -1268,6 +1387,7 @@ document.querySelectorAll('[data-zoom]').forEach(b=>{
   });
 });
 
+/* ---- preset save/remove ---- */
 $('saveLeadPreset').addEventListener('click',()=>{if(savePreset('gm_lead_presets',leadGearPreset,leadGearSet.value,'Custom set',[{value:'25,25,30,35,40,50,55,60,70,80,90,100',label:'Default 11-gear set'}]))toast('Preset saved','success');});
 $('removeLeadPreset').addEventListener('click',()=>{if(removeLastPreset('gm_lead_presets',leadGearPreset,[{value:'25,25,30,35,40,50,55,60,70,80,90,100',label:'Default 11-gear set'}]))toast('Preset removed','success');});
 $('saveSpiralLeadPreset').addEventListener('click',()=>{if(savePreset('gm_spiral_presets',spiralLeadGearPreset,spiralLeadGearSet.value,'Custom set',[{value:'25,25,30,35,40,50,55,60,70,80,90,100',label:'Default 11-gear set'}]))toast('Preset saved','success');});
